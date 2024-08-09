@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -15,6 +16,11 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addVariant }) {
+      addVariant('ch', '& > *');
+      addVariant('ch-hover', '& > *:hover');
+    }
+  ],
 };
 export default config;
