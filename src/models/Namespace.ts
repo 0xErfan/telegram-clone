@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { schema as roomSchema } from "./room";
+import { schema as roomSchema } from "./Room";
 
 const schema = new Schema({
     title: { type: String, required: true },
