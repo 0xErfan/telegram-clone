@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Telegram-clone",
-  description: "FullStack telegram clone with socket.io",
+  description: "FullStack NextJs Telegram clone with socket.io",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
