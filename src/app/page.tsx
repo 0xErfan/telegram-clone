@@ -1,6 +1,9 @@
-export default async function Home() {
-
-  return (
-    <div className="text-2xl flex-center">Hi there</div>
-  )
+const Home = async () => {
+    return (
+        <div>
+            hi
+        </div>
+    )
 }
+
+export default Home;
