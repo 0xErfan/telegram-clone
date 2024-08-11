@@ -1,7 +1,10 @@
+import HiThere from "@/component/HiThere";
+
 const Home = async () => {
+
     return (
         <div>
-            hi
+            <HiThere />
         </div>
     )
 }
