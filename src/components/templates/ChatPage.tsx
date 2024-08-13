@@ -3,10 +3,11 @@ import { BiSearch } from "react-icons/bi";
 import { ChatCard } from "../modules/ChatCard";
 import ChatHeader from "./ChatHeader";
 import ChatContent from "./ChatContent";
+import MessageSender from "./MessageSender";
 
 const ChatPage = () => {
     return (
-        <div className="flex items-center bg-leftBarBg size-full ch:size-full h-screen overflow-hidden">
+        <div className="flex items-center bg-leftBarBg size-full ch:size-full h-screen relative overflow-hidden">
 
             <div className="flex-1 bg-leftBarBg px-4 overflow-y-auto">
 
@@ -41,10 +42,20 @@ const ChatPage = () => {
             </div>
 
             <div className="flex-[2.4] bg-chatBg relative rounded-l-2xl px-4 xl:px-8 text-white overflow-x-hidden">
+                {/* add aos animations for messages */}
+                {
+                    'isChatSelected'
+                        ?
+                        <>
+                            <ChatHeader />
+                            <ChatContent />
+                        </>
+                        : <div className="flex-center size-full">
+                            <p className="rounded-full w-fit text-[14px] py-1 px-3 text-center bg-white/[18%]">Select chat to start messaging</p>
+                        </div>
+                }
 
-                <ChatHeader />
-
-                <ChatContent />
+                <MessageSender />
 
             </div>
 
