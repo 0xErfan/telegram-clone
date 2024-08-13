@@ -13,23 +13,43 @@ export const ChatCard = () => {
             className={`flex items-center gap-3 relative h-[70px] cursor-pointer transition-all duration-300 rounded overflow-hidden ${isActive && 'px-3'}`}
         >
 
-            <Image
-                className={`size-[50px] bg-center rounded-full ${isOnline && 'onlineCircle'}`}
-                width={50}
-                height={50}
-                src='/images/favicon.ico' alt="avatar"
-            />
+            <>
+                <Image
+                    className={`size-[50px] bg-center rounded-full ${isOnline && 'onlineCircle'}`}
+                    width={50}
+                    height={50}
+                    src='/images/favicon.ico' alt="avatar"
+                />
+                {
+                    isOnline
+                        ?
+                        <span className={`absolute bg-mainGreen transition-all duration-300 ${isActive ? 'left-12' : 'left-9'} size-[10px] bottom-3 rounded-full`}></span>
+                        : null
+                }
+            </>
 
-            <div className="flex flex-col w-full ch:w-full gap-1 text-darkGray text-[14px] ch:ch:line-clamp-1">
+            <div className="flex flex-col w-full ch:w-full gap-1 text-darkGray text-[14px] ">
 
                 <div className="flex items-center justify-between">
-                    <p className="text-white font-bold text-[16px] font-segoeBold">Sweetie</p>
+                    <p className="text-white font-bold text-[16px] font-segoeBold line-clamp-1">Sweetie</p>
                     <p>8:32 PM</p>
                 </div>
 
                 <div className="flex items-center justify-between">
-                    <p>I love You so fucking much</p>
-                    {'' && 'show pin(pin or replay svg)'}
+
+                    <p className="line-clamp-1">I love You so fucking much</p>
+
+                    <div className="flex items-center justify-between w-14">
+                        <div className="flex-center text-center w-min px-2 bg-darkBlue text-white rounded-full">23</div>
+                        <Image
+                            src='/shapes/pin.svg'
+                            width={17}
+                            height={17}
+                            className="size-4 bg-center"
+                            alt="pin shape"
+                        />
+                    </div>
+
                 </div>
             </div>
 

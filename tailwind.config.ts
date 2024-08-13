@@ -15,7 +15,8 @@ const config: Config = {
         'leftBarBg': '#19202E',
         'darkGray': '#888888',
         'darkBlue': '#1566A3',
-        'lightBlue': '#60CDFF'
+        'lightBlue': '#60CDFF',
+        'mainGreen': '#6CCB5F'
       },
       fontFamily: {
         'segoeRegular': 'segoeRegular',
