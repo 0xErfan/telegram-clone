@@ -1,10 +1,11 @@
 import Image from "next/image";
 import { BiSearch } from "react-icons/bi";
 import { ChatCard } from "../modules/ChatCard";
+import ChatHeader from "./ChatHeader";
 
 const ChatPage = () => {
     return (
-        <div className="flex items-center bg-red-600 size-full ch:size-full h-screen overflow-hidden">
+        <div className="flex items-center bg-leftBarBg size-full ch:size-full h-screen overflow-hidden">
 
             <div className="flex-1 bg-leftBarBg px-4 overflow-y-auto">
 
@@ -38,7 +39,11 @@ const ChatPage = () => {
 
             </div>
 
-            <div className="flex-[2.4] bg-chatBg">hi there</div>
+            <div className="flex-[2.4] bg-chatBg relative rounded-l-2xl px-8 text-white overflow-x-hidden">
+
+                <ChatHeader />
+
+            </div>
 
         </div>
     )
