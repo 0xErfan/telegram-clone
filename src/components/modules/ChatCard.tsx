@@ -23,7 +23,7 @@ export const ChatCard = () => {
                 {
                     isOnline
                         ?
-                        <span className={`absolute bg-mainGreen transition-all duration-300 ${isActive ? 'left-12' : 'left-9'} size-[10px] bottom-3 rounded-full`}></span>
+                        <span className={`absolute bg-lightBlue transition-all duration-300 ${isActive ? 'left-12' : 'left-9'} size-[10px] bottom-3 rounded-full`}></span>
                         : null
                 }
             </>
@@ -37,7 +37,7 @@ export const ChatCard = () => {
 
                 <div className="flex items-center justify-between">
 
-                    <p className="line-clamp-1">I love You so fucking much</p>
+                    <p className="line-clamp-1">Hi buddy how you doing?</p>
 
                     <div className="flex items-center justify-between w-14">
                         <div className="flex-center text-center w-min px-2 bg-darkBlue text-white rounded-full">23</div>
