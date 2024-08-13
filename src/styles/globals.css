@@ -5,3 +5,18 @@
 .flex-center {
   @apply flex items-center justify-center;
 }
+
+@font-face {
+  font-family: 'segoeRegular';
+  src: url('../../public/fonts/fonnts.com-Segoe_UI_Variable_Static_Display.ttf');
+}
+
+@font-face {
+  font-family: 'segoeBold';
+  src: url('../../public/fonts/fonnts.com-Segoe_UI_Variable_Static_Display_Bold.ttf');
+}
+
+@font-face {
+  font-family: 'segoeLight';
+  src: url('../../public/fonts/fonnts.com-Segoe_UI_Variable_Static_Display_Light.ttf');
+}

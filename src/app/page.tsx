@@ -1,11 +1,9 @@
-import HiThere from "@/component/HiThere";
+import ChatPage from "@/components/templates/ChatPage";
 
 const Home = async () => {
 
     return (
-        <div>
-            <HiThere />
-        </div>
+        <ChatPage />
     )
 }
 
