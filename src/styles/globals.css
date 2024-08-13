@@ -20,3 +20,8 @@
   font-family: 'segoeLight';
   src: url('../../public/fonts/fonnts.com-Segoe_UI_Variable_Static_Display_Light.ttf');
 }
+
+.activeChat::after {
+  content: '';
+  @apply bg-lightBlue right-0 bottom-0 top-0 w-1 h-8 transition-all rounded-r-full
+}

@@ -13,6 +13,9 @@ const config: Config = {
       colors: {
         'chatBg': '#232735',
         'leftBarBg': '#19202E',
+        'darkGray': '#888888',
+        'darkBlue': '#1566A3',
+        'lightBlue': '#60CDFF'
       },
       fontFamily: {
         'segoeRegular': 'segoeRegular',
