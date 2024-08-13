@@ -6,6 +6,14 @@
   @apply flex items-center justify-center;
 }
 
+::-webkit-scrollbar {
+  @apply w-[2px]
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-full w-full cursor-pointer bg-white/[54.42%]
+}
+
 @font-face {
   font-family: 'segoeRegular';
   src: url('../../public/fonts/fonnts.com-Segoe_UI_Variable_Static_Display.ttf');
