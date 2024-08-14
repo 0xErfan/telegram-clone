@@ -1,15 +1,20 @@
+'use client'
 import Image from "next/image";
 import { BiSearch } from "react-icons/bi";
 import { ChatCard } from "../modules/ChatCard";
 import ChatHeader from "./ChatHeader";
 import ChatContent from "./ChatContent";
 import MessageSender from "./MessageSender";
+import { useState } from "react";
 
 const ChatPage = () => {
+
+    const [isChatSelected, setIsChatSelected] = useState(true)
+
     return (
         <div className="flex items-center bg-leftBarBg size-full ch:size-full h-screen relative overflow-hidden">
 
-            <div className="flex-1 bg-leftBarBg px-4 overflow-y-auto">
+            <div className={`flex-1 ${isChatSelected && 'hidden'} md:block bg-leftBarBg px-4 overflow-y-auto`}>
 
                 <div className="sticky top-0 bg-leftBarBg py-4 z-30">
                     <div className="flex items-center gap-3 w-full text-white tex-[14px]">
@@ -41,7 +46,7 @@ const ChatPage = () => {
 
             </div>
 
-            <div className="flex-[2.4] bg-chatBg relative rounded-l-2xl px-4 xl:px-8 text-white overflow-x-hidden">
+            <div className={`flex-[2.4] bg-chatBg relative ${!isChatSelected && 'hidden'} md:block xl:rounded-l-2xl px-4 xl:px-8 text-white overflow-x-hidden`}>
                 {/* add aos animations for messages */}
                 {
                     'isChatSelected'
