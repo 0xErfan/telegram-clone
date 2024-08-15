@@ -5,17 +5,30 @@ import { ChatCard } from "../modules/ChatCard";
 import ChatHeader from "./ChatHeader";
 import ChatContent from "./ChatContent";
 import MessageSender from "./MessageSender";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ChatFolders from "../modules/ChatFolders";
 
 const ChatPage = () => {
 
     const [isChatSelected, setIsChatSelected] = useState(true)
+    const chatFolderRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+
+        const handleScroll = (event: WheelEvent) => {
+            event.preventDefault();
+            const scrollAmount = event.deltaY < 0 ? -30 : 30
+            chatFolderRef.current!.scrollBy({ left: scrollAmount });
+        }
+
+        chatFolderRef.current!.addEventListener('wheel', handleScroll);
+        return () => chatFolderRef.current!.removeEventListener('wheel', handleScroll);
+    }, [])
 
     return (
         <div className="flex items-center bg-leftBarBg size-full ch:size-full h-screen relative overflow-hidden">
 
-            <div className={`flex-1 ${isChatSelected && 'hidden'} md:block bg-leftBarBg px-4 overflow-y-auto`}>
+            <div className={`flex-1 ${isChatSelected && 'hidden'} md:block bg-leftBarBg noScrollWidth px-4 overflow-y-auto`}>
 
                 <div className="w-full sticky top-0 bg-leftBarBg space-y-1 pt-1 border-b border-white/5 z-30">
 
@@ -48,12 +61,15 @@ const ChatPage = () => {
                         }
                     </div>
 
-                    <div style={{ scrollbarWidth: "thin" }} className="flex items-center gap-5 overflow-x-auto h-10 text-darkGray ch:py-1 ch:w-fit">
-                        <ChatFolders count={2} name="All" />
-                        <ChatFolders count={32} name="Groups" />
-                        <ChatFolders count={212} isActive name="Private" />
-                        <ChatFolders count={5} name="Bots" />
-                        <ChatFolders count={5} name="Bots" />
+                    <div
+                        ref={chatFolderRef}
+                        className="flex items-center noScrollWidth gap-5 overflow-x-auto h-10 text-darkGray ch:py-1 ch:w-fit z-40"
+                    >
+                        <ChatFolders key={2} count={2} name="All" />
+                        <ChatFolders key={32} count={32} name="Groups" />
+                        <ChatFolders key={212} count={212} isActive name="Private" />
+                        <ChatFolders key={5} count={5} name="Bots" />
+                        <ChatFolders key={53} count={5} name="Bots" />
                     </div>
 
                 </div>

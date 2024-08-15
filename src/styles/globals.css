@@ -33,3 +33,7 @@
   content: '';
   @apply bg-lightBlue right-0 bottom-0 top-0 w-1 h-8 transition-all rounded-r-full
 }
+
+.noScrollWidth {
+  scrollbar-width: none;
+}
