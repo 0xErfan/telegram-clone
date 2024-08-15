@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "../styles/globals.css";
+import 'swiper/css';
+import 'swiper/css/pagination';
 
 export const metadata: Metadata = {
   title: "Telegram-clone",

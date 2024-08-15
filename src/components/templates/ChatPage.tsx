@@ -17,7 +17,7 @@ const ChatPage = () => {
 
             <div className={`flex-1 ${isChatSelected && 'hidden'} md:block bg-leftBarBg px-4 overflow-y-auto`}>
 
-                <div className="w-full sticky top-0 bg-leftBarBg py-1 border-b pb-3 border-white/5 z-30">
+                <div className="w-full sticky top-0 bg-leftBarBg space-y-1 pt-1 border-b border-white/5 z-30">
 
                     <div className="flex items-center justify-between gap-6">
 
@@ -48,10 +48,11 @@ const ChatPage = () => {
                         }
                     </div>
 
-                    <div className="flex items-center gap-5 mt-3 text-darkGray ch:p-1 ch:w-fit">
+                    <div style={{ scrollbarWidth: "thin" }} className="flex items-center gap-5 overflow-x-auto h-10 text-darkGray ch:py-1 ch:w-fit">
                         <ChatFolders count={2} name="All" />
                         <ChatFolders count={32} name="Groups" />
                         <ChatFolders count={212} isActive name="Private" />
+                        <ChatFolders count={5} name="Bots" />
                         <ChatFolders count={5} name="Bots" />
                     </div>
 
