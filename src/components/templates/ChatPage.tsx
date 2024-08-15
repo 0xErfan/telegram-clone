@@ -5,13 +5,14 @@ import { ChatCard } from "../modules/ChatCard";
 import ChatHeader from "./ChatHeader";
 import ChatContent from "./ChatContent";
 import MessageSender from "./MessageSender";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import ChatFolders from "../modules/ChatFolders";
+import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 
 const ChatPage = () => {
 
-    const [isChatSelected, setIsChatSelected] = useState(true)
     const chatFolderRef = useRef<HTMLDivElement>(null)
+    const selectedChat = useGlobalVariablesStore(state => state.selectedChat)
 
     useEffect(() => {
 
@@ -22,13 +23,14 @@ const ChatPage = () => {
         }
 
         chatFolderRef.current!.addEventListener('wheel', handleScroll);
-        return () => chatFolderRef.current!.removeEventListener('wheel', handleScroll);
+        return () => chatFolderRef.current!?.removeEventListener('wheel', handleScroll);
+
     }, [])
 
     return (
         <div className="flex items-center bg-leftBarBg size-full ch:size-full h-screen relative overflow-hidden">
 
-            <div className={`flex-1 ${isChatSelected && 'hidden'} md:block bg-leftBarBg noScrollWidth px-4 overflow-y-auto`}>
+            <div data-aos-duration="500" data-aos='fade-right' className={`flex-1 ${selectedChat && 'hidden'} md:block bg-leftBarBg noScrollWidth px-4 overflow-y-auto`}>
 
                 <div className="w-full sticky top-0 bg-leftBarBg space-y-1 pt-1 border-b border-white/5 z-30">
 
@@ -76,16 +78,16 @@ const ChatPage = () => {
 
                 <div className="flex flex-col mt-2 overflow-auto">
                     {
-                        Array(15).fill(0).map((_, index) => <ChatCard key={index} />)
+                        Array(15).fill(0).map((_, index) => <ChatCard id={index} key={index} />)
                     }
                 </div>
 
             </div>
 
-            <div className={`flex-[2.4] bg-chatBg relative ${!isChatSelected && 'hidden'} md:block xl:rounded-l-2xl px-4 xl:px-8 text-white overflow-x-hidden`}>
+            <div data-aos-duration="500" data-aos='fade-right' className={`flex-[2.4] bg-chatBg relative ${!selectedChat && 'hidden'} md:block xl:rounded-l-2xl px-4 xl:px-8 text-white overflow-x-hidden noScrollWidth`}>
                 {/* add aos animations for messages */}
                 {
-                    'isChatSelected'
+                    selectedChat
                         ?
                         <>
                             <ChatHeader />

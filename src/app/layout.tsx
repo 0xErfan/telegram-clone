@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "../styles/globals.css";
 import 'swiper/css';
 import 'swiper/css/pagination';
+import 'aos/dist/aos.css'
+import AosAnimation from "@/components/modules/AosAnimation";
 
 export const metadata: Metadata = {
   title: "Telegram-clone",
@@ -12,6 +14,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className="font-segoeRegular">
+        <AosAnimation />
         {children}
       </body>
     </html>

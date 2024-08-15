@@ -1,15 +1,17 @@
 'use client'
+import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import Image from "next/image"
 import { useState } from "react"
 
-export const ChatCard = () => {
+export const ChatCard = ({ id }: { id: number }) => {
 
     const [isOnline, setIsOnline] = useState(true)
-    const [isActive, setIsActive] = useState(false)
+    const { selectedChat, setter } = useGlobalVariablesStore(state => state)
+    const isActive = selectedChat == id
 
     return (
         <div
-            onClick={() => setIsActive(prev => !prev)}
+            onClick={() => setter({ selectedChat: id })}
             className={`flex items-center gap-3 relative h-[70px] cursor-pointer transition-all duration-300 rounded overflow-hidden ${isActive && 'px-3'}`}
         >
 

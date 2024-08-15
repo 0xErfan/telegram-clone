@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 interface Props {
-    isOpen: boolean
+    selectedChat: null | number
 }
 
 interface Updater {
@@ -10,7 +10,7 @@ interface Updater {
 }
 
 const useGlobalVariablesStore = create<Props & Updater>(set => ({
-    isOpen: false,
+    selectedChat: null,
     updater(key: keyof Props, value: Props[keyof Props]) {
         set({ [key]: value })
     },
