@@ -99,7 +99,6 @@ const ChatPage = () => {
                 }
 
                 <MessageSender />
-
             </div>
 
         </div>
