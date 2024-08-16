@@ -5,7 +5,7 @@ import { ChatCard } from "../modules/ChatCard";
 import ChatHeader from "./ChatHeader";
 import ChatContent from "./ChatContent";
 import MessageSender from "./MessageSender";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import ChatFolders from "../modules/ChatFolders";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 
@@ -13,6 +13,7 @@ const ChatPage = () => {
 
     const chatFolderRef = useRef<HTMLDivElement>(null)
     const selectedChat = useGlobalVariablesStore(state => state.selectedChat)
+    const [isSearchOpen, setIsSearchOpen] = useState(false)
 
     useEffect(() => {
 
@@ -48,9 +49,9 @@ const ChatPage = () => {
                         </div>
 
                         {
-                            's'
+                            !isSearchOpen
                                 ?
-                                <BiSearch className="cursor-pointer size-[23px] text-white/90 mt-3" />
+                                <BiSearch onClick={() => setIsSearchOpen(true)} className="cursor-pointer size-[23px] text-white/90 mt-3" />
                                 :
                                 <div className="flex items-center flex-[3] justify-betweens rounded h-10 px-4 border-b-2 border-white/[78.6%] mt-4 bg-white/[6.05%] text-white/[78.6%]">
                                     <input
@@ -89,12 +90,12 @@ const ChatPage = () => {
                 {
                     selectedChat !== null
                         ?
-                        <section data-aos="zoom-out">
+                        <section data-aos="fade-right">
                             <ChatHeader />
                             <ChatContent />
                             <MessageSender />
                         </section>
-                        : <div data-aos="zoom-out" className="flex-center size-full">
+                        : <div data-aos="fade-left" className="flex-center size-full">
                             <p className="rounded-full w-fit text-[14px] py-1 px-3 text-center bg-white/[18%]">Select chat to start messaging</p>
                         </div>
                 }
