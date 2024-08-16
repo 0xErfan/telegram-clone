@@ -30,7 +30,7 @@ const ChatPage = () => {
     return (
         <div className="flex items-center bg-leftBarBg size-full ch:size-full h-screen relative overflow-hidden">
 
-            <div data-aos-duration="500" data-aos='fade-right' className={`flex-1 ${selectedChat && 'hidden'} md:block bg-leftBarBg noScrollWidth px-4 overflow-y-auto`}>
+            <div data-aos-duration="400" data-aos='fade-right' className={`flex-1 ${selectedChat && 'hidden'} md:block bg-leftBarBg noScrollWidth px-4 overflow-y-auto`}>
 
                 <div className="w-full sticky top-0 bg-leftBarBg space-y-1 pt-1 border-b border-white/5 z-30">
 
@@ -84,21 +84,21 @@ const ChatPage = () => {
 
             </div>
 
-            <div data-aos-duration="500" data-aos='fade-right' className={`flex-[2.4] bg-chatBg relative ${!selectedChat && 'hidden'} md:block xl:rounded-l-2xl px-4 xl:px-8 text-white overflow-x-hidden noScrollWidth`}>
+            <div data-aos-duration="400" data-aos='fade-right' className={`flex-[2.4] bg-chatBg relative ${!selectedChat && 'hidden'} md:block xl:rounded-l-2xl px-4 xl:px-8 text-white overflow-x-hidden noScrollWidth`}>
                 {/* add aos animations for messages */}
                 {
-                    selectedChat
+                    selectedChat !== null
                         ?
-                        <>
+                        <section data-aos="zoom-out">
                             <ChatHeader />
                             <ChatContent />
-                        </>
-                        : <div className="flex-center size-full">
+                            <MessageSender />
+                        </section>
+                        : <div data-aos="zoom-out" className="flex-center size-full">
                             <p className="rounded-full w-fit text-[14px] py-1 px-3 text-center bg-white/[18%]">Select chat to start messaging</p>
                         </div>
                 }
 
-                <MessageSender />
             </div>
 
         </div>
