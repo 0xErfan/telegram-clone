@@ -10,10 +10,10 @@ const SocketConnection = () => {
 
     useEffect(() => {
 
-        const Socket = io('http://localhost:3001')
-        setter({ socket: Socket })
+        // const Socket = io('http://localhost:3001')
+        // setter({ socket: Socket })
 
-        return () => { Socket.disconnect() }
+        // return () => { Socket.disconnect() }
 
     }, [])
 
