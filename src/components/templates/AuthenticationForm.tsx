@@ -1,95 +1,66 @@
-import { Autocomplete, AutocompleteItem } from "@nextui-org/autocomplete";
-import { Button } from "@nextui-org/button";
-import { Input } from "@nextui-org/input";
-
-import { Key, useState } from "react";
+import { useState } from "react";
 import { SiTelegram } from "react-icons/si";
-
-export const animals = [
-    { label: "Cat", value: "cat", description: "The second most popular pet in the world" },
-    { label: "Dog", value: "dog", description: "The most popular pet in the world" },
-    { label: "Elephant", value: "elephant", description: "The largest land animal" },
-    { label: "Lion", value: "lion", description: "The king of the jungle" },
-    { label: "Tiger", value: "tiger", description: "The largest cat species" },
-    { label: "Giraffe", value: "giraffe", description: "The tallest land animal" },
-    {
-        label: "Dolphin",
-        value: "dolphin",
-        description: "A widely distributed and diverse group of aquatic mammals",
-    },
-    { label: "Penguin", value: "penguin", description: "A group of aquatic flightless birds" },
-    { label: "Zebra", value: "zebra", description: "A several species of African equids" },
-    {
-        label: "Shark",
-        value: "shark",
-        description: "A group of elasmobranch fish characterized by a cartilaginous skeleton",
-    },
-    {
-        label: "Whale",
-        value: "whale",
-        description: "Diverse group of fully aquatic placental marine mammals",
-    },
-    { label: "Otter", value: "otter", description: "A carnivorous mammal in the subfamily Lutrinae" },
-    { label: "Crocodile", value: "crocodile", description: "A large semiaquatic reptile" },
-];
+import SignInForm from "./SignInForm";
+import SignUpForm from "./SignUpForm";
 
 
 const AuthenticationForm = () => {
 
-    const [countryValue, setCountry] = useState<string | null>(null);
-    const [phoneNumber, setPhoneNumber] = useState('')
+    const [isLogging, setIsLogging] = useState(true)
 
     return (
         <section className="bg-leftBarBg flex-center size-full h-screen">
 
-            <div className="flex items-center flex-col max-w-[360px] w-full py-16 text-white">
+            <div className="flex items-center transition-all duration-300 flex-col max-w-[360px] w-full py-16 text-white">
 
                 <SiTelegram className="size-40 rounded-full text-lightBlue" />
-                <h1 className="font-bold font-segoeBold text-[35px] mt-7">Sign in to Telegram</h1>
-                <p className="text-darkGray text-center px-12 text-[16px] font-bold font-segoeBold mt-3">Please confirm your country code and enter your phone number.</p>
 
-                <div className="flex w-full flex-col mt-12 space-y-6 ch:text-xl">
+                <h1 className="font-bold font-segoeBold text-[35px] mt-7">Sign {isLogging ? 'in' : 'up'} to Telegram</h1>
 
-                    <Autocomplete
-                        label="Select country"
-                        variant="bordered"
-                        color="primary"
-                        defaultItems={animals}
-                        onInputChange={value => setCountry(value)}
+                <p className="text-darkGray text-center px-12 text-[16px] font-bold font-segoeBold mt-3">
+                    {
+                        isLogging
+                            ?
+                            'Please confirm your username and password to sign in.'
+                            :
+                            'Please fill the fields to sign up.'
+                    }
+                </p>
+
+                {
+                    isLogging
+                        ?
+                        <SignInForm />
+                        :
+                        <SignUpForm />
+                }
+
+                <div className="text-left w-full mr-auto mt-5 text-[14px]">
+                    {
+                        isLogging
+                            ?
+                            "Don't have an account? "
+                            :
+                            "Already have an account?"
+                    }
+                    <span
+                        onClick={() => setIsLogging(prev => !prev)}
+                        className="underline cursor-pointer font-bold font-segoeBold text-darkBlue"
                     >
                         {
-                            (item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>
+                            isLogging
+                                ?
+                                ' Sign up'
+                                :
+                                ' Sign in'
                         }
-                    </Autocomplete>
-
-                    <Input
-                        variant='bordered'
-                        color="primary"
-                        label="phone"
-                        isInvalid={isNaN(+phoneNumber.trim())}
-                        value={phoneNumber}
-                        onChange={e => setPhoneNumber(e.target.value)}
-                        errorMessage='Please enter a valid number'
-                        validate={(e => e)}
-                        placeholder="Enter your phone"
-                        className=""
-                    />
-
-                    <Button
-                        color="primary"
-                        size="lg"
-                        className="w-full"
-                        value={'Next'}
-                        variant="shadow"
-                    >
-                        Next
-                    </Button>
-
+                    </span>
                 </div>
 
             </div>
+
         </section>
     )
 }
 
-export default AuthenticationForm
+export default AuthenticationForm;
