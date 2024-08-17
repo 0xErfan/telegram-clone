@@ -83,7 +83,7 @@ const ChatPage = () => {
 
                 <div className="flex flex-col mt-2 overflow-auto">
                     {
-                        Array(15).fill(0).map((_, index) => <ChatCard id={index} key={index} />)
+                        Array(15).fill(0).map((_, index) => <ChatCard id={index + 1} key={index} />)
                     }
                 </div>
 
