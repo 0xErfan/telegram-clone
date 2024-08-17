@@ -3,10 +3,17 @@ import { PiMicrophoneLight } from "react-icons/pi";
 import { MdAttachFile } from "react-icons/md";
 import { IoIosSend } from "react-icons/io";
 import { useState } from "react";
+import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 
 const MessageSender = () => {
 
     const [text, setText] = useState('')
+    const socket = useGlobalVariablesStore(state => state.socket)
+
+    const emitMessageHandler = () => {
+        socket?.emit('message', { message: text })
+        setText('')
+    }
 
     return (
         <section className='sticky -mx-4 md:mx-0 flex-center bg-chatBg z-30 bottom-0 md:pb-3 inset-x-0'>
@@ -23,7 +30,7 @@ const MessageSender = () => {
                 {
                     text.trim().length
                         ?
-                        <IoIosSend className="shrink-0 basis-[5%] size-6 cursor-pointer text-lightBlue rotate-45" />
+                        <IoIosSend onClick={emitMessageHandler} className="shrink-0 basis-[5%] size-6 cursor-pointer text-lightBlue rotate-45" />
                         :
                         <PiMicrophoneLight className="shrink-0 basis-[5%] size-6 cursor-pointer" />
                 }

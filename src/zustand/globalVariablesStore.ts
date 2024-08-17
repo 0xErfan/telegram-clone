@@ -1,7 +1,9 @@
+import { Socket } from "socket.io-client";
 import { create } from "zustand";
 
 interface Props {
     selectedChat: null | number
+    socket: null | Socket
 }
 
 interface Updater {
@@ -11,6 +13,8 @@ interface Updater {
 
 const useGlobalVariablesStore = create<Props & Updater>(set => ({
     selectedChat: null,
+    socket: null,
+
     updater(key: keyof Props, value: Props[keyof Props]) {
         set({ [key]: value })
     },
