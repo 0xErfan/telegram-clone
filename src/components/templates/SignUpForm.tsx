@@ -18,7 +18,7 @@ const SignUpForm = () => {
 
     const submitForm = async () => {
         const response = await axios.put('/api/auth/register', userData)
-        if (response.status !== 201) {}
+        if (response.status !== 201) { }
     }
 
     return (
