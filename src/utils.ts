@@ -27,23 +27,21 @@ const showToast = (status: boolean, message: string, duration: number = 2500) =>
 
     toast[status ? 'success' : 'error'](message,
         {
-            position: "top-right",
+            position: "top-left",
             duration,
             style: {
                 display: 'flex',
-                flexDirection: 'row-reverse',
                 alignItems: 'center',
-                fontFamily: 'peyda',
-                backgroundColor: '#292A2D',
-                color: '#e3e3e3',
+                fontFamily: 'inherit',
+                backgroundColor: '#19202E',
+                color: '#ffffff',
                 position: 'relative',
-                top: '50px',
-                fontSize: '17px',
+                top: '30px',
+                fontSize: '16px',
                 padding: '9px',
-                border: `2px solid #${status ? '16723A' : 'FD0019'}`,
-                borderRadius: '6px',
+                border: `2px solid #${status ? '60CDFF' : 'f31260'}`,
+                borderRadius: '4px',
                 zIndex: '999999',
-                wordSpacing: '4px'
             }
         }
     )

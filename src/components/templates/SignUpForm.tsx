@@ -8,14 +8,15 @@ import useUserStore from "@/zustand/userStore";
 const SignUpForm = () => {
 
     const { setter, updater } = useUserStore(state => state)
+    const [checkForValidation, setCheckForValidation] = useState(false)
 
     const [userData, setUserData] = useState({
         name: '',
         lastName: '',
-        username: 'SADF',
+        username: '',
         avatar: '',
         password: '',
-        phone: 'sdf'
+        phone: ''
     })
 
     const userUpdater = (key: keyof typeof userData, value: string) => {
@@ -24,44 +25,53 @@ const SignUpForm = () => {
 
     const submitForm = async () => {
 
+        setCheckForValidation(true)
+
+        if (userData.username.trim().length < 3 || userData.username.trim().length > 20) return
+        if (userData.password.trim().length < 8 || userData.password.trim().length > 20) return
+        if (!/(^09[0-9]{9}$)|(^\u06F0\u06F9[\u06F0-\u06F9]{9})$/.test(userData.phone)) return
+
         try {
             const response = await axios.post('/api/auth/register', userData)
 
             if (response.status == 201) {
-                console.log(response.data)
                 setter(response.data)
                 updater('isLogin', true)
+                showToast(true, 'You signed up successfully.')
             }
-            showToast(true, response.data.message)
 
-        } catch (error) { console.log(error) }
+        } catch (error: any) { showToast(false, error.response.data.message) }
     }
 
     return (
-        <div data-aos='zoom-out' className="flex w-full flex-col mt-10 space-y-6 ch:text-xl">
+        <div
+            data-aos='zoom-out'
+            className="flex w-full flex-col mt-10 space-y-6 ch:text-xl"
+            onKeyUp={e => e.key == 'Enter' && submitForm()}
+        >
 
             <Input
                 variant='bordered'
                 color="primary"
                 radius="sm"
-                label="Name"
-                value={userData.name}
-                isInvalid={userData.name.trim().length < 3}
-                errorMessage='Name length should be more that 3 letters'
-                onChange={e => userUpdater('name', e.target.value)}
-                placeholder="Enter your name"
+                label="Username"
+                value={userData.username}
+                isInvalid={(userData.username.trim().length < 3 || userData.username.trim().length > 20) && checkForValidation}
+                errorMessage='username length should be more that 3 & less that 20 letters'
+                onChange={e => userUpdater('username', e.target.value)}
+                placeholder="Enter your unique username"
             />
 
             <Input
                 variant='bordered'
                 color="primary"
                 radius="sm"
-                label="Last name"
-                value={userData.lastName}
-                isInvalid={userData.lastName.trim().length < 3}
-                errorMessage='Username length should be more that 3 letters'
-                onChange={e => userUpdater('lastName', e.target.value)}
-                placeholder="Enter your lastname"
+                label="Phone"
+                value={userData.phone}
+                isInvalid={(isNaN(+userData.phone) || !/(^09[0-9]{9}$)|(^\u06F0\u06F9[\u06F0-\u06F9]{9})$/.test(userData.phone)) && checkForValidation}
+                errorMessage='Invalid phone number'
+                onChange={e => userUpdater('phone', e.target.value)}
+                placeholder="Enter your phone number"
             />
 
             <Input
@@ -70,8 +80,8 @@ const SignUpForm = () => {
                 radius="sm"
                 label="Password"
                 value={userData.password}
-                isInvalid={userData.password.trim().length < 8}
-                errorMessage='Password length should be more that 7 letters'
+                isInvalid={(userData.password.trim().length < 8 || userData.password.trim().length > 20) && checkForValidation}
+                errorMessage='Password length should be more that 7 & less that 20 letters'
                 onChange={e => userUpdater('password', e.target.value)}
                 placeholder="Enter your password"
             />
