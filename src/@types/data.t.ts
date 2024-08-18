@@ -4,6 +4,7 @@ interface UserModel {
     username: string
     password: string
     avatar: string
+    isLogin: boolean
     createdAt: string
 }
 

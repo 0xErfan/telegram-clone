@@ -4,7 +4,6 @@ import { create } from "zustand";
 interface Updater {
     updater: (key: keyof UserModel, value: UserModel[keyof UserModel]) => void
     setter: any
-    isLogin: boolean
 }
 
 const useUserStore = create<UserModel & Updater>(set => ({

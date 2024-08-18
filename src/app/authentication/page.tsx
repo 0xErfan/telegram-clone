@@ -12,7 +12,9 @@ const Authentication = ({ children }: { children: ReactNode }) => {
             {
                 isLogin
                     ?
-                    { children }
+                    <>
+                        {children}
+                    </>
                     :
                     <AuthenticationForm />
             }

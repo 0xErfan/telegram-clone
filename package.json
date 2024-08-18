@@ -20,6 +20,7 @@
     "@types/jsonwebtoken": "^9.0.6",
     "aos": "^2.3.4",
     "axios": "^1.7.3",
+    "bcrypt": "^5.1.1",
     "framer-motion": "^11.3.28",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.2",

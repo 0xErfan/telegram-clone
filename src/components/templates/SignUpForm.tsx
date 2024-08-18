@@ -2,14 +2,20 @@ import { Button } from "@nextui-org/button"
 import { Input } from "@nextui-org/input"
 import { useState } from "react";
 import axios from 'axios'
+import { showToast } from "@/utils";
+import useUserStore from "@/zustand/userStore";
 
 const SignUpForm = () => {
+
+    const { setter, updater } = useUserStore(state => state)
 
     const [userData, setUserData] = useState({
         name: '',
         lastName: '',
+        username: 'SADF',
         avatar: '',
-        password: ''
+        password: '',
+        phone: 'sdf'
     })
 
     const userUpdater = (key: keyof typeof userData, value: string) => {
@@ -17,8 +23,18 @@ const SignUpForm = () => {
     }
 
     const submitForm = async () => {
-        const response = await axios.put('/api/auth/register', userData)
-        if (response.status !== 201) { }
+
+        try {
+            const response = await axios.post('/api/auth/register', userData)
+
+            if (response.status == 201) {
+                console.log(response.data)
+                setter(response.data)
+                updater('isLogin', true)
+            }
+            showToast(true, response.data.message)
+
+        } catch (error) { console.log(error) }
     }
 
     return (
