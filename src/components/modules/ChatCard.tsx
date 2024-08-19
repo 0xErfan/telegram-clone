@@ -44,6 +44,7 @@ export const ChatCard = ({ id }: { id: number }) => {
                     <div className="flex items-center justify-between w-14">
                         <div className="flex-center text-center w-min px-2 bg-darkBlue text-white rounded-full">23</div>
                         <Image
+                            priority
                             src='/shapes/pin.svg'
                             width={17}
                             height={17}
