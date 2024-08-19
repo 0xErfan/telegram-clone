@@ -3,6 +3,7 @@ interface UserModel {
     lastName: string
     username: string
     password: string
+    phone: number
     avatar: string
     isLogin: boolean
     createdAt: string

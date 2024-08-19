@@ -15,8 +15,8 @@ const SignInForm = () => {
     const {
         register,
         handleSubmit,
-        formState: { isSubmitting, errors }
-    } = useForm<Inputs>()
+        formState: { isSubmitting, errors, isValid }
+    } = useForm<Inputs>({ mode: 'onChange' })
 
     const { setter, updater } = useUserStore(state => state)
 
@@ -62,9 +62,11 @@ const SignInForm = () => {
 
             <Input
                 {...register('password', {
-                    required: 'This filed is required!',
-                    minLength: { value: 7, message: 'password length is bigger than 7' },
-                    maxLength: { value: 20, message: 'password length is less than 20' },
+                    validate: (value) => (value?.length! > 20 || value?.length! < 8)
+                        ?
+                        'Password length should be bigger than 8 & less than 20'
+                        :
+                        true
                 })}
                 variant='bordered'
                 color="primary"
@@ -77,12 +79,12 @@ const SignInForm = () => {
 
             <Button
                 isLoading={isSubmitting}
-                disabled={isSubmitting}
+                disabled={!isValid}
                 color="primary"
                 size="lg"
                 radius="sm"
                 className="w-full"
-                variant="shadow"
+                variant={isValid ? 'shadow' : 'flat'}
                 onClick={handleSubmit(submitForm)}
             >
                 Sign in
