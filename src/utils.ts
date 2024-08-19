@@ -1,6 +1,7 @@
 import { Secret, sign, verify } from "jsonwebtoken"
 import toast from "react-hot-toast"
 import { UserModel } from "./@types/data.t";
+import axios from "axios";
 
 
 const getTimer = (date?: string) => {
@@ -55,7 +56,7 @@ const tokenDecoder = (token: string) => {
     }
 }
 
-const tokenGenerator = (data: object, days: number = 7) => sign({ email: data }, process.env.secretKey as Secret, { expiresIn: 60 * 60 * 24 * days })
+const tokenGenerator = (data: object, days: number = 7) => sign({ phone: data }, process.env.secretKey as Secret, { expiresIn: 60 * 60 * 24 * days })
 
 const isEmptyInput = (payload: {}, props: string[]) => {
 
@@ -108,6 +109,12 @@ const convertNumbers2English = (string: any) => {
     });
 }
 
+const isLoginCheck = async (): Promise<UserModel | null> => {
+    const userData = await axios.get(`/api/auth/me`)
+    return userData.data ?? null
+}
+
+
 const removeProductFromBasket = async (productID: string, userID: string) => {
 
     try {
@@ -146,6 +153,8 @@ const authUser = async ({ isFromClient = false, cookie }: { isFromClient?: boole
         console.log(error)
     }
 }
+
+const delay = (ms: number) => new Promise(res => setTimeout(res, ms)) 
 
 const getPastDateTime = (last: 'MONTH' | 'WEEK' | 'DAY' | number): Date => {
 
@@ -197,4 +206,6 @@ export {
     authUser,
     getPastDateTime,
     getCurrentPersianWeekday,
+    isLoginCheck,
+    delay,
 }

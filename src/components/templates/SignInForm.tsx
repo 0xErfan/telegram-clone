@@ -1,4 +1,4 @@
-import { showToast } from "@/utils";
+import { delay, showToast } from "@/utils";
 import useUserStore from "@/zustand/userStore";
 import { Button } from "@nextui-org/button"
 import { Input } from "@nextui-org/input"
@@ -9,24 +9,32 @@ const SignInForm = () => {
 
     const [payload, setPayload] = useState('');
     const [password, setPassword] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
 
     const { setter, updater } = useUserStore(state => state)
 
     const submitForm = async () => {
 
         if (!payload.trim().length || !password.trim().length) return;
+        setIsLoading(true)
 
         try {
 
             const response = await axios.post('/api/auth/login', { payload, password })
 
             if (response.status == 200) {
-                setter(response.data)
-                updater('isLogin', true)
-                showToast(true, 'You logged in successfully.')
+                delay(2000).then(() => {
+                    setter(response.data)
+                    updater('isLogin', true)
+                    showToast(true, 'You logged in successfully.')
+                    setIsLoading(false)
+                })
             }
 
-        } catch (error: any) { showToast(false, error.response.data.message, 3000) }
+        } catch (error: any) {
+            setIsLoading(false)
+            showToast(false, error.response.data.message, 3000)
+        }
     }
 
     return (
@@ -57,7 +65,7 @@ const SignInForm = () => {
             />
 
             <Button
-                isLoading={false}
+                isLoading={isLoading}
                 color="primary"
                 size="lg"
                 radius="sm"
