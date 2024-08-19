@@ -4,6 +4,7 @@ interface UserModel {
     username: string
     password: string
     phone: number
+    rooms: RoomModel
     avatar: string
     isLogin: boolean
     createdAt: string
