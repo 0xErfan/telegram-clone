@@ -4,7 +4,7 @@ interface UserModel {
     username: string
     password: string
     phone: number
-    rooms: RoomModel
+    rooms: RoomModel[]
     avatar: string
     isLogin: boolean
     createdAt: string
@@ -31,7 +31,7 @@ interface MediaModel {
 interface RoomModel {
     name: string
     avatar: string
-    participants: UserModel[]
+    participants: [_id: string]
     messages: MediaModel[]
     locations: LocationModel[]
     createdAt: string

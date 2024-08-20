@@ -1,33 +1,29 @@
 import mongoose, { Schema } from "mongoose"
 import { schema as MessageSchema } from "./Message";
-import { schema as UserSchema } from "./User";
+import connectToDB from "@/db/db";
+import MediaSchema from "./Media";
+import LocationSchema from "./Location";
 
-const LocationSchema = new Schema({
-    x: { type: Number, required: true },
-    y: { type: Number, required: true },
-    sender: UserSchema
-})
+await connectToDB()
 
-const MediaSchema = new Schema({
-    file: { type: File, required: true },
-    sender: UserSchema
-})
-
-export const schema = new mongoose.Schema({
+const RoomSchema = new Schema({
     name: { type: String, required: true },
     avatar: { type: String || null },
-    participants: [UserSchema],
-    medias: [MediaSchema],
-    messages: [MessageSchema],
-    locations: [LocationSchema]
+    type: { type: String, enum: ['group', 'private', 'chanel'], required: true },
+    participants: [{ type: mongoose.Schema.ObjectId, ref: 'User', required: true }],
+    admins: [{ type: mongoose.Schema.ObjectId, ref: 'User', default: [] }],
+    medias: { type: [MediaSchema], default: [] },
+    messages: { type: [MessageSchema], default: [] },
+    locations: { type: [LocationSchema], default: [] }
 }, { timestamps: true })
 
-const RoomModel = mongoose.models.Room || mongoose.model('Room', schema);
+const RoomModel = mongoose.models.Room || mongoose.model('Room', RoomSchema);
 const MediaModel = mongoose.models.Media || mongoose.model('Media', MediaSchema);
 const LocationModel = mongoose.models.Location || mongoose.model('Location', LocationSchema);
 
 export {
     RoomModel,
     MediaModel,
-    LocationModel
+    LocationModel,
+    RoomSchema,
 };

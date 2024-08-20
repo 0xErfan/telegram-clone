@@ -40,7 +40,6 @@ const config: Config = {
               DEFAULT: "#60CDFF",
               foreground: "#FFFFFF",
             },
-            focus: "#YOUR_FOCUS_COLOR",
           },
         },
       },

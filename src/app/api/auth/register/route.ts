@@ -20,8 +20,17 @@ export const POST = async (req: Request) => {
             username,
             password,
             phone,
-            rooms: []
         })
+
+        const defaultRooms = [{
+            name: 'Saved Messages',
+            avatar: '/images/savedMessages.png',
+            type: 'private',
+            participants: [userData._id]
+        }]
+
+        userData.rooms = defaultRooms
+        await userData.save()
 
         const token = tokenGenerator(userData.phone, 7)
 
