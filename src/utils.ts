@@ -114,26 +114,6 @@ const isLoginCheck = async (): Promise<UserModel | null> => {
     return userData.data ?? null
 }
 
-
-const removeProductFromBasket = async (productID: string, userID: string) => {
-
-    try {
-        const res = await fetch('/api/basket/delete', {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ productID, userID })
-        })
-
-        const data = await res.json()
-
-        showToast(res.ok, data.message, 2000)
-
-    } catch (err) {
-        console.log(err)
-        showToast(false, err as string)
-    }
-}
-
 const authUser = async ({ isFromClient = false, cookie }: { isFromClient?: boolean, cookie?: string }): Promise<UserModel | null | undefined> => {
 
     try {
@@ -154,7 +134,7 @@ const authUser = async ({ isFromClient = false, cookie }: { isFromClient?: boole
     }
 }
 
-const delay = (ms: number) => new Promise(res => setTimeout(res, ms)) 
+const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
 
 const getPastDateTime = (last: 'MONTH' | 'WEEK' | 'DAY' | number): Date => {
 
@@ -193,6 +173,16 @@ const getCurrentPersianWeekday = (day: number) => {
     return persianDays[day];
 }
 
+const getTimeFromDate = (date: Date | null) => {
+
+    if (typeof date !== 'string') return null;
+
+    const time = new Date(date).toLocaleTimeString()
+    const isAfternoon = new Date(date).getHours() > 12
+
+    return time + ' ' + (isAfternoon ? 'PM' : 'AM')
+}
+
 export {
     getTimer,
     showToast,
@@ -202,10 +192,10 @@ export {
     shuffleArray,
     sharePage,
     convertNumbers2English,
-    removeProductFromBasket,
     authUser,
     getPastDateTime,
     getCurrentPersianWeekday,
     isLoginCheck,
     delay,
+    getTimeFromDate,
 }

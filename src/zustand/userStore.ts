@@ -7,10 +7,13 @@ interface Updater {
 }
 
 const useUserStore = create<UserModel & Updater>(set => ({
+    _id: '',
     name: '',
     lastName: '',
     username: '',
     password: '',
+    phone: 0,
+    rooms: [],
     avatar: '',
     createdAt: '',
     isLogin: false,

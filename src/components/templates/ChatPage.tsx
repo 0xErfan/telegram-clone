@@ -2,17 +2,18 @@
 import Image from "next/image";
 import { BiSearch } from "react-icons/bi";
 import { ChatCard } from "../modules/ChatCard";
-import ChatHeader from "./ChatHeader";
 import ChatContent from "./ChatContent";
 import MessageSender from "./MessageSender";
 import { useEffect, useRef, useState } from "react";
 import ChatFolders from "../modules/ChatFolders";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
+import useUserStore from "@/zustand/userStore";
 
 const ChatPage = () => {
 
     const chatFolderRef = useRef<HTMLDivElement>(null)
     const { selectedChat, socket } = useGlobalVariablesStore(state => state) || null
+    const { rooms } = useUserStore(state => state)
     const [isSearchOpen, setIsSearchOpen] = useState(false)
 
     useEffect(() => {
@@ -83,7 +84,12 @@ const ChatPage = () => {
 
                 <div className="flex flex-col mt-2 overflow-auto">
                     {
-                        Array(15).fill(0).map((_, index) => <ChatCard id={index + 1} key={index} />)
+                        rooms?.map(data =>
+                            <ChatCard
+                                {...data}
+                                key={data?._id}
+                            />
+                        )
                     }
                 </div>
 
@@ -95,7 +101,6 @@ const ChatPage = () => {
                     selectedChat !== null
                         ?
                         <section data-aos="fade-right">
-                            <ChatHeader />
                             <ChatContent />
                             <MessageSender />
                         </section>

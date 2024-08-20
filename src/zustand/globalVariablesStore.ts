@@ -2,7 +2,7 @@ import { Socket } from "socket.io-client";
 import { create } from "zustand";
 
 interface Props {
-    selectedChat: null | number
+    selectedChat: null | string
     socket: null | Socket
 }
 

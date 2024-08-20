@@ -1,4 +1,5 @@
 interface UserModel {
+    _id: string
     name: string
     lastName: string
     username: string
@@ -11,6 +12,7 @@ interface UserModel {
 }
 
 interface MessageModel {
+    _id: string
     message: string
     sender: UserModel
     seen: boolean
@@ -18,26 +20,31 @@ interface MessageModel {
 }
 
 interface LocationModel {
+    _id: string
     x: number
     y: number
     sender: UserModel
 }
 
 interface MediaModel {
+    _id: string
     file: File
     sender: UserModel
 }
 
 interface RoomModel {
+    _id: string
     name: string
     avatar: string
     participants: [_id: string]
-    messages: MediaModel[]
+    messages: MessageModel[]
     locations: LocationModel[]
+    medias: MediaModel[]
     createdAt: string
 }
 
 interface NameSpaceModel {
+    _id: string
     title: string
     rooms: RoomModel[]
 }
