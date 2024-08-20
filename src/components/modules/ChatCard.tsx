@@ -5,13 +5,13 @@ import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import Image from "next/image"
 import { useState } from "react"
 
-export const ChatCard = ({ messages, _id, participants, name, avatar }: RoomModel) => {
+export const ChatCard = ({ messages, _id, name, avatar }: RoomModel) => {
 
     const [isOnline, setIsOnline] = useState(true)
     const { selectedChat, setter } = useGlobalVariablesStore(state => state)
 
     const isActive = selectedChat == _id
-    const latestMessageTime = getTimeFromDate(new Date(messages[messages.length]?.createdAt))
+    const latestMessageTime = getTimeFromDate(messages?.length ? messages[messages.length - 1]?.createdAt : null)
     const notSeenMessages = messages.filter(data => !data.seen).length || null
 
     return (
@@ -49,7 +49,7 @@ export const ChatCard = ({ messages, _id, participants, name, avatar }: RoomMode
 
                 <div className="flex items-center justify-between">
 
-                    <p className="line-clamp-1">{'hi this is erfan'}</p>
+                    <p className="line-clamp-1">{messages?.length ? messages[messages.length - 1]?.message : null}</p>
 
                     <div className="flex items-center justify-between w-14">
                         <div className="flex-center text-center w-min px-2 bg-darkBlue text-white rounded-full">{notSeenMessages}</div>

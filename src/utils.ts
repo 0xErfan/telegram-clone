@@ -173,14 +173,8 @@ const getCurrentPersianWeekday = (day: number) => {
     return persianDays[day];
 }
 
-const getTimeFromDate = (date: Date | null) => {
-
-    if (typeof date !== 'string') return null;
-
-    const time = new Date(date).toLocaleTimeString()
-    const isAfternoon = new Date(date).getHours() > 12
-
-    return time + ' ' + (isAfternoon ? 'PM' : 'AM')
+const getTimeFromDate = (date: string | null) => {
+    return new Date(date!).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
 export {

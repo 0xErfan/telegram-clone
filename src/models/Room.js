@@ -1,8 +1,8 @@
 import mongoose, { Schema } from "mongoose"
-import { schema as MessageSchema } from "./Message";
-import connectToDB from "@/db/db";
-import MediaSchema from "./Media";
-import LocationSchema from "./Location";
+import { schema as MessageSchema } from "./Message.js";
+import connectToDB from "../db/db.js";
+import MediaSchema from "./Media.js";
+import LocationSchema from "./Location.js";
 
 await connectToDB()
 

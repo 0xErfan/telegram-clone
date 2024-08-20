@@ -5,22 +5,27 @@ import Image from "next/image";
 import { PiDotsThreeVerticalBold } from "react-icons/pi";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import { useEffect, useMemo, useState } from "react";
-import { RoomModel } from "@/@types/data.t";
+import { MessageModel, RoomModel } from "@/@types/data.t";
 import useUserStore from "@/zustand/userStore";
 
 const ChatContent = () => {
 
+    const [messages, setMessages] = useState<MessageModel[]>([])
     const [chatData, setChatData] = useState<RoomModel | null>(null)
     const { rooms, _id } = useUserStore(state => state)
-    const { setter, selectedChat } = useGlobalVariablesStore(state => state)
+    const { setter, selectedChat, socket } = useGlobalVariablesStore(state => state)
 
-    const isChatEmpty = useMemo(() => {
-        return !chatData?.medias?.length && !chatData?.messages?.length && !chatData?.locations?.length
-    }, [selectedChat])
+    useEffect(() => {
+        socket?.on('message', data => {
+            console.log(data)
+            setMessages(prev => [...prev, { message: data.message, sender: data.sender }])
+        })
+    }, [])
 
     useEffect(() => {
         const currentRoom = rooms.find(data => data._id == selectedChat)
         setChatData(currentRoom!)
+        setMessages(currentRoom?.messages!)
     }, [selectedChat])
 
     return (
@@ -68,9 +73,9 @@ const ChatContent = () => {
             <div className="flex flex-col gap-2 my-2 h-screen">
                 {
                     // don't forget you only are rendering messages and not medias and...
-                    !isChatEmpty
+                    messages?.length
                         ?
-                        chatData?.messages.map(data =>
+                        messages.map(data =>
                             <Message
                                 myId={_id}
                                 {...data}

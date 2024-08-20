@@ -1,4 +1,5 @@
 import connectToDB from "@/db/db";
+import { RoomModel } from "@/models/Room";
 import UserModel from "@/models/User";
 import { tokenGenerator } from "@/utils";
 import { hash } from "bcrypt";
@@ -22,20 +23,17 @@ export const POST = async (req: Request) => {
             phone,
         })
 
-        const defaultRooms = [{
+        const defaultRoom = await RoomModel.create({
             name: 'Saved Messages',
             avatar: '/images/savedMessages.png',
             type: 'private',
             participants: [userData._id]
-        }]
-
-        userData.rooms = defaultRooms
-        await userData.save()
+        })
 
         const token = tokenGenerator(userData.phone, 7)
 
         cookies().set('token', token, { httpOnly: true, maxAge: 60 * 60 * 14 })
-        return Response.json(userData, { status: 201 })
+        return Response.json({ ...userData, rooms: [defaultRoom] }, { status: 201 })
 
     } catch (err: any) {
         console.log(err)

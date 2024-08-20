@@ -18,7 +18,8 @@ const Authentication = ({ children }: { children: ReactNode }) => {
                     const userData = await axios.post('/api/auth/me')
 
                     if (userData.status == 200) {
-                        setter(userData.data)
+                        console.log(userData)
+                        setter({...userData.data._doc, rooms: userData.data?.rooms})
                         updater('isLogin', true)
                     }
 

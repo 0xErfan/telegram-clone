@@ -1,12 +1,11 @@
 import { MessageModel } from '@/@types/data.t'
-import { getTimeFromDate } from '@/utils'
 import Image from 'next/image'
 
 
-const Message = ({ _id, createdAt, message, seen, sender }: MessageModel & { myId: string }) => {
+const Message = ({ _id, createdAt, message, seen, sender, myId }: MessageModel & { myId: string }) => {
 
-    const isFromMe = sender._id == _id
-    const messageTime = getTimeFromDate(new Date(createdAt))
+    const isFromMe = sender._id == myId
+    const messageTime = new Date(createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 
     return (
         <div className={`flex items-end ${isFromMe ? 'flex-row-reverse' : 'flex-row'} gap-2`}>
@@ -24,7 +23,7 @@ const Message = ({ _id, createdAt, message, seen, sender }: MessageModel & { myI
                                 alt='avatar'
                             />
                             :
-                            <div className='size-full flex-center text-center font-bold text-2xl'>{sender.name[0]}</div>
+                            <div className='size-[35px] rounded-full bg-lightBlue flex-center text-center font-bold text-2xl'>{sender.name[0]}</div>
                     }
                 </>
             }

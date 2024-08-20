@@ -12,13 +12,9 @@ import useUserStore from "@/zustand/userStore";
 const ChatPage = () => {
 
     const chatFolderRef = useRef<HTMLDivElement>(null)
-    const { selectedChat, socket } = useGlobalVariablesStore(state => state) || null
+    const { selectedChat } = useGlobalVariablesStore(state => state) || null
     const { rooms } = useUserStore(state => state)
     const [isSearchOpen, setIsSearchOpen] = useState(false)
-
-    useEffect(() => {
-        socket?.on('message', data => console.log(data))
-    }, [])
 
     useEffect(() => {
 
