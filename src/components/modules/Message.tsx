@@ -1,14 +1,18 @@
 import { MessageModel } from '@/@types/data.t'
+import { getTimeFromDate } from '@/utils'
 import Image from 'next/image'
 
 
-const Message = ({ _id, createdAt, message, seen, sender, myId }: MessageModel & { myId: string }) => {
+const Message = ({ createdAt, message, seen, sender, myId }: MessageModel & { myId: string }) => {
 
     const isFromMe = sender._id == myId
-    const messageTime = new Date(createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    const messageTime = getTimeFromDate(createdAt)
 
     return (
-        <div className={`flex items-end ${isFromMe ? 'flex-row-reverse' : 'flex-row'} gap-2`}>
+        <div
+            data-aos={isFromMe ? 'fade-left' : 'fade-right'}
+            className={`flex items-end ${isFromMe ? 'flex-row-reverse' : 'flex-row'} gap-2`}
+        >
             {
                 !isFromMe &&
                 <>
@@ -27,7 +31,7 @@ const Message = ({ _id, createdAt, message, seen, sender, myId }: MessageModel &
                     }
                 </>
             }
-            <div className={`${isFromMe ? 'bg-darkBlue rounded-l-md rounded-tr-md' : 'bg-white/10 rounded-r-md rounded-tl-md'} relative w-fit max-w-[80%] xl:max-w-[60%] px-[6px]`}>
+            <div className={`${isFromMe ? 'bg-darkBlue rounded-l-md rounded-tr-md text-right' : 'bg-white/10 rounded-r-md rounded-tl-md text-left'} relative w-fit max-w-[80%] min-w-16 xl:max-w-[60%] px-[6px]`}>
                 {
                     isFromMe
                         ?
@@ -35,10 +39,10 @@ const Message = ({ _id, createdAt, message, seen, sender, myId }: MessageModel &
                         :
                         <p className='w-full text-left text-[14px] font-bold mt-px font-segoeBold text-[#C8504F]'>{sender.name}</p>
                 }
-                <p className='text-[14px] mt-1 mb-[18px]'>{message}</p>
+                <p className='text-[16px] p-1 mt-1 mb-[18px]'>{message}</p>
 
                 <span className={`flex items-center justify-end gap-1 absolute bottom-px right-2 w-full text-[12px]  ${isFromMe ? 'text-[#B7D9F3]' : 'text-darkGray'} text-right`}>
-                    <p>{messageTime}</p>
+                    <p className='whitespace-nowrap'>{messageTime}</p>
                     {
                         isFromMe && seen &&
                         <Image

@@ -13,13 +13,12 @@ const Authentication = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         (
             async () => {
-                
+
                 try {
                     const userData = await axios.post('/api/auth/me')
 
                     if (userData.status == 200) {
-                        console.log(userData)
-                        setter({...userData.data._doc, rooms: userData.data?.rooms})
+                        setter({ ...userData.data._doc, rooms: userData.data?.rooms })
                         updater('isLogin', true)
                     }
 

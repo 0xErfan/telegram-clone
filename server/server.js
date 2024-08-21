@@ -16,14 +16,21 @@ io.on('connection', async socket => {
 
     socket.on('message', async ({ roomID, messageData }) => {
 
-        const userData = await UserModel.findOne({ _id: messageData.sender })
-        await RoomModel.updateOne({ _id: roomID }, { $push: { messages: messageData } });
+        const senderData = await UserModel.findById(messageData.sender)
 
-        io.emit('message',
-            {
-                ...messageData,
-                sender: userData
-            })
+        await RoomModel.findOneAndUpdate(
+            { _id: roomID },
+            { $push: { messages: messageData } }
+        )
+
+        const newMessageData = {
+            message: messageData.message,
+            _id: Date.now() + (Math.random(3000)),
+            createdAt: Date.now(),
+            sender: senderData,
+        }
+
+        io.emit('message', newMessageData)
     })
 
 })

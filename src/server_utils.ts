@@ -6,7 +6,6 @@ import { cookies } from "next/headers"
 
 const isLoginCheck = async (): Promise<UserModel | null> => {
     const userData = await axios.post(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/auth/me`, cookies().get('token')?.value)
-    console.log(userData)
     return userData.data ?? null
 }
 

@@ -37,3 +37,7 @@
 .noScrollWidth {
   scrollbar-width: none;
 }
+
+.maxChatPageHeight {
+  height: calc(100vh - 100px);
+}

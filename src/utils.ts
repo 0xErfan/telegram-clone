@@ -174,7 +174,7 @@ const getCurrentPersianWeekday = (day: number) => {
 }
 
 const getTimeFromDate = (date: string | null) => {
-    return new Date(date!).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    return new Date(date!).toLocaleTimeString([], { hour: 'numeric', minute: 'numeric' })
 }
 
 export {
