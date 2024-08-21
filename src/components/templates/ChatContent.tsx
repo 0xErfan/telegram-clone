@@ -16,16 +16,19 @@ const ChatContent = () => {
     const { setter, selectedChat, socket } = useGlobalVariablesStore(state => state)
 
     useEffect(() => {
+
         socket?.on('message', data => {
             setMessages(prev => [...prev, { message: data.message, sender: data.sender, ...data }])
         })
+
+        socket?.on('seen', data => console.log(data))
+
     }, [])
 
     useEffect(() => {
         const currentRoom = rooms.find(data => data._id == selectedChat)
         setChatData(currentRoom!)
-        const isMessageDuplicated = chatData?.messages.some(msg => currentRoom?.messages.some(data => data.createdAt == msg.createdAt))
-        !isMessageDuplicated && setMessages(currentRoom?.messages!)
+        setMessages(currentRoom?.messages!)
     }, [selectedChat])
 
     return (
@@ -70,7 +73,7 @@ const ChatContent = () => {
             </div>
             {/* Header */}
 
-            <div className="flex flex-col gap-2 my-2  maxChatPageHeight">
+            <div className="flex flex-col gap-2 my-2">
                 {
                     // don't forget you only are rendering messages and not medias and...
                     messages?.length

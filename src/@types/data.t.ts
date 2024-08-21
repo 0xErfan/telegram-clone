@@ -7,8 +7,10 @@ interface UserModel {
     phone: number
     rooms: RoomModel[]
     avatar: string
+    status: 'online' | 'offline'
     isLogin: boolean
     createdAt: string
+    updatedAt: string
 }
 
 interface MessageModel {
@@ -16,7 +18,9 @@ interface MessageModel {
     message: string
     sender: UserModel
     seen: boolean
+    roomID: string
     createdAt: string
+    updatedAt: string
 }
 
 interface LocationModel {
@@ -24,12 +28,18 @@ interface LocationModel {
     x: number
     y: number
     sender: UserModel
+    roomID: string
+    createdAt: string
+    updatedAt: string
 }
 
 interface MediaModel {
     _id: string
     file: File
     sender: UserModel
+    roomID: string
+    createdAt: string
+    updatedAt: string
 }
 
 interface RoomModel {
@@ -37,16 +47,21 @@ interface RoomModel {
     name: string
     avatar: string
     participants: [_id: string]
+    admins: [_id: string]
+    creator: string
     messages: MessageModel[]
     locations: LocationModel[]
     medias: MediaModel[]
     createdAt: string
+    updatedAt: string
 }
 
 interface NameSpaceModel {
     _id: string
     title: string
     rooms: RoomModel[]
+    createdAt: string
+    updatedAt: string
 }
 
 export type {

@@ -1,15 +1,31 @@
 import { MessageModel } from '@/@types/data.t'
+import { useOnScreen } from '@/hook/useOnScreen'
 import { getTimeFromDate } from '@/utils'
+import useGlobalVariablesStore from '@/zustand/globalVariablesStore'
 import Image from 'next/image'
+import { useEffect, useRef } from 'react'
 
 
-const Message = ({ createdAt, message, seen, sender, myId }: MessageModel & { myId: string }) => {
+const Message = ({ createdAt, message, seen, _id, sender, myId }: MessageModel & { myId: string }) => {
+
+    const messageRef = useRef(null)
+    const { socket } = useGlobalVariablesStore(state => state)
 
     const isFromMe = sender._id == myId
+    const isInViewport = useOnScreen(messageRef)
     const messageTime = getTimeFromDate(createdAt)
+
+    useEffect(() => {
+
+        if (!seen && isFromMe && isInViewport) {
+            socket?.emit('seen', _id)
+        }
+
+    }, [isInViewport, seen])
 
     return (
         <div
+            ref={messageRef}
             data-aos={isFromMe ? 'fade-left' : 'fade-right'}
             className={`flex items-end ${isFromMe ? 'flex-row-reverse' : 'flex-row'} gap-2`}
         >

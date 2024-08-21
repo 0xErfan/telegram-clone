@@ -1,7 +1,7 @@
-import { RoomModel } from "../src/models/Room.js"
 import connectToDB from "../src/db/db.js"
 import { Server } from 'socket.io'
-import UserModel from "../src/models/User.js"
+import RoomModel from "../src/models/Room.js"
+import MessageModel from "../src/models/Message.js"
 
 const io = new Server(3001, {
     cors: {
@@ -31,6 +31,11 @@ io.on('connection', async socket => {
         }
 
         io.emit('message', newMessageData)
+    })
+
+    socket.on('seen', async _id => {
+        io.emit('seen', _id)
+        // await MessageModel.findOneAndUpdate({ _id }, { seen: true })
     })
 
 })

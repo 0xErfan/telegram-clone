@@ -1,10 +1,10 @@
 import mongoose, { Schema } from "mongoose";
-import { schema as roomSchema } from "./Room";
+import { schema } from "./User";
 
 const schema = new Schema({
     title: { type: String, required: true },
-    rooms: [roomSchema]
+    rooms: [{ type: Schema.ObjectId, ref: 'Room', required: true }]
 })
 
-const RoomModel = mongoose.models.NameSpace || mongoose.model('NameSpace', schema);
-export default RoomModel;
+const NameSpaceModel = mongoose.models.NameSpace || mongoose.model('NameSpace', schema);
+export default NameSpaceModel;
