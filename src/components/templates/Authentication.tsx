@@ -45,4 +45,4 @@ const Authentication = ({ children }: { children: ReactNode }) => {
     )
 }
 
-export default Authentication
+export default Authentication;

@@ -6,21 +6,24 @@ import 'aos/dist/aos.css'
 import AosAnimation from "@/components/modules/AosAnimation";
 import SocketConnection from "@/components/modules/SocketConnection";
 import { Toaster } from "react-hot-toast";
+import { NextUIProvider } from "@nextui-org/system";
 
 export const metadata: Metadata = {
-  title: "Telegram-clone",
-  description: "FullStack NextJs Telegram clone with socket.io",
+    title: "Telegram-clone",
+    description: "FullStack NextJs Telegram clone with socket.io",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <html lang="en">
-      <body className="font-segoeRegular">
-        <AosAnimation />
-        <SocketConnection />
-        <Toaster></Toaster>
-        {children}
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en">
+            <body className="font-segoeRegular">
+                <NextUIProvider>
+                    <AosAnimation />
+                    <SocketConnection />
+                    <Toaster />
+                    {children}
+                </NextUIProvider>
+            </body>
+        </html>
+    );
 }

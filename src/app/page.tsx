@@ -1,14 +1,11 @@
-import ChatPage from "@/components/templates/ChatPage";
-import Authentication from "./authentication/page";
-import { NextUIProvider } from "@nextui-org/system";
+import Authentication from "@/components/templates/Authentication";
+import App from "@/components/templates/ChatPage";
 
 const Home = () => {
 
     return (
         <Authentication>
-            <NextUIProvider>
-                <ChatPage />
-            </NextUIProvider>
+            <App />
         </Authentication>
     )
 }
