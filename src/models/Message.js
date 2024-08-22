@@ -7,5 +7,5 @@ export const schema = new Schema({
     roomID: { type: Schema.ObjectId, ref: 'Room', required: true }
 }, { timestamps: true })
 
-const MessageModel = mongoose.models?.Message || mongoose.model('Message', schema);
+const MessageModel = mongoose.models.Message || mongoose.model('Message', schema);
 export default MessageModel;

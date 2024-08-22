@@ -1,5 +1,5 @@
 import connectToDB from "@/db/db";
-import { RoomModel } from "@/models/Room";
+import RoomModel from "@/models/Room";
 import UserModel from "@/models/User";
 import { tokenDecoder } from "@/utils";
 import { cookies } from "next/headers";
@@ -18,16 +18,7 @@ export const POST = async (req: Request) => {
 
         const userData = await UserModel.findOne({ phone: verifiedToken?.phone })
 
-        const userRooms = await RoomModel.find({
-            participants: { $in: userData._id }
-        }).populate({
-            path: 'messages',
-            populate: {
-                path: 'sender',
-                model: 'User',
-                select: 'name'
-            }
-        })
+        const userRooms = await RoomModel.find({ participants: { $in: userData._id } })
 
         if (!userData || !verifiedToken) {
             cookies().delete('token')

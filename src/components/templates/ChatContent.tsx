@@ -73,7 +73,7 @@ const ChatContent = () => {
             </div>
             {/* Header */}
 
-            <div className="flex flex-col gap-2 my-2">
+            <div className="flex flex-col gap-2 my-2 h-screen">
                 {
                     // don't forget you only are rendering messages and not medias and...
                     messages?.length

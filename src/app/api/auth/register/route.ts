@@ -1,5 +1,5 @@
 import connectToDB from "@/db/db";
-import { RoomModel } from "@/models/Room";
+import RoomModel from "@/models/Room";
 import UserModel from "@/models/User";
 import { tokenGenerator } from "@/utils";
 import { hash } from "bcrypt";
@@ -27,6 +27,7 @@ export const POST = async (req: Request) => {
             name: 'Saved Messages',
             avatar: '/images/savedMessages.png',
             type: 'private',
+            creator: userData._id,
             participants: [userData._id]
         })
 
