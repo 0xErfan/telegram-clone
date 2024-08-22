@@ -16,11 +16,6 @@ const MessageSender = () => {
     const { socket, selectedChat } = useGlobalVariablesStore(state => state)
     const { rooms, _id } = useUserStore(state => state)
 
-    useEffect(() => {
-        const currentRoom = rooms.find(data => data._id === selectedChat)
-        setChatData(currentRoom!)
-    }, [selectedChat])
-
     const emitMessageHandler = () => {
         socket?.emit('message', {
             roomID: chatData?._id,

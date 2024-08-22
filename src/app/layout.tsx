@@ -4,7 +4,6 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'aos/dist/aos.css'
 import AosAnimation from "@/components/modules/AosAnimation";
-import SocketConnection from "@/components/modules/SocketConnection";
 import { Toaster } from "react-hot-toast";
 import { NextUIProvider } from "@nextui-org/system";
 
@@ -19,7 +18,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <body className="font-segoeRegular">
                 <NextUIProvider>
                     <AosAnimation />
-                    <SocketConnection />
                     <Toaster />
                     {children}
                 </NextUIProvider>

@@ -1,6 +1,5 @@
 import connectToDB from "../src/db/db.js"
 import { Server } from 'socket.io'
-import RoomModel from "../src/models/Room.js"
 import MessageModel from "../src/models/Message.js"
 
 const io = new Server(3001, {
@@ -13,24 +12,20 @@ const io = new Server(3001, {
 io.on('connection', async socket => {
 
     await connectToDB()
+    let roomID = null
 
-    socket.on('message', async ({ roomID, messageData }) => {
+    socket.on('joinRoom', id => { roomID = id })
+    socket.join(roomID)
 
-        const senderData = await UserModel.findById(messageData.sender)
+    socket.on('message', async ({ roomID: dd, messageData }) => {
 
-        await RoomModel.findOneAndUpdate(
-            { _id: roomID },
-            { $push: { messages: messageData } }
-        )
-
-        const newMessageData = {
+        const newMessage = await MessageModel.create({
             message: messageData.message,
-            _id: Date.now() + (Math.random(3000)),
-            createdAt: Date.now(),
-            sender: senderData,
-        }
-
-        io.emit('message', newMessageData)
+            sender: messageData.sender,
+            roomID
+        })
+        console.log(newMessage)
+        io.in(roomID).emit('message', newMessage)
     })
 
     socket.on('seen', async _id => {

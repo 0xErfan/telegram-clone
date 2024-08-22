@@ -7,34 +7,18 @@ import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import { useEffect, useState } from "react";
 import { MessageModel, RoomModel } from "@/@types/data.t";
 import useUserStore from "@/zustand/userStore";
+import MessageSender from "./MessageSender";
 
 const ChatContent = () => {
 
     const [messages, setMessages] = useState<MessageModel[]>([])
     const [chatData, setChatData] = useState<RoomModel | null>(null)
     const { rooms, _id } = useUserStore(state => state)
-    const { setter, selectedChat, socket } = useGlobalVariablesStore(state => state)
-
-    useEffect(() => {
-
-        socket?.on('message', data => {
-            setMessages(prev => [...prev, { message: data.message, sender: data.sender, ...data }])
-        })
-
-        socket?.on('seen', data => console.log(data))
-
-    }, [])
-
-    useEffect(() => {
-        const currentRoom = rooms.find(data => data._id == selectedChat)
-        setChatData(currentRoom!)
-        setMessages(currentRoom?.messages!)
-    }, [selectedChat])
+    const { setter } = useGlobalVariablesStore(state => state)
 
     return (
-        <section>
+        <section data-aos="fade-right">
 
-            {/* Header */}
             <div className="flex items-center justify-between sticky top-0 border-b border-white/5 bg-chatBg z-30 py-3 xl:py-0 xl:h-[97px]">
 
                 <div className='flex items-center gap-5'>
@@ -71,7 +55,6 @@ const ChatContent = () => {
                     </div>
                 </div>
             </div>
-            {/* Header */}
 
             <div className="flex flex-col gap-2 my-2 h-screen">
                 {
@@ -91,6 +74,8 @@ const ChatContent = () => {
                         </div>
                 }
             </div>
+
+            <MessageSender />
 
         </section>
 
