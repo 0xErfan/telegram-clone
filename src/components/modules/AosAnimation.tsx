@@ -5,10 +5,10 @@ import { useEffect } from 'react'
 
 const AosAnimation = () => {
 
-    const selectedChat = useGlobalVariablesStore(state => state.selectedChat)
+    const selectedRoom = useGlobalVariablesStore(state => state.selectedRoom)
 
     useEffect(() => { Aos.init() }, [])
-    useEffect(() => { Aos.refresh() }, [selectedChat])
+    useEffect(() => { Aos.refresh() }, [selectedRoom])
 
     return null;
 }

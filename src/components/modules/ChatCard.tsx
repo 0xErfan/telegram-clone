@@ -8,15 +8,15 @@ import { useState } from "react"
 export const ChatCard = ({ messages, _id, name, avatar }: RoomModel) => {
 
     const [isOnline, setIsOnline] = useState(true)
-    const { selectedChat, setter } = useGlobalVariablesStore(state => state)
+    const { selectedRoom, setter } = useGlobalVariablesStore(state => state)
 
-    const isActive = selectedChat == _id
+    const isActive = selectedRoom == _id
     const latestMessageTime = getTimeFromDate(messages?.length ? messages[messages.length - 1]?.createdAt : null)
     const notSeenMessages = messages.filter(data => !data.seen).length || null
 
     return (
         <div
-            onClick={() => setter({ selectedChat: _id })}
+            onClick={() => setter({ selectedRoom: _id })}
             className={`flex items-center gap-3 relative h-[70px] cursor-pointer transition-all duration-300 rounded overflow-hidden ${isActive && 'px-3'}`}
         >
             <>
@@ -30,7 +30,7 @@ export const ChatCard = ({ messages, _id, name, avatar }: RoomModel) => {
                             alt="avatar"
                         />
                         :
-                        <div className="size-full flex-center text-bold text-center text-2xl">{name[0]}</div>
+                        <div className="size-full flex-center text-bold text-center text-2xl">{name.length && name[0]}</div>
                 }
                 {
                     isOnline

@@ -4,16 +4,16 @@ import ChatContent from "./ChatContent"
 
 const RightBar = () => {
 
-    const { selectedChat } = useGlobalVariablesStore(state => state)
+    const { selectedRoom } = useGlobalVariablesStore(state => state)
 
     return (
         <div
             data-aos-duration="400"
             data-aos='fade-right'
-            className={`flex-[2.4] bg-chatBg relative ${!selectedChat && 'hidden'} md:block xl:rounded-l-2xl px-4 xl:px-8 text-white overflow-x-hidden noScrollWidth`}
+            className={`flex-[2.4] bg-chatBg relative ${!selectedRoom && 'hidden'} md:block xl:rounded-l-2xl px-4 xl:px-8 text-white overflow-x-hidden noScrollWidth`}
         >
             {
-                selectedChat !== null
+                selectedRoom !== null
                     ?
                     <ChatContent />
                     :

@@ -24,7 +24,7 @@ const ChatContent = () => {
                 <div className='flex items-center gap-5'>
 
                     <IoMdArrowRoundBack
-                        onClick={() => setter({ selectedChat: null })}
+                        onClick={() => setter({ selectedRoom: null })}
                         className='cursor-pointer size-6 text-white/80'
                     />
 

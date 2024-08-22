@@ -1,6 +1,6 @@
 import connectToDB from "../src/db/db.js"
 import { Server } from 'socket.io'
-import MessageModel from "../src/models/Message.js"
+import RoomModel from "../src/models/Room.js"
 
 const io = new Server(3001, {
     cors: {
@@ -9,28 +9,26 @@ const io = new Server(3001, {
     }
 })
 
-io.on('connection', async socket => {
+await connectToDB()
 
-    await connectToDB()
-    let roomID = null
+io.of('/getRooms').on('connection', socket => {
 
-    socket.on('joinRoom', id => { roomID = id })
-    socket.join(roomID)
+    socket.on('getRooms', async userID => {
 
-    socket.on('message', async ({ roomID: dd, messageData }) => {
+        const userRooms = await RoomModel.find({ participants: { $in: userID } })
 
-        const newMessage = await MessageModel.create({
-            message: messageData.message,
-            sender: messageData.sender,
-            roomID
-        })
-        console.log(newMessage)
-        io.in(roomID).emit('message', newMessage)
-    })
+        const updatedRooms = []
 
-    socket.on('seen', async _id => {
-        io.emit('seen', _id)
-        // await MessageModel.findOneAndUpdate({ _id }, { seen: true })
+        for (const room of userRooms) {
+            updatedRooms.push(
+                {
+                    ...room,
+                    messages: room.messages?.length ? room.messages[room.messages.length] : []
+                })
+        }
+        console.log(updatedRooms)
+
+        socket.emit('getRooms', updatedRooms)
     })
 
 })

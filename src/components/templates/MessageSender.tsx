@@ -13,7 +13,7 @@ const MessageSender = () => {
     const [text, setText] = useState('')
     const [chatData, setChatData] = useState<RoomModel | null>(null)
 
-    const { socket, selectedChat } = useGlobalVariablesStore(state => state)
+    const { socket, selectedRoom } = useGlobalVariablesStore(state => state)
     const { rooms, _id } = useUserStore(state => state)
 
     const emitMessageHandler = () => {

@@ -11,7 +11,7 @@ const ChatHeader = () => {
         <div className="flex items-center justify-between sticky top-0 border-b border-white/5 bg-chatBg z-30 py-3 xl:py-0 xl:h-[97px]">
 
             <div className='flex items-center gap-5'>
-                <IoMdArrowRoundBack onClick={() => setter({ selectedChat: null })} className='cursor-pointer size-7 text-white/80' />
+                <IoMdArrowRoundBack onClick={() => setter({ selectedRoom: null })} className='cursor-pointer size-7 text-white/80' />
                 <div className="flex items-start gap-3">
                     <Image
                         src='/images/favicon.ico'

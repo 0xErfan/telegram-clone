@@ -3,13 +3,32 @@ import Image from "next/image"
 import { BiSearch } from "react-icons/bi"
 import ChatFolders from "../modules/ChatFolders"
 import { ChatCard } from "../modules/ChatCard"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
+import { RoomModel } from "@/@types/data.t"
+import { io } from "socket.io-client"
 import useUserStore from "@/zustand/userStore"
+import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
+import useSockets from "@/zustand/useSockets"
+
+const roomSocket = io('http://localhost:3001/getRooms')
 
 const LeftBar = () => {
 
+    const [rooms, setRooms] = useState<RoomModel[]>([])
+    const { _id } = useUserStore(state => state)
+    const { selectedRoom } = useGlobalVariablesStore(state => state)
+    const { updater } = useSockets(state => state)
     const chatFolderRef = useRef<HTMLDivElement>(null)
-    const { rooms } = useUserStore(state => state)
+
+    useEffect(() => {
+
+        updater('rooms', roomSocket)
+
+        roomSocket.emit('getRooms', _id)
+        roomSocket.on('getRooms', (rooms: RoomModel[]) => setRooms(rooms))
+
+        return () => { roomSocket.off('getRooms') }
+    }, [])
 
     useEffect(() => {
 
@@ -25,7 +44,11 @@ const LeftBar = () => {
     }, [])
 
     return (
-        <div data-aos-duration="400" data-aos='fade-right' className={`flex-1 ${'selectedChat' && 'hidden'} md:block bg-leftBarBg noScrollWidth px-4 overflow-y-auto`}>
+        <div
+            data-aos-duration="400"
+            data-aos='fade-right'
+            className={`flex-1 ${selectedRoom && 'hidden'} md:block bg-leftBarBg noScrollWidth px-4 overflow-y-auto`}
+        >
 
             <div className="w-full sticky top-0 bg-leftBarBg space-y-1 pt-1 border-b border-white/5 z-30">
 

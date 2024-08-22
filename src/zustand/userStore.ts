@@ -17,6 +17,8 @@ const useUserStore = create<UserModel & Updater>(set => ({
     avatar: '',
     createdAt: '',
     isLogin: false,
+    status: 'offline',
+    updatedAt: '',
 
     updater(key: keyof UserModel, value: UserModel[keyof UserModel]) {
         set({ [key]: value })
