@@ -2,24 +2,25 @@ import { BsEmojiSmile } from "react-icons/bs";
 import { PiMicrophoneLight } from "react-icons/pi";
 import { MdAttachFile } from "react-icons/md";
 import { IoIosSend } from "react-icons/io";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import useUserStore from "@/zustand/userStore";
-import { RoomModel } from "@/@types/data.t";
+import useSockets from "@/zustand/useSockets";
 
 
 const MessageSender = () => {
 
     const [text, setText] = useState('')
-    const [chatData, setChatData] = useState<RoomModel | null>(null)
 
-    const { socket, selectedRoom } = useGlobalVariablesStore(state => state)
-    const { rooms, _id } = useUserStore(state => state)
+    const { selectedRoom } = useGlobalVariablesStore(state => state)
+    const { rooms } = useSockets(state => state)
+    const userData = useUserStore(state => state)
 
     const emitMessageHandler = () => {
-        socket?.emit('message', {
-            roomID: chatData?._id,
-            messageData: { message: text, sender: _id }
+        rooms?.emit('newMessage', {
+            roomID: selectedRoom?._id,
+            message: text,
+            sender: userData
         })
         setText('')
     }

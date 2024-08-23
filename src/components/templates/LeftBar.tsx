@@ -5,7 +5,7 @@ import ChatFolders from "../modules/ChatFolders"
 import { ChatCard } from "../modules/ChatCard"
 import { useEffect, useRef, useState } from "react"
 import { RoomModel } from "@/@types/data.t"
-import { io } from "socket.io-client"
+import { io } from 'socket.io-client'
 import useUserStore from "@/zustand/userStore"
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import useSockets from "@/zustand/useSockets"
@@ -15,10 +15,12 @@ const roomSocket = io('http://localhost:3001')
 const LeftBar = () => {
 
     const [rooms, setRooms] = useState<RoomModel[]>([])
-    const { _id } = useUserStore(state => state)
-    const { selectedRoom, setter } = useGlobalVariablesStore(state => state)
-    const { updater } = useSockets(state => state)
     const chatFolderRef = useRef<HTMLDivElement>(null)
+
+    const { _id } = useUserStore(state => state)
+    const { updater } = useSockets(state => state)
+    const { selectedRoom, setter } = useGlobalVariablesStore(state => state)
+
 
     useEffect(() => {
 
@@ -26,11 +28,13 @@ const LeftBar = () => {
 
         roomSocket.emit('getRooms', _id)
         roomSocket.on('getRooms', (rooms: RoomModel[]) => setRooms(rooms))
-        roomSocket.on('joining', data => { setter({selectedRoom: data}) })
+        roomSocket.on('joining', data => { setter({ selectedRoom: data }) })
 
         return () => {
             roomSocket.off('getRooms')
             roomSocket.off('joining')
+            roomSocket.off('leavingRoom')
+            roomSocket.off('newMessage')
         }
     }, [])
 
@@ -46,6 +50,11 @@ const LeftBar = () => {
         return () => chatFolderRef.current!?.removeEventListener('wheel', handleScroll);
 
     }, [])
+
+    useEffect(() => {
+        roomSocket.emit('joining', selectedRoom?._id)
+        return () => { roomSocket.emit('leavingRoom', selectedRoom?._id) }
+    }, [selectedRoom?._id])
 
     return (
         <div

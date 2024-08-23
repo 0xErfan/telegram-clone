@@ -3,6 +3,7 @@ import { create } from "zustand";
 
 interface Props {
     rooms: Socket | null
+    roomsNs: Socket | null
     updater: (key: keyof Props, value: Props[keyof Props]) => void
     setter: any
 }
@@ -10,6 +11,7 @@ interface Props {
 const useSockets = create<Props>(set => ({
 
     rooms: null,
+    roomsNs: null,
 
     updater(key: keyof Props, value: Props[keyof Props]) {
         set({ [key]: value })

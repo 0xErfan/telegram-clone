@@ -8,7 +8,7 @@ const AosAnimation = () => {
     const selectedRoom = useGlobalVariablesStore(state => state.selectedRoom)
 
     useEffect(() => { Aos.init() }, [])
-    useEffect(() => { Aos.refresh() }, [selectedRoom])
+    useEffect(() => { Aos.refresh() }, [selectedRoom?._id])
 
     return null;
 }

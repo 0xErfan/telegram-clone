@@ -4,26 +4,39 @@ import Message from "../modules/Message"
 import Image from "next/image";
 import { PiDotsThreeVerticalBold } from "react-icons/pi";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
-import { useEffect, useState } from "react";
 import useUserStore from "@/zustand/userStore";
 import MessageSender from "./MessageSender";
+import useSockets from "@/zustand/useSockets";
+import { useEffect, useRef, useState } from "react";
 
 const ChatContent = () => {
 
     const { _id } = useUserStore(state => state)
     const { setter } = useGlobalVariablesStore(state => state)
+    const { rooms } = useSockets(state => state)
+    const lastMsgRef = useRef<HTMLDivElement>(null)
 
     const {
-        _id: roomID,
-        messages,
+        messages: roomMessages,
         avatar,
         name,
         participants
     } = useGlobalVariablesStore(state => state.selectedRoom!)
 
+    const [messages, setMessages] = useState(roomMessages)
+
     useEffect(() => {
-        console.log(roomID)
-    }, [roomID])
+
+        rooms?.on('newMessage', newMsg => {
+            setMessages(prev => [...prev, newMsg])
+        })
+
+        return () => {
+            rooms?.off('newMessage')
+        }
+    }, [])
+
+    useEffect(() => { lastMsgRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages.length])
 
     return (
         <section data-aos="fade-right">
@@ -65,17 +78,22 @@ const ChatContent = () => {
                 </div>
             </div>
 
-            <div className="flex flex-col gap-2 my-2 h-screen">
+            <div className="flex flex-col gap-2 my-2 h-full">
                 {
                     // don't forget you only are rendering messages and not medias and...
                     messages?.length
                         ?
-                        messages.map(data =>
-                            <Message
-                                myId={_id}
-                                {...data}
+                        messages.map((data, index) =>
+                            <div
                                 key={data._id}
-                            />
+                                ref={messages.length == index ? lastMsgRef : null}
+                            >
+                                <Message
+                                    myId={_id}
+                                    {...data}
+
+                                />
+                            </div>
                         )
                         :
                         <div data-aos="fade-left" className="flex-center size-full">

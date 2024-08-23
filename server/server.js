@@ -15,8 +15,27 @@ const io = new Server(3001, {
 
 await connectToDB()
 
-
 io.on('connection', async socket => {
+
+    socket.on('newMessage', async ({ roomID, sender, message }) => {
+
+        const msgData = {
+            sender,
+            message,
+            roomID,
+            createdAt: Date.now()
+        }
+
+        io.to(roomID).emit('newMessage', { ...msgData, _id: Date.now() })
+
+        const newMsg = await MessageModel.create(msgData)
+
+        await RoomModel.findOneAndUpdate(
+            { _id: roomID },
+            { $push: { messages: newMsg._id } }
+        )
+
+    })
 
     socket.on('getRooms', async userID => {
 
@@ -34,8 +53,11 @@ io.on('connection', async socket => {
         socket.emit('getRooms', await processRooms())
     })
 
-    socket.on('joining', async roomID => {
-        const roomData = await RoomModel.findOne({ _id: roomID })
+    socket.on('joining', async newRoom => {
+
+        socket.join(newRoom)
+
+        const roomData = await RoomModel.findOne({ _id: newRoom })
             .populate('messages', '', MessageModel)
             .populate('medias', '', MediaModel)
             .populate('locations', '', LocationModel)
@@ -45,9 +67,10 @@ io.on('connection', async socket => {
                     path: 'sender',
                     model: UserModel
                 }
-            })
+            });
 
         socket.emit('joining', roomData)
     })
 
+    socket.on('leavingRoom', roomID => socket.leave(roomID))
 })
