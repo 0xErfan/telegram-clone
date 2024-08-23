@@ -5,16 +5,25 @@ import Image from "next/image";
 import { PiDotsThreeVerticalBold } from "react-icons/pi";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import { useEffect, useState } from "react";
-import { MessageModel, RoomModel } from "@/@types/data.t";
 import useUserStore from "@/zustand/userStore";
 import MessageSender from "./MessageSender";
 
 const ChatContent = () => {
 
-    const [messages, setMessages] = useState<MessageModel[]>([])
-    const [chatData, setChatData] = useState<RoomModel | null>(null)
-    const { rooms, _id } = useUserStore(state => state)
+    const { _id } = useUserStore(state => state)
     const { setter } = useGlobalVariablesStore(state => state)
+
+    const {
+        _id: roomID,
+        messages,
+        avatar,
+        name,
+        participants
+    } = useGlobalVariablesStore(state => state.selectedRoom!)
+
+    useEffect(() => {
+        console.log(roomID)
+    }, [roomID])
 
     return (
         <section data-aos="fade-right">
@@ -30,20 +39,20 @@ const ChatContent = () => {
 
                     <div className="flex items-start gap-3">
                         {
-                            chatData?.avatar
+                            avatar
                                 ?
                                 <Image
-                                    src={chatData.avatar}
+                                    src={avatar}
                                     width={50}
                                     height={50}
                                     alt="avatar"
                                 />
                                 :
-                                <div className='size-full flex-center text-center font-bold text-2xl'>{chatData?.name[0]}</div>
+                                <div className='flex-center bg-darkBlue rounded-full size-[50px] shrink-0 text-center font-bold text-2xl'>{name[0]}</div>
                         }
                         <div className="flex justify-center flex-col gap-1">
-                            <h3 className="font-bold text-[16px] font-segoeBold">{chatData?.name}</h3>
-                            <p className="font-bold text-[14px] text-darkGray font-segoeBold">{chatData?.participants.length} members, 3 online</p>
+                            <h3 className="font-bold text-[16px] font-segoeBold">{name}</h3>
+                            <p className="font-bold text-[14px] text-darkGray font-segoeBold">{participants?.length} members, 3 online</p>
                         </div>
                     </div>
 

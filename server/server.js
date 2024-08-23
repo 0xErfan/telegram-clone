@@ -1,6 +1,10 @@
 import connectToDB from "../src/db/db.js"
 import { Server } from 'socket.io'
 import RoomModel from "../src/models/Room.js"
+import MessageModel from "../src/models/Message.js"
+import MediaModel from "../src/models/Media.js"
+import LocationModel from "../src/models/Location.js"
+import UserModel from "../src/models/User.js"
 
 const io = new Server(3001, {
     cors: {
@@ -11,24 +15,39 @@ const io = new Server(3001, {
 
 await connectToDB()
 
-io.of('/getRooms').on('connection', socket => {
+
+io.on('connection', async socket => {
 
     socket.on('getRooms', async userID => {
 
-        const userRooms = await RoomModel.find({ participants: { $in: userID } })
+        const userRooms = await RoomModel.find({ participants: { $in: userID } }).lean()
 
-        const updatedRooms = []
+        const processRooms = async () => {
+            const promises = userRooms.map(async (room) => {
+                const lastMsgID = room.messages?.[room.messages.length - 1]?._id || null;
+                const lastMsgData = await MessageModel.findOne({ _id: lastMsgID });
+                return { ...room, lastMsgData };
+            });
+            return Promise.all(promises);
+        };
 
-        for (const room of userRooms) {
-            updatedRooms.push(
-                {
-                    ...room,
-                    messages: room.messages?.length ? room.messages[room.messages.length] : []
-                })
-        }
-        console.log(updatedRooms)
+        socket.emit('getRooms', await processRooms())
+    })
 
-        socket.emit('getRooms', updatedRooms)
+    socket.on('joining', async roomID => {
+        const roomData = await RoomModel.findOne({ _id: roomID })
+            .populate('messages', '', MessageModel)
+            .populate('medias', '', MediaModel)
+            .populate('locations', '', LocationModel)
+            .populate({
+                path: 'messages',
+                populate: {
+                    path: 'sender',
+                    model: UserModel
+                }
+            })
+
+        socket.emit('joining', roomData)
     })
 
 })

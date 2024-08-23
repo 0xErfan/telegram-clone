@@ -10,13 +10,13 @@ import useUserStore from "@/zustand/userStore"
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import useSockets from "@/zustand/useSockets"
 
-const roomSocket = io('http://localhost:3001/getRooms')
+const roomSocket = io('http://localhost:3001')
 
 const LeftBar = () => {
 
     const [rooms, setRooms] = useState<RoomModel[]>([])
     const { _id } = useUserStore(state => state)
-    const { selectedRoom } = useGlobalVariablesStore(state => state)
+    const { selectedRoom, setter } = useGlobalVariablesStore(state => state)
     const { updater } = useSockets(state => state)
     const chatFolderRef = useRef<HTMLDivElement>(null)
 
@@ -26,8 +26,12 @@ const LeftBar = () => {
 
         roomSocket.emit('getRooms', _id)
         roomSocket.on('getRooms', (rooms: RoomModel[]) => setRooms(rooms))
+        roomSocket.on('joining', data => { setter({selectedRoom: data}) })
 
-        return () => { roomSocket.off('getRooms') }
+        return () => {
+            roomSocket.off('getRooms')
+            roomSocket.off('joining')
+        }
     }, [])
 
     useEffect(() => {
@@ -96,7 +100,7 @@ const LeftBar = () => {
 
             <div className="flex flex-col mt-2 overflow-auto">
                 {
-                    rooms?.map(data =>
+                    rooms?.map((data: any) =>
                         <ChatCard
                             {...data}
                             key={data?._id}

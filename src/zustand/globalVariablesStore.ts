@@ -1,8 +1,9 @@
+import { RoomModel } from "@/@types/data.t";
 import { Socket } from "socket.io-client";
 import { create } from "zustand";
 
 interface Props {
-    selectedRoom: null | string
+    selectedRoom: null | RoomModel
     socket: null | Socket
 }
 
