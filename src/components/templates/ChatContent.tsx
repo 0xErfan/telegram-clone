@@ -17,6 +17,7 @@ const ChatContent = () => {
     const lastMsgRef = useRef<HTMLDivElement>(null)
 
     const {
+        _id: roomID,
         messages: roomMessages,
         avatar,
         name,
@@ -24,19 +25,29 @@ const ChatContent = () => {
     } = useGlobalVariablesStore(state => state.selectedRoom!)
 
     const [messages, setMessages] = useState(roomMessages)
+    const [isLoaded, setIsLoaded] = useState(false)
 
     useEffect(() => {
 
         rooms?.on('newMessage', newMsg => {
             setMessages(prev => [...prev, newMsg])
+            setIsLoaded(true)
         })
 
         return () => {
             rooms?.off('newMessage')
+            setIsLoaded(false)
         }
     }, [])
 
-    useEffect(() => { lastMsgRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages.length])
+    useEffect(() => {
+        setMessages(roomMessages)
+        setIsLoaded(false)
+    }, [roomID])
+
+    useEffect(() => {
+        lastMsgRef.current?.scrollIntoView({ behavior: isLoaded ? 'smooth' : 'instant' })
+    }, [messages.length, isLoaded]) // scroll to latest not seen msg(add the seen check later hah)
 
     return (
         <section data-aos="fade-right">
@@ -86,7 +97,7 @@ const ChatContent = () => {
                         messages.map((data, index) =>
                             <div
                                 key={data._id}
-                                ref={messages.length == index ? lastMsgRef : null}
+                                ref={messages.length - 1 == index ? lastMsgRef : null}
                             >
                                 <Message
                                     myId={_id}

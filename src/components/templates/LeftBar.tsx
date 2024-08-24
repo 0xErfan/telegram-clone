@@ -27,14 +27,13 @@ const LeftBar = () => {
         updater('rooms', roomSocket)
 
         roomSocket.emit('getRooms', _id)
+
         roomSocket.on('getRooms', (rooms: RoomModel[]) => setRooms(rooms))
         roomSocket.on('joining', data => { setter({ selectedRoom: data }) })
 
         return () => {
             roomSocket.off('getRooms')
             roomSocket.off('joining')
-            roomSocket.off('leavingRoom')
-            roomSocket.off('newMessage')
         }
     }, [])
 
