@@ -4,15 +4,30 @@ import { getTimeFromDate } from "@/utils"
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import useSockets from "@/zustand/useSockets"
 import Image from "next/image"
+import { useEffect, useState } from "react"
 
-export const ChatCard = ({ messages, _id, name, avatar, lastMsgData }: RoomModel & { lastMsgData: MessageModel }) => {
+export const ChatCard = ({
+    messages,
+    _id,
+    name,
+    avatar,
+    lastMsgData: chatLastMsgData
+}: RoomModel & { lastMsgData: MessageModel }
+) => {
 
+    const [lastMsgData, setLastMsgData] = useState(chatLastMsgData)
     const { selectedRoom, setter } = useGlobalVariablesStore(state => state)
     const { rooms } = useSockets(state => state)
-
     const isActive = selectedRoom?._id == _id
     const latestMessageTime = getTimeFromDate(lastMsgData?.createdAt)
     const notSeenMessages = messages?.filter(data => !data.seen)?.length || null
+
+    useEffect(() => {
+        if (selectedRoom?._id == _id) {
+            const lastMsgData = selectedRoom?.messages[selectedRoom?.messages.length - 1]
+            setLastMsgData(lastMsgData)
+        }
+    }, [selectedRoom?._id, _id, selectedRoom?.messages.length])
 
     const joinToRoom = () => { rooms?.emit('joining', _id) }
 

@@ -79,16 +79,14 @@ const Message = ({ createdAt, message, seen, _id, sender, myId, roomID }: Messag
                 <span className={`flex items-center justify-end gap-1 absolute bottom-px right-1 w-full text-[12px]  ${isFromMe ? 'text-[#B7D9F3]' : 'text-darkGray'} text-right`}>
                     <p className='whitespace-nowrap'>{messageTime}</p>
                     {
-                        (isFromMe && seen?.length)  ?
-                            <div data-aos='fade-left'>
-                                <Image
-                                    src='/shapes/seen.svg'
-                                    width={15}
-                                    height={15}
-                                    className='size-[15px] rounded-full bg-center'
-                                    alt='avatar'
-                                />
-                            </div>
+                        (isFromMe && seen?.length) ?
+                            <Image
+                                src='/shapes/seen.svg'
+                                width={15}
+                                height={15}
+                                className={`size-[15px] rounded-full bg-center duration-500 ${(isFromMe && seen?.length) ? 'opacity-100' : 'opacity-0'}`}
+                                alt='avatar'
+                            />
                             : null
                     }
                 </span>
