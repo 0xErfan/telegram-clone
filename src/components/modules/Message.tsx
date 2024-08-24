@@ -39,10 +39,9 @@ const Message = ({ createdAt, message, seen, _id, sender, myId, roomID }: Messag
         <div
             ref={messageRef}
             className={`
-                flex items-end
-                ${isFromMe ? 'flex-row-reverse' : 'flex-row'}
+                flex items-end gap-2 relative
+                ${isFromMe ? 'flex-row-reverse bottomBorderRight' : 'flex-row bottomBorderLeft'}
                 ${isMounted ? 'opacity-100 scale-x-100' : 'opacity-0 scale-0'}
-                gap-2
                 transition-all
                 duration-500
                 overflow-hidden
@@ -66,7 +65,7 @@ const Message = ({ createdAt, message, seen, _id, sender, myId, roomID }: Messag
                     }
                 </>
             }
-            <div className={`${isFromMe ? 'bg-darkBlue rounded-l-md rounded-tr-md text-right' : 'bg-white/10 rounded-r-md rounded-tl-md text-left'} relative w-fit max-w-[80%] min-w-20 xl:max-w-[60%] px-[6px]`}>
+            <div className={`${isFromMe ? 'bg-darkBlue rounded-l-md rounded-tr-xl text-right' : 'bg-white/10 rounded-r-md rounded-tl-xl text-left'} relative w-fit max-w-[80%] min-w-24 xl:max-w-[60%] px-[12px]`}>
                 {
                     isFromMe
                         ?
@@ -76,7 +75,7 @@ const Message = ({ createdAt, message, seen, _id, sender, myId, roomID }: Messag
                 }
                 <p className='text-[16px] p-1 mt-1 break-words mb-[18px]'>{message}</p>
 
-                <span className={`flex items-center justify-end gap-1 absolute bottom-px right-1 w-full text-[12px]  ${isFromMe ? 'text-[#B7D9F3]' : 'text-darkGray'} text-right`}>
+                <span className={`flex items-center justify-end gap-1 absolute bottom-px right-3 w-full text-[12px]  ${isFromMe ? 'text-[#B7D9F3]' : 'text-darkGray'} text-right`}>
                     <p className='whitespace-nowrap'>{messageTime}</p>
                     {
                         (isFromMe && seen?.length) ?

@@ -38,5 +38,12 @@
   scrollbar-width: none;
 }
 
-.maxChatPageHeight {
+.bottomBorderLeft::before {
+  content: '';
+  @apply absolute bg-chatBg rounded-br-2xl z-[999] w-2 left-10 inset-y-0
+}
+
+.bottomBorderRight::before {
+  content: '';
+  @apply absolute bg-chatBg rounded-bl-2xl rounded-tr-xl z-[999] w-2 right-0 top-0 -bottom-px
 }

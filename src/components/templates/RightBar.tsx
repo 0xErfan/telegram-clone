@@ -10,7 +10,7 @@ const RightBar = () => {
         <div
             data-aos-duration="400"
             data-aos='fade-right'
-            className={`flex-[2.4] bg-chatBg relative ${!selectedRoom && 'hidden'} md:block xl:rounded-l-2xl px-4 xl:px-8 text-white overflow-x-hidden noScrollWidth`}
+            className={`flex-[2.4] bg-chatBg relative ${!selectedRoom && 'hidden'} md:block xl:rounded-l-2xl px-2 md:px-4 xl:px-8 text-white overflow-x-hidden noScrollWidth`}
         >
             {
                 selectedRoom !== null
