@@ -23,17 +23,33 @@ io.on('connection', async socket => {
             sender,
             message,
             roomID,
+            seen: [],
             createdAt: Date.now()
         }
 
         io.to(roomID).emit('newMessage', { ...msgData, _id: Date.now() })
+        
+        try {
+            const newMsg = await MessageModel.create(msgData)
 
-        const newMsg = await MessageModel.create(msgData)
+            await RoomModel.findOneAndUpdate(
+                { _id: roomID },
+                { $push: { messages: newMsg._id } }
+            )
+        } catch (error) { console.log(error) }
 
-        await RoomModel.findOneAndUpdate(
-            { _id: roomID },
-            { $push: { messages: newMsg._id } }
-        )
+    })
+
+    socket.on('seenMsg', async (seenData) => {
+
+        io.to(seenData.roomID).emit('seenMsg', seenData)
+
+        try {
+            await MessageModel.findOneAndUpdate(
+                { _id: seenData.msgID },
+                { $push: { seen: seenData.sender._id } }
+            )
+        } catch (error) { console.log(error) }
 
     })
 

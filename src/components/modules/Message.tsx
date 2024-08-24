@@ -1,17 +1,37 @@
 import { MessageModel } from '@/@types/data.t'
 import { useOnScreen } from '@/hook/useOnScreen'
 import { getTimeFromDate } from '@/utils'
+import useSockets from '@/zustand/useSockets'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 
 
-const Message = ({ createdAt, message, seen, _id, sender, myId }: MessageModel & { myId: string }) => {
+const Message = ({ createdAt, message, seen, _id, sender, myId, roomID }: MessageModel & { myId: string }) => {
 
     const messageRef = useRef(null)
     const isFromMe = sender._id == myId
     const isInViewport = useOnScreen(messageRef)
     const messageTime = getTimeFromDate(createdAt)
     const [isMounted, setIsMounted] = useState(false)
+
+    const { rooms } = useSockets(state => state)
+
+    useEffect(() => {
+
+        if (sender?._id) {
+
+            const isAlreadySeenByThisUser = isFromMe ? true : seen?.length ? (seen.includes(myId) ? true : false) : false
+            if (!isAlreadySeenByThisUser && isInViewport) {
+                console.log('event is going to call for ' + message)
+                rooms?.emit('seenMsg', {
+                    sender,
+                    msgID: _id,
+                    roomID
+                })
+            }
+        }
+
+    }, [isInViewport, isFromMe])
 
     useEffect(() => { setIsMounted(true) }, [])
 
@@ -58,14 +78,15 @@ const Message = ({ createdAt, message, seen, _id, sender, myId }: MessageModel &
                 <span className={`flex items-center justify-end gap-1 absolute bottom-px right-2 w-full text-[12px]  ${isFromMe ? 'text-[#B7D9F3]' : 'text-darkGray'} text-right`}>
                     <p className='whitespace-nowrap'>{messageTime}</p>
                     {
-                        isFromMe && seen &&
-                        <Image
-                            src='/shapes/seen.svg'
-                            width={15}
-                            height={15}
-                            className='size-[15px] rounded-full bg-center'
-                            alt='avatar'
-                        />
+                        (isFromMe && seen?.length) ?
+                            <Image
+                                src='/shapes/seen.svg'
+                                width={15}
+                                height={15}
+                                className='size-[15px] rounded-full bg-center'
+                                alt='avatar'
+                            />
+                            : null
                     }
                 </span>
             </div>

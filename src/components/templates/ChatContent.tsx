@@ -18,36 +18,62 @@ const ChatContent = () => {
 
     const {
         _id: roomID,
-        messages: roomMessages,
+        messages,
         avatar,
         name,
         participants
     } = useGlobalVariablesStore(state => state.selectedRoom!)
 
-    const [messages, setMessages] = useState(roomMessages)
+    const selectedRoom = useGlobalVariablesStore(state => state.selectedRoom!)
     const [isLoaded, setIsLoaded] = useState(false)
 
-    useEffect(() => {
-
-        rooms?.on('newMessage', newMsg => {
-            setMessages(prev => [...prev, newMsg])
-            setIsLoaded(true)
-        })
-
-        return () => {
-            rooms?.off('newMessage')
-            setIsLoaded(false)
-        }
-    }, [])
-
-    useEffect(() => {
-        setMessages(roomMessages)
-        setIsLoaded(false)
-    }, [roomID])
+    useEffect(() => { setIsLoaded(false) }, [roomID])
 
     useEffect(() => {
         lastMsgRef.current?.scrollIntoView({ behavior: isLoaded ? 'smooth' : 'instant' })
     }, [messages.length, isLoaded]) // scroll to latest not seen msg(add the seen check later hah)
+
+    useEffect(() => {
+
+        rooms?.on('newMessage', newMsg => {
+            setter({
+                selectedRoom: {
+                    ...selectedRoom,
+                    messages: [...selectedRoom.messages, newMsg]
+                }
+            })
+            // setMessages(prev => [...prev, newMsg])
+            setIsLoaded(true)
+        })
+
+        rooms?.on('seenMsg', ({ sender, msgID, roomID }) => {
+            
+            const updatedSeenMessage = [...messages]
+
+            const isUpdated = updatedSeenMessage.some(msg => {
+                if (msg._id === msgID) {
+                    msg.seen = [...msg.seen, sender._id]
+                    return true
+                }
+            })
+
+            if (isUpdated) {
+                setter({
+                    selectedRoom: {
+                        ...selectedRoom,
+                        messages: updatedSeenMessage
+                    }
+                })
+            }
+
+        })
+
+        return () => {
+            rooms?.off('newMessage')
+            rooms?.off('seenMsg')
+            setIsLoaded(false)
+        }
+    }, [])
 
     return (
         <section data-aos="fade-right">

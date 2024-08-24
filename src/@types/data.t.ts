@@ -17,7 +17,7 @@ interface MessageModel {
     _id: string
     message: string
     sender: UserModel
-    seen: boolean
+    seen: string[]
     roomID: string
     createdAt: string
     updatedAt: string
