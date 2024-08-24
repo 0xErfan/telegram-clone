@@ -19,6 +19,8 @@ io.on('connection', async socket => {
 
     socket.on('newMessage', async ({ roomID, sender, message }) => {
 
+        let tempID = Date.now()
+
         const msgData = {
             sender,
             message,
@@ -27,10 +29,12 @@ io.on('connection', async socket => {
             createdAt: Date.now()
         }
 
-        io.to(roomID).emit('newMessage', { ...msgData, _id: Date.now() })
-        
+        io.to(roomID).emit('newMessage', { ...msgData, _id: tempID })
+
         try {
             const newMsg = await MessageModel.create(msgData)
+            io.to(roomID).emit('newMessageIdUpdate', { tempID, _id: newMsg._id })
+            tempID = null
 
             await RoomModel.findOneAndUpdate(
                 { _id: roomID },
@@ -47,7 +51,7 @@ io.on('connection', async socket => {
         try {
             await MessageModel.findOneAndUpdate(
                 { _id: seenData.msgID },
-                { $push: { seen: seenData.sender._id } }
+                { $push: { seen: seenData.seenBy } }
             )
         } catch (error) { console.log(error) }
 

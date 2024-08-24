@@ -42,38 +42,56 @@ const ChatContent = () => {
                     messages: [...selectedRoom.messages, newMsg]
                 }
             })
-            // setMessages(prev => [...prev, newMsg])
             setIsLoaded(true)
         })
 
-        rooms?.on('seenMsg', ({ sender, msgID, roomID }) => {
-            
-            const updatedSeenMessage = [...messages]
+        rooms?.on('newMessageIdUpdate', ({ tempID, _id }) => {
 
-            const isUpdated = updatedSeenMessage.some(msg => {
-                if (msg._id === msgID) {
-                    msg.seen = [...msg.seen, sender._id]
+            const updatedMsgID = [...selectedRoom.messages]
+
+            updatedMsgID.some(msg => {
+                if (msg._id === tempID) {
+                    msg._id = _id
                     return true
                 }
             })
 
-            if (isUpdated) {
-                setter({
-                    selectedRoom: {
-                        ...selectedRoom,
-                        messages: updatedSeenMessage
-                    }
-                })
-            }
+            setter({
+                selectedRoom: {
+                    ...selectedRoom,
+                    messages: updatedMsgID
+                }
+            })
+            setIsLoaded(true)
+        })
+
+        rooms?.on('seenMsg', ({ msgID, seenBy }) => {
+
+            const updatedSeenMessage = [...messages]
+
+            updatedSeenMessage.some(msg => {
+                if (msg._id === msgID) {
+                    msg.seen = [...new Set([...msg.seen, seenBy])]
+                    return true
+                }
+            })
+
+            setter({
+                selectedRoom: {
+                    ...selectedRoom,
+                    messages: updatedSeenMessage
+                }
+            })
 
         })
 
         return () => {
             rooms?.off('newMessage')
             rooms?.off('seenMsg')
+            rooms?.off('newMessageIdUpdate')
             setIsLoaded(false)
         }
-    }, [])
+    }, [selectedRoom.messages?.length])
 
     return (
         <section data-aos="fade-right">
