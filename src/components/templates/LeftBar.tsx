@@ -21,7 +21,6 @@ const LeftBar = () => {
     const { updater } = useSockets(state => state)
     const { selectedRoom, setter } = useGlobalVariablesStore(state => state)
 
-
     useEffect(() => {
 
         updater('rooms', roomSocket)
@@ -29,6 +28,7 @@ const LeftBar = () => {
         roomSocket.emit('getRooms', _id)
 
         roomSocket.on('getRooms', (rooms: RoomModel[]) => setRooms(rooms))
+
         roomSocket.on('joining', data => { setter({ selectedRoom: data }) })
 
         return () => {

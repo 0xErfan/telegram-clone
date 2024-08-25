@@ -16,11 +16,11 @@ export const ChatCard = ({
 ) => {
 
     const [lastMsgData, setLastMsgData] = useState(chatLastMsgData)
-    const { selectedRoom, setter } = useGlobalVariablesStore(state => state)
+    const { selectedRoom } = useGlobalVariablesStore(state => state)
     const { rooms } = useSockets(state => state)
     const isActive = selectedRoom?._id == _id
     const latestMessageTime = getTimeFromDate(lastMsgData?.createdAt)
-    const notSeenMessages = messages?.filter(data => !data.seen)?.length || null
+    const notSeenMessages = messages?.length || null
 
     useEffect(() => {
         if (selectedRoom?._id == _id) {

@@ -65,7 +65,6 @@ io.on('connection', async socket => {
             const promises = userRooms.map(async (room) => {
                 const lastMsgID = room.messages?.[room.messages.length - 1]?._id || null;
                 const lastMsgData = await MessageModel.findOne({ _id: lastMsgID });
-                console.log(lastMsgData.createdAt)
                 return { ...room, lastMsgData };
             });
             return Promise.all(promises);
