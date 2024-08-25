@@ -65,12 +65,16 @@ io.on('connection', async socket => {
             const promises = userRooms.map(async (room) => {
                 const lastMsgID = room.messages?.[room.messages.length - 1]?._id || null;
                 const lastMsgData = await MessageModel.findOne({ _id: lastMsgID });
+                console.log(lastMsgData.createdAt)
                 return { ...room, lastMsgData };
             });
             return Promise.all(promises);
         };
 
-        socket.emit('getRooms', await processRooms())
+        const rooms = await processRooms()
+        const sortedRooms = rooms.sort((a, b) => b.lastMsgData.createdAt - a.lastMsgData.createdAt)
+
+        socket.emit('getRooms', sortedRooms)
     })
 
     socket.on('joining', async newRoom => {
@@ -92,5 +96,5 @@ io.on('connection', async socket => {
         socket.emit('joining', roomData)
     })
 
-    socket.on('leavingRoom', roomID => socket.leave(roomID))
+    // socket.on('leavingRoom', roomID => socket.leave(roomID))
 })

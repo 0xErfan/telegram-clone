@@ -61,7 +61,7 @@ export const ChatCard = ({
 
                 <div className="flex items-center justify-between">
                     <p className="text-white font-bold text-[16px] font-segoeBold line-clamp-1">{name}</p>
-                    <p>{latestMessageTime || null}</p>
+                    <p className="whitespace-nowrap">{latestMessageTime || null}</p>
                 </div>
 
                 <div className="flex items-center justify-between">

@@ -51,6 +51,15 @@ const LeftBar = () => {
     }, [])
 
     useEffect(() => {
+        setRooms(prev => prev.map((room: any) => {
+            if (room._id === selectedRoom?._id) {
+                room.lastMsgData = selectedRoom?.messages[selectedRoom?.messages.length - 1]
+            }
+            return room;
+        }))
+    }, [selectedRoom?.messages.length])
+
+    useEffect(() => {
         roomSocket.emit('joining', selectedRoom?._id)
         return () => { roomSocket.emit('leavingRoom', selectedRoom?._id) }
     }, [selectedRoom?._id])
@@ -108,12 +117,21 @@ const LeftBar = () => {
 
             <div className="flex flex-col mt-2 overflow-auto">
                 {
-                    rooms?.map((data: any) =>
-                        <ChatCard
-                            {...data}
-                            key={data?._id}
-                        />
-                    )
+                    rooms?.length
+                        ?
+                        rooms
+                            .sort((a: any, b: any) => {
+                                const aTime = new Date(a?.lastMsgData?.createdAt).getTime()
+                                const bTime = new Date(b?.lastMsgData?.createdAt).getTime()
+                                return bTime - aTime
+                            })
+                            .map((data: any) =>
+                                <ChatCard
+                                    {...data}
+                                    key={data?._id}
+                                />
+                            )
+                        : <div className="text-xl text-white font-bold w-full text-center font-segoeBold">No chats found bud</div>
                 }
             </div>
 
