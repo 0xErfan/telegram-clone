@@ -7,6 +7,7 @@ import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import useUserStore from "@/zustand/userStore";
 import useSockets from "@/zustand/useSockets";
 
+let draftMsg: string;
 
 const MessageSender = () => {
 
@@ -15,7 +16,6 @@ const MessageSender = () => {
     const { _id } = useGlobalVariablesStore(state => state?.selectedRoom) || {}
     const { rooms } = useSockets(state => state)
     const userData = useUserStore(state => state)
-    const draftMsg = useRef('')
 
     useEffect(() => {
 
@@ -23,11 +23,11 @@ const MessageSender = () => {
         
         if (draftMessage) {
             setText(draftMessage)
-            draftMsg.current = draftMessage
         }
+        draftMsg = draftMessage || ''
 
         return () => {
-            draftMsg?.current.trim().length && localStorage.setItem(_id!, draftMsg.current!)
+            draftMsg?.trim().length && localStorage.setItem(_id!, draftMsg!)
             setText('')
         }
 
@@ -41,14 +41,14 @@ const MessageSender = () => {
         })
 
         setText('')
-        draftMsg.current = ''
+        draftMsg = ''
         localStorage.removeItem(_id!)
     }
 
     const msgTextUpdater = (e: ChangeEvent<HTMLInputElement>) => {
 
         const msgText = e.target.value
-        draftMsg.current = msgText
+        draftMsg = msgText
         setText(msgText)
 
         handleIsTyping()

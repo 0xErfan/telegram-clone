@@ -143,18 +143,20 @@ const ChatContent = () => {
 
                             <h3 className="font-bold text-[16px] font-segoeBold">{name}</h3>
 
-                            <p className="font-bold text-[14px] text-darkGray font-segoeBold">
-
-                                {participants?.length + ' members, '}
-
+                            <div className="font-bold text-[14px] text-darkGray font-segoeBold line-clamp-1 whitespace-normal text-nowrap">
                                 {
                                     typings.length && [...typings].filter(tl => tl !== myName).length
                                         ?
-                                        typings.join(', ') + `${typings.length > 1 ? ' are' : ' is'} typing`
+                                        <div className="text-lightBlue whitespace-normal line-clamp-1">
+                                            {typings.join(', ') + `${typings.length > 1 ? ' are' : ' is'} typing `}
+                                            <span className="animate-ping font-extrabold font-segoeBold">...</span>
+                                        </div>
                                         :
-                                        '2 online'
+                                        <>
+                                            {participants?.length + ' members, ' + 2 + ' online'}
+                                        </>
                                 }
-                            </p>
+                            </div>
 
                         </div>
                     </div>

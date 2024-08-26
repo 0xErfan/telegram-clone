@@ -1,5 +1,4 @@
 import mongoose, { Schema } from "mongoose";
-import { schema } from "./User";
 
 const schema = new Schema({
     title: { type: String, required: true },

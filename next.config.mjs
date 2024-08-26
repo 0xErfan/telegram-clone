@@ -2,15 +2,14 @@
 const nextConfig = {
     reactStrictMode: false,
     images: {
-        domains: ['pc-kala.storage.iran.liara.space'],
         remotePatterns: [
             {
                 protocol: 'https',
                 hostname: 'pc-kala.storage.iran.liara.space',
-                port: '',
-                pathname: '*',
+                pathname: '**',
             },
         ],
+        domains: ['pc-kala.storage.iran.liara.space'], // Keep this line for backward compatibility
     }
 };
 
