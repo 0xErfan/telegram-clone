@@ -2,7 +2,7 @@ import { BsEmojiSmile } from "react-icons/bs";
 import { PiMicrophoneLight } from "react-icons/pi";
 import { MdAttachFile } from "react-icons/md";
 import { IoIosSend } from "react-icons/io";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import useUserStore from "@/zustand/userStore";
 import useSockets from "@/zustand/useSockets";
@@ -12,21 +12,45 @@ const MessageSender = () => {
 
     const [text, setText] = useState('')
     const typingTimer = useRef<NodeJS.Timeout | null>(null)
-    const { selectedRoom } = useGlobalVariablesStore(state => state)
+    const { _id } = useGlobalVariablesStore(state => state?.selectedRoom) || {}
     const { rooms } = useSockets(state => state)
     const userData = useUserStore(state => state)
+    const draftMsg = useRef('')
+
+    useEffect(() => {
+
+        const draftMessage = localStorage.getItem(_id!)
+        
+        if (draftMessage) {
+            setText(draftMessage)
+            draftMsg.current = draftMessage
+        }
+
+        return () => {
+            draftMsg?.current.trim().length && localStorage.setItem(_id!, draftMsg.current!)
+            setText('')
+        }
+
+    }, [_id])
 
     const emitMessageHandler = () => {
         rooms?.emit('newMessage', {
-            roomID: selectedRoom?._id,
+            roomID: _id,
             message: text,
             sender: userData
         })
+
         setText('')
+        draftMsg.current = ''
+        localStorage.removeItem(_id!)
     }
 
     const msgTextUpdater = (e: ChangeEvent<HTMLInputElement>) => {
-        setText(e.target.value)
+
+        const msgText = e.target.value
+        draftMsg.current = msgText
+        setText(msgText)
+
         handleIsTyping()
     }
 
@@ -34,10 +58,10 @@ const MessageSender = () => {
 
         clearTimeout(typingTimer?.current!)
 
-        rooms?.emit('typing', ({ roomID: selectedRoom?._id, sender: userData }))
+        rooms?.emit('typing', ({ roomID: _id, sender: userData }))
 
         typingTimer.current = setTimeout(() => {
-            rooms?.emit('stop-typing', ({ roomID: selectedRoom?._id, sender: userData }))
+            rooms?.emit('stop-typing', ({ roomID: _id, sender: userData }))
         }, 2000);
     }
 

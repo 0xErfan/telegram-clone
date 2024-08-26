@@ -18,6 +18,7 @@ interface MessageModel {
     message: string
     sender: UserModel
     seen: string[]
+    replays: string[]
     roomID: string
     createdAt: string
     updatedAt: string

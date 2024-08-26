@@ -6,28 +6,27 @@ import useSockets from "@/zustand/useSockets"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 
+
 export const ChatCard = ({
     messages,
     _id,
     name,
     avatar,
-    lastMsgData: chatLastMsgData
+    lastMsgData
 }: RoomModel & { lastMsgData: MessageModel }
 ) => {
 
-    const [lastMsgData, setLastMsgData] = useState(chatLastMsgData)
     const { selectedRoom } = useGlobalVariablesStore(state => state)
     const { rooms } = useSockets(state => state)
-    const isActive = selectedRoom?._id == _id
     const latestMessageTime = getTimeFromDate(lastMsgData?.createdAt)
+
+    const isActive = selectedRoom?._id == _id
     const notSeenMessages = messages?.length || null
+    const [draftMessage, setDraftMessage] = useState('')
 
     useEffect(() => {
-        if (selectedRoom?._id == _id) {
-            const lastMsgData = selectedRoom?.messages[selectedRoom?.messages.length - 1]
-            setLastMsgData(lastMsgData)
-        }
-    }, [selectedRoom?._id, _id, selectedRoom?.messages.length])
+        setDraftMessage(localStorage.getItem(_id) || '')
+    }, [localStorage.getItem(_id), _id])
 
     const joinToRoom = () => { rooms?.emit('joining', _id) }
 
@@ -66,7 +65,15 @@ export const ChatCard = ({
 
                 <div className="flex items-center justify-between">
 
-                    <p className="line-clamp-1">{lastMsgData?.message || ''}</p>
+                    <div className="line-clamp-1">
+                        {
+                            draftMessage?.length
+                                ?
+                                <span className="text-red-500">Draft: <span className="text-darkGray">{draftMessage}</span></span>
+                                :
+                                lastMsgData?.message || ''
+                        }
+                    </div>
 
                     <div className="flex items-center justify-between w-14">
                         <div className="flex-center text-center w-min px-2 bg-darkBlue text-white rounded-full">{notSeenMessages}</div>

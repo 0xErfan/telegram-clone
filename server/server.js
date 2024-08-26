@@ -13,9 +13,10 @@ const io = new Server(3001, {
     }
 })
 
+let typings = []
 await connectToDB()
 
-io.on('connection', async socket => {
+io.on('connection', socket => {
 
     socket.on('newMessage', async ({ roomID, sender, message }) => {
 
@@ -30,10 +31,14 @@ io.on('connection', async socket => {
         }
 
         io.to(roomID).emit('newMessage', { ...msgData, _id: tempID })
-
+        
         try {
+            
             const newMsg = await MessageModel.create(msgData)
+            
+            io.to(roomID).emit('lastMsgUpdate', newMsg)
             io.to(roomID).emit('newMessageIdUpdate', { tempID, _id: newMsg._id })
+
             tempID = null
 
             await RoomModel.findOneAndUpdate(
@@ -61,6 +66,8 @@ io.on('connection', async socket => {
 
         const userRooms = await RoomModel.find({ participants: { $in: userID } }).lean()
 
+        for (const room of userRooms) socket.join(room._id.toString())
+
         const processRooms = async () => {
             const promises = userRooms.map(async (room) => {
                 const lastMsgID = room.messages?.[room.messages.length - 1]?._id || null;
@@ -71,14 +78,12 @@ io.on('connection', async socket => {
         };
 
         const rooms = await processRooms()
-        const sortedRooms = rooms.sort((a, b) => b.lastMsgData.createdAt - a.lastMsgData.createdAt)
+        const sortedRooms = rooms.sort((a, b) => b.lastMsgData?.createdAt - a.lastMsgData?.createdAt)
 
         socket.emit('getRooms', sortedRooms)
     })
 
     socket.on('joining', async newRoom => {
-
-        socket.join(newRoom)
 
         const roomData = await RoomModel.findOne({ _id: newRoom })
             .populate('messages', '', MessageModel)
@@ -95,8 +100,6 @@ io.on('connection', async socket => {
         socket.emit('joining', roomData)
     })
 
-    let typings = []
-
     socket.on('typing', data => {
         if (!typings.includes(data.sender.name)) {
             io.to(data.roomID).emit('typing', data)
@@ -108,6 +111,4 @@ io.on('connection', async socket => {
         typings = typings.filter(tl => tl !== data.sender.name)
         io.to(data.roomID).emit('stop-typing', data)
     })
-
-    // socket.on('leavingRoom', roomID => socket.leave(roomID))
 })

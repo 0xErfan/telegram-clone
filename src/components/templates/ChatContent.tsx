@@ -28,16 +28,17 @@ const ChatContent = () => {
     const selectedRoom = useGlobalVariablesStore(state => state.selectedRoom!)
     const [isLoaded, setIsLoaded] = useState(false)
 
-    useEffect(() => { setIsLoaded(false) }, [roomID])
-
     useEffect(() => {
         lastMsgRef.current?.scrollIntoView({ behavior: isLoaded ? 'smooth' : 'instant' })
     }, [messages.length, isLoaded]) // scroll to latest not seen msg(add the seen check later hah)
 
     useEffect(() => {
+        setIsLoaded(false)
 
         rooms?.on('typing', data => {
-            data.sender.name !== myName && setTypings(prev => [...prev, data.sender.name as string])
+            if (data.sender.name !== myName && data.roomID == roomID) {
+                setTypings(prev => [...prev, data.sender.name as string])
+            }
         })
 
         rooms?.on('stop-typing', data => {
@@ -49,8 +50,9 @@ const ChatContent = () => {
         return () => {
             rooms?.off('typing')
             rooms?.off('stop-typing')
+            setTypings([])
         }
-    }, [])
+    }, [roomID])
 
     useEffect(() => {
 

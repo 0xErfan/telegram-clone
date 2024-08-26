@@ -4,7 +4,7 @@ import { BiSearch } from "react-icons/bi"
 import ChatFolders from "../modules/ChatFolders"
 import { ChatCard } from "../modules/ChatCard"
 import { useEffect, useRef, useState } from "react"
-import { RoomModel } from "@/@types/data.t"
+import { MessageModel, RoomModel } from "@/@types/data.t"
 import { io } from 'socket.io-client'
 import useUserStore from "@/zustand/userStore"
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
@@ -27,13 +27,26 @@ const LeftBar = () => {
 
         roomSocket.emit('getRooms', _id)
 
-        roomSocket.on('getRooms', (rooms: RoomModel[]) => setRooms(rooms))
+        roomSocket.on('getRooms', (rooms: RoomModel[]) => {
+
+            setRooms(rooms)
+
+            roomSocket.on('lastMsgUpdate', newMsg => {
+                setRooms(prev => prev.map((roomData: any) => {
+                    if (roomData._id === newMsg.roomID) {
+                        roomData.lastMsgData = newMsg
+                    }
+                    return roomData
+                }))
+            })
+        })
 
         roomSocket.on('joining', data => { setter({ selectedRoom: data }) })
 
         return () => {
             roomSocket.off('getRooms')
             roomSocket.off('joining')
+            roomSocket.off('lastMsgUpdate')
         }
     }, [])
 
@@ -50,14 +63,14 @@ const LeftBar = () => {
 
     }, [])
 
-    useEffect(() => {
-        setRooms(prev => prev.map((room: any) => {
-            if (room._id === selectedRoom?._id) {
-                room.lastMsgData = selectedRoom?.messages[selectedRoom?.messages.length - 1]
-            }
-            return room;
-        }))
-    }, [selectedRoom?.messages.length])
+    // useEffect(() => {
+    //     setRooms(prev => prev.map((room: any) => {
+    //         if (room._id === selectedRoom?._id) {
+    //             room.lastMsgData = selectedRoom?.messages[selectedRoom?.messages.length - 1]
+    //         }
+    //         return room;
+    //     }))
+    // }, [selectedRoom?.messages.length])
 
     useEffect(() => {
         roomSocket.emit('joining', selectedRoom?._id)

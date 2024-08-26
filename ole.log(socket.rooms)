@@ -1,0 +1,75 @@
+[1mdiff --git a/server/server.js b/server/server.js[m
+[1mindex b6a0293..640fec1 100644[m
+[1m--- a/server/server.js[m
+[1m+++ b/server/server.js[m
+[36m@@ -33,8 +33,12 @@[m [mio.on('connection', async socket => {[m
+         io.to(roomID).emit('newMessage', { ...msgData, _id: tempID })[m
+ [m
+         try {[m
+[32m+[m
+             const newMsg = await MessageModel.create(msgData)[m
+[32m+[m
+             io.to(roomID).emit('newMessageIdUpdate', { tempID, _id: newMsg._id })[m
+[32m+[m[32m            io.to(roomID).emit('lastMsgUpdate', newMsg)[m
+[32m+[m
+             tempID = null[m
+ [m
+             await RoomModel.findOneAndUpdate([m
+[36m@@ -62,6 +66,8 @@[m [mio.on('connection', async socket => {[m
+ [m
+         const userRooms = await RoomModel.find({ participants: { $in: userID } }).lean()[m
+ [m
+[32m+[m[32m        for (const room of userRooms) socket.join(room._id)[m
+[32m+[m
+         const processRooms = async () => {[m
+             const promises = userRooms.map(async (room) => {[m
+                 const lastMsgID = room.messages?.[room.messages.length - 1]?._id || null;[m
+[36m@@ -72,15 +78,13 @@[m [mio.on('connection', async socket => {[m
+         };[m
+ [m
+         const rooms = await processRooms()[m
+[31m-        const sortedRooms = rooms.sort((a, b) => b.lastMsgData.createdAt - a.lastMsgData.createdAt)[m
+[32m+[m[32m        const sortedRooms = rooms.sort((a, b) => b.lastMsgData?.createdAt - a.lastMsgData?.createdAt)[m
+ [m
+         socket.emit('getRooms', sortedRooms)[m
+     })[m
+ [m
+     socket.on('joining', async newRoom => {[m
+ [m
+[31m-        socket.join(newRoom)[m
+[31m-[m
+         const roomData = await RoomModel.findOne({ _id: newRoom })[m
+             .populate('messages', '', MessageModel)[m
+             .populate('medias', '', MediaModel)[m
+[36m@@ -107,6 +111,4 @@[m [mio.on('connection', async socket => {[m
+         typings = typings.filter(tl => tl !== data.sender.name)[m
+         io.to(data.roomID).emit('stop-typing', data)[m
+     })[m
+[31m-[m
+[31m-    // socket.on('leavingRoom', roomID => socket.leave(roomID))[m
+ })[m
+\ No newline at end of file[m
+[1mdiff --git a/src/@types/data.t.ts b/src/@types/data.t.ts[m
+[1mindex 7e006aa..127f1e2 100644[m
+[1m--- a/src/@types/data.t.ts[m
+[1m+++ b/src/@types/data.t.ts[m
+[36m@@ -18,6 +18,7 @@[m [minterface MessageModel {[m
+     message: string[m
+     sender: UserModel[m
+     seen: string[][m
+[32m+[m[32m    replays: string[][m
+     roomID: string[m
+     createdAt: string[m
+     updatedAt: string[m
+[1mdiff --git a/src/models/Message.js b/src/models/Message.js[m
+[1mindex 13ba798..6ea981d 100644[m
+[1m--- a/src/models/Message.js[m
+[1m+++ b/src/models/Message.js[m
+[36m@@ -4,6 +4,7 @@[m [mexport const schema = new Schema({[m
+     sender: { type: mongoose.Types.ObjectId, required: true, ref: 'User' },[m
+     message: { type: String, required: true },[m
+     seen: [{ type: Schema.ObjectId, ref: 'User', required: true, default: [] }],[m
+[32m+[m[32m    replay: [{type: Schema.ObjectId, ref: 'Message', required: true, default: []}],[m
+     roomID: { type: Schema.ObjectId, ref: 'Room', required: true }[m
+ }, { timestamps: true })[m
+ [m
