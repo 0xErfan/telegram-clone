@@ -86,20 +86,8 @@ const LeftBar = () => {
                         <h1 className="font-bold font-segoeBold">Telegram</h1>
                     </div>
 
-                    {
-                        !''
-                            ?
-                            <BiSearch className="cursor-pointer size-[23px] text-white/90 mt-3" />
-                            :
-                            <div className="flex items-center flex-[3] justify-betweens rounded h-10 px-4 border-b-2 border-white/[78.6%] mt-4 bg-white/[6.05%] text-white/[78.6%]">
-                                <input
-                                    className="bg-transparent basis-[95%] outline-none"
-                                    type="text"
-                                    placeholder="Search"
-                                />
-                                <BiSearch className="basis-[5%] cursor-pointer shrink-0 size-[18px]" />
-                            </div>
-                    }
+                    <BiSearch className="cursor-pointer size-[23px] text-white/90 mt-3" />
+
                 </div>
 
                 <div
@@ -131,7 +119,7 @@ const LeftBar = () => {
                                     key={data?._id}
                                 />
                             )
-                        : <div className="text-xl text-white font-bold w-full text-center font-segoeBold">No chats found bud</div>
+                        : <div className="text-xl text-white font-bold w-full text-center font-segoeBold pt-20">No chats found bud</div>
                 }
             </div>
 
@@ -139,4 +127,4 @@ const LeftBar = () => {
     )
 }
 
-export default LeftBar
+export default LeftBar;

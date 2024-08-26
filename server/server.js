@@ -95,5 +95,19 @@ io.on('connection', async socket => {
         socket.emit('joining', roomData)
     })
 
+    let typings = []
+
+    socket.on('typing', data => {
+        if (!typings.includes(data.sender.name)) {
+            io.to(data.roomID).emit('typing', data)
+            typings.push(data.sender.name)
+        }
+    })
+
+    socket.on('stop-typing', data => {
+        typings = typings.filter(tl => tl !== data.sender.name)
+        io.to(data.roomID).emit('stop-typing', data)
+    })
+
     // socket.on('leavingRoom', roomID => socket.leave(roomID))
 })

@@ -11,10 +11,11 @@ import { useEffect, useRef, useState } from "react";
 
 const ChatContent = () => {
 
-    const { _id } = useUserStore(state => state)
+    const { _id, name: myName } = useUserStore(state => state)
     const { setter } = useGlobalVariablesStore(state => state)
     const { rooms } = useSockets(state => state)
     const lastMsgRef = useRef<HTMLDivElement>(null)
+    const [typings, setTypings] = useState<string[]>([])
 
     const {
         _id: roomID,
@@ -32,6 +33,24 @@ const ChatContent = () => {
     useEffect(() => {
         lastMsgRef.current?.scrollIntoView({ behavior: isLoaded ? 'smooth' : 'instant' })
     }, [messages.length, isLoaded]) // scroll to latest not seen msg(add the seen check later hah)
+
+    useEffect(() => {
+
+        rooms?.on('typing', data => {
+            data.sender.name !== myName && setTypings(prev => [...prev, data.sender.name as string])
+        })
+
+        rooms?.on('stop-typing', data => {
+            setTypings(prev => {
+                return [...prev].filter(tl => tl !== data.sender.name && tl !== myName)
+            })
+        })
+
+        return () => {
+            rooms?.off('typing')
+            rooms?.off('stop-typing')
+        }
+    }, [])
 
     useEffect(() => {
 
@@ -119,8 +138,22 @@ const ChatContent = () => {
                                 <div className='flex-center bg-darkBlue rounded-full size-[50px] shrink-0 text-center font-bold text-2xl'>{name[0]}</div>
                         }
                         <div className="flex justify-center flex-col gap-1">
+
                             <h3 className="font-bold text-[16px] font-segoeBold">{name}</h3>
-                            <p className="font-bold text-[14px] text-darkGray font-segoeBold">{participants?.length} members, 3 online</p>
+
+                            <p className="font-bold text-[14px] text-darkGray font-segoeBold">
+
+                                {participants?.length + ' members, '}
+
+                                {
+                                    typings.length && [...typings].filter(tl => tl !== myName).length
+                                        ?
+                                        typings.join(', ') + `${typings.length > 1 ? ' are' : ' is'} typing`
+                                        :
+                                        '2 online'
+                                }
+                            </p>
+
                         </div>
                     </div>
 
