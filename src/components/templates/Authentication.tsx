@@ -1,9 +1,9 @@
 'use client'
 import AppLoader from "@/components/modules/AppLoader"
-import AuthenticationForm from "@/components/templates/AuthenticationForm"
 import useUserStore from "@/zustand/userStore"
 import axios from "axios"
-import { ReactNode, useEffect, useState } from "react"
+import { ReactNode, lazy, useEffect, useState } from "react"
+const AuthenticationForm = lazy(() => import('@/components/templates/AuthenticationForm'))
 
 const Authentication = ({ children }: { children: ReactNode }) => {
 

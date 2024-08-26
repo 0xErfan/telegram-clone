@@ -1,6 +1,8 @@
 'use client'
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
-import ChatContent from "./ChatContent"
+import { Suspense, lazy } from "react"
+
+const ChatContent = lazy(() => import('./ChatContent'))
 
 const RightBar = () => {
 
@@ -15,7 +17,9 @@ const RightBar = () => {
             {
                 selectedRoom !== null
                     ?
-                    <ChatContent />
+                    <Suspense fallback={<div className="size-full h-screen text-center flex-center font-bold font-segoeBold text-2xl">Loading...</div>}>
+                        <ChatContent />
+                    </Suspense>
                     :
                     <div data-aos="fade-left" className="flex-center size-full">
                         <p className="rounded-full w-fit text-[14px] py-1 px-3 text-center bg-white/[18%]">
