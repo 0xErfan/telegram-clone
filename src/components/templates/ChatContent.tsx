@@ -8,6 +8,7 @@ import useUserStore from "@/zustand/userStore";
 import MessageSender from "./MessageSender";
 import useSockets from "@/zustand/useSockets";
 import { useEffect, useRef, useState } from "react";
+import { useOnScreen } from "@/hook/useOnScreen";
 
 const ChatContent = () => {
 
@@ -16,6 +17,9 @@ const ChatContent = () => {
     const { rooms } = useSockets(state => state)
     const lastMsgRef = useRef<HTMLDivElement>(null)
     const [typings, setTypings] = useState<string[]>([])
+    const isLastMsgInView = useOnScreen(lastMsgRef)
+    const selectedRoom = useGlobalVariablesStore(state => state.selectedRoom!)
+    const [isLoaded, setIsLoaded] = useState(false)
 
     const {
         _id: roomID,
@@ -25,12 +29,12 @@ const ChatContent = () => {
         participants
     } = useGlobalVariablesStore(state => state.selectedRoom!)
 
-    const selectedRoom = useGlobalVariablesStore(state => state.selectedRoom!)
-    const [isLoaded, setIsLoaded] = useState(false)
-
     useEffect(() => {
-        lastMsgRef.current?.scrollIntoView({ behavior: isLoaded ? 'smooth' : 'instant' })
-    }, [messages.length, isLoaded]) // scroll to latest not seen msg(add the seen check later hah)
+        console.log(isLastMsgInView)
+        if (isLastMsgInView) {
+            lastMsgRef.current?.scrollIntoView({ behavior: isLoaded ? 'smooth' : 'instant' })
+        }
+    }, [messages.length, isLoaded, isLastMsgInView]) // scroll to latest not seen msg(add the seen check later hah)
 
     useEffect(() => {
         setIsLoaded(false)
@@ -114,7 +118,7 @@ const ChatContent = () => {
             rooms?.off('newMessageIdUpdate')
             setIsLoaded(false)
         }
-    }, [selectedRoom.messages?.length])
+    }, [messages?.length])
 
     return (
         <section data-aos="fade-right">
