@@ -31,11 +31,11 @@ io.on('connection', socket => {
         }
 
         io.to(roomID).emit('newMessage', { ...msgData, _id: tempID })
-        
+
         try {
-            
+
             const newMsg = await MessageModel.create(msgData)
-            
+
             io.to(roomID).emit('lastMsgUpdate', newMsg)
             io.to(roomID).emit('newMessageIdUpdate', { tempID, _id: newMsg._id })
 

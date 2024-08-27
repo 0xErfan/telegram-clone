@@ -57,12 +57,14 @@ const ChatContent = () => {
     useEffect(() => {
 
         rooms?.on('newMessage', newMsg => {
-            setter({
-                selectedRoom: {
-                    ...selectedRoom,
-                    messages: [...selectedRoom.messages, newMsg]
-                }
-            })
+            if (newMsg.roomID == roomID) {
+                setter({
+                    selectedRoom: {
+                        ...selectedRoom,
+                        messages: [...selectedRoom.messages, newMsg]
+                    }
+                })
+            }
             setIsLoaded(true)
         })
 

@@ -3,6 +3,7 @@ import { MessageModel, RoomModel } from "@/@types/data.t"
 import { getTimeFromDate } from "@/utils"
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import useSockets from "@/zustand/useSockets"
+import useUserStore from "@/zustand/userStore"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 
@@ -17,6 +18,7 @@ export const ChatCard = ({
 ) => {
 
     const { selectedRoom } = useGlobalVariablesStore(state => state)
+    const { _id: myID } = useUserStore(state => state) || {}
     const { rooms } = useSockets(state => state)
     const latestMessageTime = getTimeFromDate(lastMsgData?.createdAt)
 
@@ -71,7 +73,7 @@ export const ChatCard = ({
                                 ?
                                 <span className="text-red-500">Draft: <span className="text-darkGray">{draftMessage}</span></span>
                                 :
-                                lastMsgData?.message || ''
+                                `${(lastMsgData.sender as any) === myID || lastMsgData.sender._id == myID ? 'you: ' : ''}${lastMsgData?.message}` || ''
                         }
                     </div>
 
