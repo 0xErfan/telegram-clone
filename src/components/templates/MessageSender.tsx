@@ -21,13 +21,11 @@ const MessageSender = () => {
 
         const draftMessage = localStorage.getItem(_id!)
         
-        if (draftMessage) {
-            setText(draftMessage)
-        }
-        draftMsg = draftMessage || ''
+        draftMessage?.length && setText(draftMessage)
+        draftMsg = draftMessage?.length ? draftMessage : ''
 
         return () => {
-            draftMsg?.trim().length && localStorage.setItem(_id!, draftMsg!)
+            localStorage.setItem(_id!, draftMsg || '')
             setText('')
         }
 

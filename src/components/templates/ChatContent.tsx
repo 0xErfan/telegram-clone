@@ -29,12 +29,13 @@ const ChatContent = () => {
         participants
     } = useGlobalVariablesStore(state => state.selectedRoom!)
 
+    const [messageCount, setMessageCount] = useState(messages.length);
+
     useEffect(() => {
-        console.log(isLastMsgInView)
         if (isLastMsgInView) {
             lastMsgRef.current?.scrollIntoView({ behavior: isLoaded ? 'smooth' : 'instant' })
         }
-    }, [messages.length, isLoaded, isLastMsgInView]) // scroll to latest not seen msg(add the seen check later hah)
+    }, [messages.length, isLoaded]) // scroll to latest not seen msg(add the seen check later hah)
 
     useEffect(() => {
         setIsLoaded(false)
@@ -62,6 +63,7 @@ const ChatContent = () => {
 
         rooms?.on('newMessage', newMsg => {
             if (newMsg.roomID == roomID) {
+                setMessageCount(messages.length);
                 setter({
                     selectedRoom: {
                         ...selectedRoom,
@@ -184,7 +186,7 @@ const ChatContent = () => {
                         messages.map((data, index) =>
                             <div
                                 key={data._id}
-                                ref={messages.length - 1 == index ? lastMsgRef : null}
+                                ref={index === messageCount - 1 ? lastMsgRef : null}
                             >
                                 <Message
                                     myId={_id}
