@@ -7,7 +7,8 @@ import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import useUserStore from "@/zustand/userStore";
 import MessageSender from "./MessageSender";
 import useSockets from "@/zustand/useSockets";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import ScrollToBottom from "./ScrollToBottom";
 
 const ChatContent = () => {
 
@@ -19,6 +20,7 @@ const ChatContent = () => {
     const selectedRoom = useGlobalVariablesStore(state => state.selectedRoom!)
     const [isLoaded, setIsLoaded] = useState(false)
     const [isLastMsgInView, setIsLastMsgInView] = useState(false);
+    const [forceRender, setForceRender] = useState(false)
 
     const {
         _id: roomID,
@@ -27,6 +29,18 @@ const ChatContent = () => {
         name,
         participants
     } = useGlobalVariablesStore(state => state.selectedRoom!)
+
+    const notSeenMessages = useMemo(() => {
+
+        let count = 0
+
+        if (messages.length) {
+            const msgs = [...messages].filter(msg => msg.sender._id !== _id && !msg.seen.includes(_id))
+            count = msgs.length
+        }
+
+        return count;
+    }, [messages.length, _id, forceRender])
 
     useEffect(() => {
         const isFromMe = messages[messages?.length - 1]?.sender._id === _id
@@ -92,6 +106,7 @@ const ChatContent = () => {
                 }
             })
 
+            setForceRender(prev => !prev)
         })
 
         rooms?.on('typing', data => {
@@ -182,7 +197,7 @@ const ChatContent = () => {
 
             <div
                 onScroll={checkIsLastMsgInView}
-                className="flex flex-col z-40 gap-2 my-2 fillScreen overflow-y-auto"
+                className="flex flex-col z-40 gap-2 relative fillScreen md:pb-2 overflow-x-hidden overflow-y-auto noScrollWidth"
             >
                 {
                     messages?.length
@@ -204,6 +219,12 @@ const ChatContent = () => {
                             <p className="rounded-full w-fit text-[14px] py-1 px-3 text-center bg-white/[18%]">Select chat to start messaging</p>
                         </div>
                 }
+
+                <ScrollToBottom
+                    count={notSeenMessages}
+                    scrollToBottom={() => lastMsgRef.current?.scrollIntoView()}
+                />
+
             </div>
 
             <MessageSender />

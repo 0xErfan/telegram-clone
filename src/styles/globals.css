@@ -49,5 +49,17 @@
 }
 
 .fillScreen {
-  height: calc(100vh - 180px);
+  height: calc(100vh - 128px);
+}
+
+@media (min-width: 768px) {
+  .fillScreen {
+    height: calc(100vh - 140px);
+  }
+}
+
+@media (min-width: 1280px) {
+  .fillScreen {
+    height: calc(100vh - 170px);
+  }
 }
