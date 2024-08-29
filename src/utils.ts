@@ -178,6 +178,10 @@ const getTimeFromDate = (date: string | null) => {
     return time.includes('Invalid') ? null : time
 }
 
+const scrollIntoElem = (elem: Element) => {
+    elem?.scrollIntoView({ behavior: 'smooth' })
+}
+
 export {
     getTimer,
     showToast,
@@ -193,4 +197,5 @@ export {
     isLoginCheck,
     delay,
     getTimeFromDate,
+    scrollIntoElem
 }

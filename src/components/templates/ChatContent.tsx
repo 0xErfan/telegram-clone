@@ -8,7 +8,6 @@ import useUserStore from "@/zustand/userStore";
 import MessageSender from "./MessageSender";
 import useSockets from "@/zustand/useSockets";
 import { useEffect, useRef, useState } from "react";
-import { useOnScreen } from "@/hook/useOnScreen";
 
 const ChatContent = () => {
 
@@ -17,9 +16,9 @@ const ChatContent = () => {
     const { rooms } = useSockets(state => state)
     const lastMsgRef = useRef<HTMLDivElement>(null)
     const [typings, setTypings] = useState<string[]>([])
-    const isLastMsgInView = useOnScreen(lastMsgRef)
     const selectedRoom = useGlobalVariablesStore(state => state.selectedRoom!)
     const [isLoaded, setIsLoaded] = useState(false)
+    const [isLastMsgInView, setIsLastMsgInView] = useState(false);
 
     const {
         _id: roomID,
@@ -29,41 +28,28 @@ const ChatContent = () => {
         participants
     } = useGlobalVariablesStore(state => state.selectedRoom!)
 
-    const [messageCount, setMessageCount] = useState(messages.length);
+    useEffect(() => {
+        const isFromMe = messages[messages?.length - 1]?.sender._id
+
+        if (isFromMe || isLastMsgInView) {
+            lastMsgRef.current?.scrollIntoView({ behavior: isFromMe ? 'instant' : 'smooth' })
+        }
+    }, [messages.length, isLastMsgInView])
 
     useEffect(() => {
-        if (isLastMsgInView) {
-            lastMsgRef.current?.scrollIntoView({ behavior: isLoaded ? 'smooth' : 'instant' })
-        }
-    }, [messages.length, isLoaded]) // scroll to latest not seen msg(add the seen check later hah)
+        const observer = new IntersectionObserver(([entry]) => setIsLastMsgInView(entry.isIntersecting));
+        lastMsgRef.current && observer.observe(lastMsgRef.current);
+        return () => { lastMsgRef.current && observer.unobserve(lastMsgRef.current) };
+    }, [lastMsgRef.current?.className]);
 
     useEffect(() => {
-        setIsLoaded(false)
-
-        rooms?.on('typing', data => {
-            if (data.sender.name !== myName && data.roomID == roomID) {
-                setTypings(prev => [...prev, data.sender.name as string])
-            }
-        })
-
-        rooms?.on('stop-typing', data => {
-            setTypings(prev => {
-                return [...prev].filter(tl => tl !== data.sender.name && tl !== myName)
-            })
-        })
-
-        return () => {
-            rooms?.off('typing')
-            rooms?.off('stop-typing')
-            setTypings([])
-        }
-    }, [roomID])
+        !isLoaded && lastMsgRef.current?.scrollIntoView({ behavior: 'instant' })
+    }, [isLoaded])
 
     useEffect(() => {
 
         rooms?.on('newMessage', newMsg => {
             if (newMsg.roomID == roomID) {
-                setMessageCount(messages.length);
                 setter({
                     selectedRoom: {
                         ...selectedRoom,
@@ -114,13 +100,30 @@ const ChatContent = () => {
 
         })
 
+        rooms?.on('typing', data => {
+            if (data.sender.name !== myName && data.roomID == roomID) {
+                setTypings(prev => [...prev, data.sender.name as string])
+            }
+        })
+
+        rooms?.on('stop-typing', data => {
+            setTypings(prev => {
+                return [...prev].filter(tl => tl !== data.sender.name && tl !== myName)
+            })
+        })
+
         return () => {
             rooms?.off('newMessage')
             rooms?.off('seenMsg')
             rooms?.off('newMessageIdUpdate')
-            setIsLoaded(false)
+            rooms?.off('typing')
+            rooms?.off('stop-typing')
         }
     }, [messages?.length])
+
+    useEffect(() => {
+        return () => { setTypings([]) }
+    }, [roomID])
 
     return (
         <section data-aos="fade-right">
@@ -180,13 +183,13 @@ const ChatContent = () => {
 
             <div className="flex flex-col gap-2 my-2 h-full">
                 {
-                    // don't forget you only are rendering messages and not medias and...
                     messages?.length
                         ?
                         messages.map((data, index) =>
                             <div
+                                className={data._id}
                                 key={data._id}
-                                ref={index === messageCount - 1 ? lastMsgRef : null}
+                                ref={index === messages.length - 1 ? lastMsgRef : null}
                             >
                                 <Message
                                     myId={_id}
