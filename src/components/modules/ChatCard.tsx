@@ -73,7 +73,7 @@ export const ChatCard = ({
                                 ?
                                 <span className="text-red-500">Draft: <span className="text-darkGray">{draftMessage}</span></span>
                                 :
-                                `${(lastMsgData.sender as any) === myID || lastMsgData.sender._id == myID ? 'you: ' : ''}${lastMsgData?.message}` || ''
+                                `${(lastMsgData?.sender as any) === myID || lastMsgData?.sender._id == myID ? 'you: ' : ''}${lastMsgData?.message ?? ''}` || ''
                         }
                     </div>
 
