@@ -18,7 +18,7 @@ const SignInForm = () => {
         formState: { isSubmitting, errors, isValid }
     } = useForm<Inputs>({ mode: 'onChange' })
 
-    const { setter, updater } = useUserStore(state => state)
+    const { setter } = useUserStore(state => state)
 
     const submitForm: SubmitHandler<Inputs> = async (data) => {
 
@@ -27,8 +27,10 @@ const SignInForm = () => {
             const response = await axios.post('/api/auth/login', data)
 
             if (response.status == 200) {
-                setter(response.data)
-                updater('isLogin', true)
+                setter({
+                    ...response.data,
+                    isLogin: true
+                })
                 showToast(true, 'You logged in successfully.')
             }
 

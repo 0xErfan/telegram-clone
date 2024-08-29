@@ -23,7 +23,7 @@ export const POST = async (req: Request) => {
             phone,
         })
 
-        const defaultRoom = await RoomModel.create({
+        await RoomModel.create({
             name: 'Saved Messages',
             avatar: '/images/savedMessages.png',
             type: 'private',
@@ -34,7 +34,7 @@ export const POST = async (req: Request) => {
         const token = tokenGenerator(userData.phone, 7)
 
         cookies().set('token', token, { httpOnly: true, maxAge: 60 * 60 * 14 })
-        return Response.json({ ...userData, rooms: [defaultRoom] }, { status: 201 })
+        return Response.json(userData, { status: 201 })
 
     } catch (err: any) {
         console.log(err)

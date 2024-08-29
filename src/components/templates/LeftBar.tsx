@@ -4,7 +4,7 @@ import { BiSearch } from "react-icons/bi"
 import ChatFolders from "../modules/ChatFolders"
 import { ChatCard } from "../modules/ChatCard"
 import { useEffect, useRef, useState } from "react"
-import { MessageModel, RoomModel } from "@/@types/data.t"
+import { RoomModel } from "@/@types/data.t"
 import { io } from 'socket.io-client'
 import useUserStore from "@/zustand/userStore"
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
@@ -17,15 +17,20 @@ const LeftBar = () => {
     const [rooms, setRooms] = useState<RoomModel[]>([])
     const chatFolderRef = useRef<HTMLDivElement>(null)
 
-    const { _id } = useUserStore(state => state)
-    const { updater } = useSockets(state => state)
+    const _id = useUserStore(state => state._id)
+    const updater = useSockets(state => state.updater)
     const { selectedRoom, setter } = useGlobalVariablesStore(state => state)
 
     useEffect(() => {
+        
+        if (!_id) return
 
         updater('rooms', roomSocket)
 
+        roomSocket.emit('joining', selectedRoom?._id)
         roomSocket.emit('getRooms', _id)
+
+        roomSocket.on('joining', data => { setter({ selectedRoom: data }) })
 
         roomSocket.on('getRooms', (rooms: RoomModel[]) => {
 
@@ -41,14 +46,12 @@ const LeftBar = () => {
             })
         })
 
-        roomSocket.on('joining', data => { setter({ selectedRoom: data }) })
-
         return () => {
             roomSocket.off('getRooms')
             roomSocket.off('joining')
             roomSocket.off('lastMsgUpdate')
         }
-    }, [])
+    }, [_id])
 
     useEffect(() => {
 
@@ -62,20 +65,6 @@ const LeftBar = () => {
         return () => chatFolderRef.current!?.removeEventListener('wheel', handleScroll);
 
     }, [])
-
-    // useEffect(() => {
-    //     setRooms(prev => prev.map((room: any) => {
-    //         if (room._id === selectedRoom?._id) {
-    //             room.lastMsgData = selectedRoom?.messages[selectedRoom?.messages.length - 1]
-    //         }
-    //         return room;
-    //     }))
-    // }, [selectedRoom?.messages.length])
-
-    useEffect(() => {
-        roomSocket.emit('joining', selectedRoom?._id)
-        return () => { roomSocket.emit('leavingRoom', selectedRoom?._id) }
-    }, [selectedRoom?._id])
 
     return (
         <div

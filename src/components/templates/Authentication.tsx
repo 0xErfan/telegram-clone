@@ -8,7 +8,7 @@ const AuthenticationForm = lazy(() => import('@/components/templates/Authenticat
 const Authentication = ({ children }: { children: ReactNode }) => {
 
     const [isLoading, setIsLoading] = useState(true)
-    const { setter, updater, isLogin } = useUserStore(state => state)
+    const { setter, isLogin } = useUserStore(state => state)
 
     useEffect(() => {
         (
@@ -18,8 +18,10 @@ const Authentication = ({ children }: { children: ReactNode }) => {
                     const userData = await axios.post('/api/auth/me')
 
                     if (userData.status == 200) {
-                        setter({ ...userData.data._doc, rooms: userData.data?.rooms })
-                        updater('isLogin', true)
+                        setter({
+                            ...userData.data,
+                            isLogin: true,
+                        })
                     }
 
                 } catch (error) { }

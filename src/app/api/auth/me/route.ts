@@ -16,15 +16,15 @@ export const POST = async (req: Request) => {
 
         const verifiedToken = tokenDecoder(token) as { phone: string }
 
-        const userData = await UserModel.findOne({ phone: verifiedToken?.phone })
-
-        const userRooms = await RoomModel.find({ participants: { $in: userData._id } })
+        const userData = await UserModel.findOne({ phone: verifiedToken?.phone }).lean()
+        console.log(userData)
 
         if (!userData || !verifiedToken) {
             cookies().delete('token')
             return Response.json({ message: 'No user exist with this username or password!' }, { status: 401 })
         }
-        return Response.json({ ...userData, rooms: userRooms }, { status: 200 })
+
+        return Response.json(userData, { status: 200 })
 
     } catch (err) {
         console.log(err)

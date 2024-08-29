@@ -19,7 +19,7 @@ export const POST = async (req: Request) => {
         const token = tokenGenerator(userData.phone, 7)
 
         cookies().set('token', token, { httpOnly: true, path: "/", maxAge: 60 * 60 * 24 * 6 })
-        return Response.json({ userData, message: 'You logged in successfully.' }, { status: 200 })
+        return Response.json(userData, { status: 200 })
 
     } catch (err) {
         console.log(err)

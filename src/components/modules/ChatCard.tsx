@@ -92,7 +92,7 @@ export const ChatCard = ({
                 </div>
             </div>
 
-            <span className={`absolute flex items-center ${isActive ? 'opacity-100' : 'opacity-0'} transition-all duration-200 activeChat inset-0 size-full bg-white/[6.05%]`}></span>
+            <span className={`absolute flex items-center ${isActive ? 'opacity-100' : 'opacity-0'} transition-all activeChat inset-0 size-full bg-white/[6.05%]`}></span>
 
         </div>
     )

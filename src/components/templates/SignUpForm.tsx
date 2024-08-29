@@ -10,7 +10,7 @@ type Inputs = Partial<UserModel>
 
 const SignUpForm = () => {
 
-    const { setter, updater } = useUserStore(state => state)
+    const { setter } = useUserStore(state => state)
 
     const {
         register,
@@ -24,8 +24,10 @@ const SignUpForm = () => {
             const response = await axios.post('/api/auth/register', data)
 
             if (response.status == 201) {
-                setter(response.data)
-                updater('isLogin', true)
+                setter({
+                    ...response.data,
+                    isLogin: true
+                })
                 showToast(true, 'You signed up successfully.')
             }
 
