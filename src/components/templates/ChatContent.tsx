@@ -7,7 +7,7 @@ import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import useUserStore from "@/zustand/userStore";
 import MessageSender from "./MessageSender";
 import useSockets from "@/zustand/useSockets";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const ChatContent = () => {
 
@@ -29,18 +29,12 @@ const ChatContent = () => {
     } = useGlobalVariablesStore(state => state.selectedRoom!)
 
     useEffect(() => {
-        const isFromMe = messages[messages?.length - 1]?.sender._id
+        const isFromMe = messages[messages?.length - 1]?.sender._id === _id
 
         if (isFromMe || isLastMsgInView) {
             lastMsgRef.current?.scrollIntoView({ behavior: isFromMe ? 'instant' : 'smooth' })
         }
-    }, [messages.length])
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(([entry]) => setIsLastMsgInView(entry.isIntersecting));
-        lastMsgRef.current && observer.observe(lastMsgRef.current);
-        return () => { lastMsgRef.current && observer.unobserve(lastMsgRef.current) };
-    }, [lastMsgRef.current?.className]);
+    }, [messages.length, isLastMsgInView])
 
     useEffect(() => {
         !isLoaded && lastMsgRef.current?.scrollIntoView({ behavior: 'instant' })
@@ -125,6 +119,11 @@ const ChatContent = () => {
         return () => { setTypings([]) }
     }, [roomID])
 
+    const checkIsLastMsgInView = (e: any) => {
+        const isInView = e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight <= 0
+        setIsLastMsgInView(isInView)
+    }
+
     return (
         <section data-aos="fade-right">
 
@@ -181,13 +180,15 @@ const ChatContent = () => {
                 </div>
             </div>
 
-            <div onScroll={e => console.log('hi this is erfan')} className="flex flex-col z-40 gap-2 my-2 fillScreen overflow-y-auto">
+            <div
+                onScroll={checkIsLastMsgInView}
+                className="flex flex-col z-40 gap-2 my-2 fillScreen overflow-y-auto"
+            >
                 {
                     messages?.length
                         ?
                         messages.map((data, index) =>
                             <div
-                                className={data._id}
                                 key={data._id}
                                 ref={index === messages.length - 1 ? lastMsgRef : null}
                             >
