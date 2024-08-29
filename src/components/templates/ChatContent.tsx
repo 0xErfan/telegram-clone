@@ -34,7 +34,7 @@ const ChatContent = () => {
         if (isFromMe || isLastMsgInView) {
             lastMsgRef.current?.scrollIntoView({ behavior: isFromMe ? 'instant' : 'smooth' })
         }
-    }, [messages.length, isLastMsgInView])
+    }, [messages.length])
 
     useEffect(() => {
         const observer = new IntersectionObserver(([entry]) => setIsLastMsgInView(entry.isIntersecting));
@@ -181,7 +181,7 @@ const ChatContent = () => {
                 </div>
             </div>
 
-            <div className="flex flex-col gap-2 my-2 h-full">
+            <div onScroll={e => console.log('hi this is erfan')} className="flex flex-col z-40 gap-2 my-2 fillScreen overflow-y-auto">
                 {
                     messages?.length
                         ?

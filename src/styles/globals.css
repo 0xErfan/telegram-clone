@@ -47,3 +47,7 @@
   content: '';
   @apply absolute bg-chatBg rounded-bl-2xl rounded-tr-xl z-[999] w-2 right-0 top-0 -bottom-px
 }
+
+.fillScreen {
+  height: calc(100vh - 180px);
+}
