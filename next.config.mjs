@@ -9,7 +9,6 @@ const nextConfig = {
                 pathname: '**',
             },
         ],
-        domains: ['pc-kala.storage.iran.liara.space'], // Keep this line for backward compatibility
     }
 };
 

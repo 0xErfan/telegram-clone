@@ -7,17 +7,17 @@ import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import useUserStore from "@/zustand/userStore";
 import MessageSender from "./MessageSender";
 import useSockets from "@/zustand/useSockets";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ScrollToBottom from "./ScrollToBottom";
 
 const ChatContent = () => {
 
+    let lastMsgRef = useRef<HTMLDivElement>(null)
     const { _id, name: myName } = useUserStore(state => state)
     const { setter } = useGlobalVariablesStore(state => state)
     const { rooms } = useSockets(state => state)
-    const lastMsgRef = useRef<HTMLDivElement>(null)
-    const [typings, setTypings] = useState<string[]>([])
     const selectedRoom = useGlobalVariablesStore(state => state.selectedRoom!)
+    const [typings, setTypings] = useState<string[]>([])
     const [isLoaded, setIsLoaded] = useState(false)
     const [isLastMsgInView, setIsLastMsgInView] = useState(false);
     const [forceRender, setForceRender] = useState(false)
@@ -42,19 +42,15 @@ const ChatContent = () => {
         return count;
     }, [messages.length, _id, forceRender])
 
-    useEffect(() => {
-        const isFromMe = messages[messages?.length - 1]?.sender._id === _id
-
-        if (isFromMe || isLastMsgInView) {
-            lastMsgRef.current?.scrollIntoView({ behavior: isFromMe ? 'instant' : 'smooth' })
+    const manageScroll = () => {
+        if (isLoaded) {
+            const isFromMe = messages[messages?.length - 1]?.sender._id === _id;
+            if (isFromMe || isLastMsgInView) lastMsgRef.current?.scrollIntoView({ behavior: 'smooth' })
         }
-    }, [messages.length, isLastMsgInView])
+    }
 
     useEffect(() => {
-        !isLoaded && lastMsgRef.current?.scrollIntoView({ behavior: 'instant' })
-    }, [isLoaded])
-
-    useEffect(() => {
+        manageScroll()
 
         rooms?.on('newMessage', newMsg => {
             if (newMsg.roomID == roomID) {
@@ -65,7 +61,6 @@ const ChatContent = () => {
                     }
                 })
             }
-            setIsLoaded(true)
         })
 
         rooms?.on('newMessageIdUpdate', ({ tempID, _id }) => {
@@ -85,7 +80,7 @@ const ChatContent = () => {
                     messages: updatedMsgID
                 }
             })
-            setIsLoaded(true)
+
         })
 
         rooms?.on('seenMsg', ({ msgID, seenBy }) => {
@@ -131,7 +126,19 @@ const ChatContent = () => {
     }, [messages?.length])
 
     useEffect(() => {
-        return () => { setTypings([]) }
+        if (!isLoaded && _id && messages.length) {
+            const lastSeenMsg = [...messages].reverse().find(msg => msg.sender._id === _id || msg.seen.includes(_id))
+            const lastSeenMsgElem = document.getElementsByClassName(lastSeenMsg?._id!)[0]
+            lastSeenMsgElem.scrollIntoView()
+            setIsLoaded(true)
+        } // not working properly, the element get selected correctly but the scroll is not
+    }, [messages.length, isLoaded, _id])
+
+    useEffect(() => {
+        return () => {
+            setIsLoaded(false)
+            setTypings([])
+        }
     }, [roomID])
 
     const checkIsLastMsgInView = (e: any) => {
@@ -204,8 +211,9 @@ const ChatContent = () => {
                         ?
                         messages.map((data, index) =>
                             <div
+                                className={data._id}
                                 key={data._id}
-                                ref={index === messages.length - 1 ? lastMsgRef : null}
+                                ref={index == messages.length - 1 ? lastMsgRef : null}
                             >
                                 <Message
                                     myId={_id}
