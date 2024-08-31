@@ -52,6 +52,10 @@
   height: calc(100vh - 128px);
 }
 
+.z-full {
+  z-index: 999999999999999999999
+}
+
 @media (min-width: 768px) {
   .fillScreen {
     height: calc(100vh - 140px);

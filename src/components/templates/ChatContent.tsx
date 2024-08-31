@@ -21,6 +21,7 @@ const ChatContent = () => {
     const [isLoaded, setIsLoaded] = useState(false)
     const [isLastMsgInView, setIsLastMsgInView] = useState(false);
     const [forceRender, setForceRender] = useState(false)
+    const [replayData, setReplayData] = useState<string | null>(null)
 
     const {
         _id: roomID,
@@ -29,6 +30,10 @@ const ChatContent = () => {
         name,
         participants
     } = useGlobalVariablesStore(state => state.selectedRoom!)
+
+    const replayDataMsg = useMemo(() => {
+        return messages.find(msg => msg._id == replayData)
+    }, [replayData, roomID])
 
     const onlineMembersCount = useMemo(() => {
         return onlineUsers.filter(data => participants.includes(data.userID)).length
@@ -220,6 +225,7 @@ const ChatContent = () => {
                                 ref={index == messages.length - 1 ? lastMsgRef : null}
                             >
                                 <Message
+                                    addReplay={data => setReplayData(data)}
                                     myId={_id}
                                     {...data}
 
@@ -239,7 +245,10 @@ const ChatContent = () => {
 
             </div>
 
-            <MessageSender />
+            <MessageSender
+                replayData={replayDataMsg}
+                closeReplay={() => setReplayData(null)}
+            />
 
         </section>
     )

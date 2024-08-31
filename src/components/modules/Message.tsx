@@ -1,12 +1,22 @@
 import { MessageModel } from '@/@types/data.t'
 import { useOnScreen } from '@/hook/useOnScreen'
 import { getTimeFromDate } from '@/utils'
+import { MdOutlineReplay } from "react-icons/md";
 import useSockets from '@/zustand/useSockets'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 
 
-const Message = ({ createdAt, message, seen, _id, sender, myId, roomID }: MessageModel & { myId: string }) => {
+const Message = ({
+    createdAt,
+    message,
+    seen,
+    _id,
+    sender,
+    myId,
+    roomID,
+    addReplay
+}: MessageModel & { myId: string, addReplay: (_id: string) => void }) => {
 
     const messageRef = useRef(null)
     const isFromMe = sender._id == myId
@@ -71,7 +81,13 @@ const Message = ({ createdAt, message, seen, _id, sender, myId, roomID }: Messag
                         ?
                         <div className='my-1'></div>
                         :
-                        <p className='w-full text-left text-[14px] font-bold mt-px font-segoeBold text-[#C8504F]'>{sender.name}</p>
+                        <div className='flex items-center w-full justify-between'>
+                            <p className='w-full text-left text-[14px] font-bold mt-px font-segoeBold text-[#C8504F]'>{sender.name}</p>
+                            <MdOutlineReplay
+                                onClick={() => addReplay(_id)}
+                                className='size-[19px] mt-1 shrink-0 cursor-pointer text-white/60'
+                            />
+                        </div>
                 }
                 <p className='text-[16px] p-1 mt-1 break-words mb-[18px]'>{message}</p>
 

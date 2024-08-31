@@ -1,15 +1,21 @@
 import { BsEmojiSmile } from "react-icons/bs";
 import { PiMicrophoneLight } from "react-icons/pi";
 import { MdAttachFile } from "react-icons/md";
-import { IoIosSend } from "react-icons/io";
+import { IoIosSend, IoMdClose } from "react-icons/io";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import useUserStore from "@/zustand/userStore";
 import useSockets from "@/zustand/useSockets";
+import { MessageModel } from "@/@types/data.t";
+
+interface Props {
+    replayData: Partial<MessageModel> | undefined
+    closeReplay: () => void
+}
 
 let draftMsg: string;
 
-const MessageSender = () => {
+const MessageSender = ({ replayData, closeReplay }: Props) => {
 
     const [text, setText] = useState('')
     const typingTimer = useRef<NodeJS.Timeout | null>(null)
@@ -20,7 +26,7 @@ const MessageSender = () => {
     useEffect(() => {
 
         const draftMessage = localStorage.getItem(_id!)
-        
+
         draftMessage?.length && setText(draftMessage)
         draftMsg = draftMessage?.length ? draftMessage : ''
 
@@ -64,10 +70,20 @@ const MessageSender = () => {
     }
 
     return (
-        <section className='sticky -mx-4 md:mx-0 flex-center bg-chatBg z-30 bottom-0 md:pb-3 inset-x-0'
+        <section className='sticky -mx-4 md:mx-0 bg-chatBg z-[999999] bottom-0 md:pb-3 inset-x-0'
         >
-            <div className='flex items-center w-full px-2 ch:w-full gap-1 bg-white/[5.12%] h-[53px] rounded'>
+
+            <div className={`${replayData?._id ? 'opacity-100 h-[37px]' : 'opacity-0 h-0'} flex flex-row-reverse duration-200 transition-all items-center gap-3 px-4 line-clamp-1 overflow-ellipsis absolute rounded-t-xl bg-white/[5.12%] inset-x-0 z-40 bottom-16`}>
+                <IoMdClose onClick={closeReplay} className="size-8 transition-all cursor-pointer active:bg-inherit active:rounded-full p-1" />
+                <p className="line-clamp-1 break-words overflow-ellipsis">{replayData?.message}</p>
+            </div>
+
+            <span className={`${replayData?._id ? 'opacity-100 h-[37px]' : 'opacity-0 h-0'} duration-200 transition-all border-b border-white/5 z-30 absolute inset-x-0 bottom-16 bg-inherit`}></span>
+
+            <div className='flex items-center relative w-full px-2 ch:w-full gap-1 bg-white/[5.12%] h-[53px] rounded'>
+
                 <BsEmojiSmile className="shrink-0 basis-[5%]" />
+
                 <input
                     value={text}
                     onChange={msgTextUpdater}
@@ -76,7 +92,9 @@ const MessageSender = () => {
                     type="text"
                     placeholder="Message"
                 />
+
                 <MdAttachFile className="shrink-0 basis-[5%] size-5 cursor-pointer" />
+
                 {
                     text.trim().length
                         ?
@@ -84,7 +102,9 @@ const MessageSender = () => {
                         :
                         <PiMicrophoneLight className="shrink-0 basis-[5%] size-6 cursor-pointer" />
                 }
+
             </div>
+
         </section>
     )
 }
