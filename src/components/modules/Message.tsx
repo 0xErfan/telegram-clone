@@ -20,6 +20,8 @@ const Message = ({
 }: MessageModel & { myId: string, addReplay: (_id: string) => void }) => {
 
     const messageRef = useRef(null)
+    const [isReplayBtnShown, setIsReplayBtnShown] = useState(false)
+
     const isFromMe = sender._id == myId
     const isInViewport = useOnScreen(messageRef)
     const messageTime = getTimeFromDate(createdAt)
@@ -49,6 +51,8 @@ const Message = ({
     return (
         <div
             ref={messageRef}
+            onMouseEnter={() => setIsReplayBtnShown(true)}
+            onMouseLeave={() => setIsReplayBtnShown(false)}
             className={`
                 flex items-end gap-2 relative
                 ${isFromMe ? 'flex-row-reverse bottomBorderRight' : 'flex-row bottomBorderLeft'}
@@ -60,7 +64,7 @@ const Message = ({
         >
             {
                 !isFromMe &&
-                <>
+                <div className='cursor-pointer'>
                     {
                         sender.avatar
                             ?
@@ -74,25 +78,33 @@ const Message = ({
                             :
                             <div className='size-[35px] rounded-full bg-lightBlue flex-center text-center font-bold text-2xl'>{sender.name[0]}</div>
                     }
-                </>
+                </div>
             }
-            <div className={`${isFromMe ? 'bg-darkBlue rounded-l-md rounded-tr-xl text-right' : 'bg-white/10 rounded-r-md rounded-tl-xl text-left'} relative w-fit max-w-[80%] min-w-24 xl:max-w-[60%] px-[12px]`}>
+            <div className={`${isFromMe ? 'bg-darkBlue rounded-l-md rounded-tr-xl text-right pl-1 pr-3' : 'bg-white/10 rounded-r-md rounded-tl-xl text-left pr-1 pl-3'} relative w-fit max-w-[80%] min-w-24 xl:max-w-[60%]`}>
                 {
                     isFromMe
                         ?
                         <div className='my-1'></div>
                         :
-                        <div className='flex items-center w-full justify-between'>
+                        <div className='flex items-center gap-2 w-full justify-between'>
                             <p className='w-full text-left text-[14px] font-bold mt-px font-segoeBold text-[#C8504F]'>{sender.name}</p>
                             <MdOutlineReplay
                                 onClick={() => addReplay(_id)}
-                                className='size-[19px] mt-1 shrink-0 cursor-pointer text-white/60'
+                                className={`${isReplayBtnShown ? 'opacity-100' : 'opacity-0'} duration-200 transition-all size-[19px] mt-1 shrink-0 cursor-pointer text-white/60`}
                             />
                         </div>
                 }
 
-                <div className='flex flex-col text-[16px] p-1 mt-1 break-words mb-[18px]'>
-                    {replayedTo && <div className='text-sm'>{replayedTo.message}</div>}
+                <div className='flex flex-col text-[16px] text-left gap-1 p-1 mt-1 break-words mb-[13px]'>
+                    {
+                        replayedTo
+                        &&
+                        <div className={`${isFromMe ? 'bg-lightBlue/25 rounded-l-md' : 'bg-green-500/15 rounded-r-md'} cursor-pointer rounded-md rounded-t-md text-sm relative w-full py-1 px-3 overflow-hidden`}>
+                            <span className={`absolute ${isFromMe ? 'bg-white' : 'bg-green-500'} left-0  inset-y-0 w-[3px] h-full `}></span>
+                            <p className='font-extrabold font-segoeBold'>{replayedTo.username}</p>
+                            <p className='font-thin'>{replayedTo.message}</p>
+                        </div>
+                    }
                     <p>{message}</p>
                 </div>
 

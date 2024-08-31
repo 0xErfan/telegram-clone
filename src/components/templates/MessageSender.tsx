@@ -48,7 +48,8 @@ const MessageSender = ({ replayData, closeReplay }: Props) => {
                     targetID: replayData?._id,
                     replayedTo: {
                         message: replayData?.message,
-                        msgID: replayData?._id
+                        msgID: replayData?._id,
+                        username: replayData.sender?.name
                     }
                 }
                 : null

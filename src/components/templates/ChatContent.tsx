@@ -62,7 +62,6 @@ const ChatContent = () => {
         manageScroll()
 
         rooms?.on('newMessage', newMsg => {
-            console.log(newMsg)
             if (newMsg.roomID == roomID) {
                 setter({
                     selectedRoom: {

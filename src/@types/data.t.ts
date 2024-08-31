@@ -19,7 +19,7 @@ interface MessageModel {
     sender: UserModel
     seen: string[]
     replays: string[]
-    replayedTo: { message: string, msgID: string } | null
+    replayedTo: { message: string, msgID: string, username: string } | null
     roomID: string
     createdAt: string
     updatedAt: string
