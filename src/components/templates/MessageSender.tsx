@@ -37,13 +37,24 @@ const MessageSender = ({ replayData, closeReplay }: Props) => {
 
     }, [_id])
 
-    const emitMessageHandler = () => {
+    const sendMessage = () => {
+
         rooms?.emit('newMessage', {
             roomID: _id,
             message: text,
-            sender: userData
+            sender: userData,
+            replayData: replayData ?
+                {
+                    targetID: replayData?._id,
+                    replayedTo: {
+                        message: replayData?.message,
+                        msgID: replayData?._id
+                    }
+                }
+                : null
         })
 
+        closeReplay()
         setText('')
         draftMsg = ''
         localStorage.removeItem(_id!)
@@ -73,12 +84,12 @@ const MessageSender = ({ replayData, closeReplay }: Props) => {
         <section className='sticky -mx-4 md:mx-0 bg-chatBg z-[999999] bottom-0 md:pb-3 inset-x-0'
         >
 
-            <div className={`${replayData?._id ? 'opacity-100 h-[37px]' : 'opacity-0 h-0'} flex flex-row-reverse duration-200 transition-all items-center gap-3 px-4 line-clamp-1 overflow-ellipsis absolute rounded-t-xl bg-white/[5.12%] inset-x-0 z-40 bottom-16`}>
+            <div className={`${replayData?._id ? 'opacity-100 h-[37px]' : 'opacity-0 h-0'} flex flex-row-reverse duration-200 transition-all items-center gap-3 px-4 line-clamp-1 overflow-ellipsis absolute rounded-t-xl bg-white/[5.12%] inset-x-0 z-40 bottom-[53px] md:bottom-16`}>
                 <IoMdClose onClick={closeReplay} className="size-8 transition-all cursor-pointer active:bg-inherit active:rounded-full p-1" />
                 <p className="line-clamp-1 break-words overflow-ellipsis">{replayData?.message}</p>
             </div>
 
-            <span className={`${replayData?._id ? 'opacity-100 h-[37px]' : 'opacity-0 h-0'} duration-200 transition-all border-b border-white/5 z-30 absolute inset-x-0 bottom-16 bg-inherit`}></span>
+            <span className={`${replayData?._id ? 'opacity-100 h-[37px]' : 'opacity-0 h-0'} duration-200 transition-all border-b border-white/5 z-30 absolute inset-x-0 bottom-[53px] md:bottom-16 bg-inherit`}></span>
 
             <div className='flex items-center relative w-full px-2 ch:w-full gap-1 bg-white/[5.12%] h-[53px] rounded'>
 
@@ -87,7 +98,7 @@ const MessageSender = ({ replayData, closeReplay }: Props) => {
                 <input
                     value={text}
                     onChange={msgTextUpdater}
-                    onKeyUp={e => e.key == "Enter" && text.trim().length && emitMessageHandler()}
+                    onKeyUp={e => e.key == "Enter" && text.trim().length && sendMessage()}
                     className="bg-transparent resize-none outline-none h-full flex-center"
                     type="text"
                     placeholder="Message"
@@ -98,7 +109,7 @@ const MessageSender = ({ replayData, closeReplay }: Props) => {
                 {
                     text.trim().length
                         ?
-                        <IoIosSend onClick={emitMessageHandler} className="shrink-0 basis-[5%] size-6 cursor-pointer text-lightBlue rotate-45" />
+                        <IoIosSend onClick={sendMessage} className="shrink-0 basis-[5%] size-6 cursor-pointer text-lightBlue rotate-45" />
                         :
                         <PiMicrophoneLight className="shrink-0 basis-[5%] size-6 cursor-pointer" />
                 }

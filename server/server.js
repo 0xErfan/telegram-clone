@@ -20,7 +20,7 @@ await connectToDB()
 
 io.on('connection', socket => {
 
-    socket.on('newMessage', async ({ roomID, sender, message }) => {
+    socket.on('newMessage', async ({ roomID, sender, message, replayData }) => {
 
         let tempID = Date.now()
 
@@ -32,7 +32,11 @@ io.on('connection', socket => {
             createdAt: Date.now()
         }
 
-        io.to(roomID).emit('newMessage', { ...msgData, _id: tempID })
+        io.to(roomID).emit('newMessage', {
+            ...msgData,
+            _id: tempID,
+            replayedTo: replayData ? replayData.replayedTo : null
+        })
 
         try {
 
@@ -42,6 +46,15 @@ io.on('connection', socket => {
             io.to(roomID).emit('newMessageIdUpdate', { tempID, _id: newMsg._id })
 
             tempID = null
+
+            if (replayData) {
+                await MessageModel.findOneAndUpdate(
+                    { _id: replayData.targetID },
+                    { $push: { replays: newMsg._id } }
+                )
+                newMsg.replayedTo = replayData.replayedTo
+                await newMsg.save()
+            }
 
             await RoomModel.findOneAndUpdate(
                 { _id: roomID },
@@ -100,6 +113,13 @@ io.on('connection', socket => {
                     path: 'sender',
                     model: UserModel
                 }
+            })
+            .populate({
+                path: 'messages',
+                populate: {
+                    path: 'replay',
+                    model: MessageModel,
+                },
             });
 
         socket.emit('joining', roomData)

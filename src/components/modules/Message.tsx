@@ -1,10 +1,10 @@
-import { MessageModel } from '@/@types/data.t'
 import { useOnScreen } from '@/hook/useOnScreen'
 import { getTimeFromDate } from '@/utils'
 import { MdOutlineReplay } from "react-icons/md";
 import useSockets from '@/zustand/useSockets'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
+import { MessageModel } from '@/@types/data.t';
 
 
 const Message = ({
@@ -15,6 +15,7 @@ const Message = ({
     sender,
     myId,
     roomID,
+    replayedTo,
     addReplay
 }: MessageModel & { myId: string, addReplay: (_id: string) => void }) => {
 
@@ -89,7 +90,11 @@ const Message = ({
                             />
                         </div>
                 }
-                <p className='text-[16px] p-1 mt-1 break-words mb-[18px]'>{message}</p>
+
+                <div className='flex flex-col text-[16px] p-1 mt-1 break-words mb-[18px]'>
+                    {replayedTo && <div className='text-sm'>{replayedTo.message}</div>}
+                    <p>{message}</p>
+                </div>
 
                 <span className={`flex items-center justify-end gap-1 absolute bottom-px right-3 w-full text-[12px]  ${isFromMe ? 'text-[#B7D9F3]' : 'text-darkGray'} text-right`}>
                     <p className='whitespace-nowrap'>{messageTime}</p>
