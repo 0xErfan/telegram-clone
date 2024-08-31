@@ -22,7 +22,7 @@ const LeftBar = () => {
     const { selectedRoom, setter } = useGlobalVariablesStore(state => state)
 
     useEffect(() => {
-        
+
         if (!_id) return
 
         updater('rooms', roomSocket)
@@ -46,10 +46,13 @@ const LeftBar = () => {
             })
         })
 
+        roomSocket.on('updateOnlineUsers', onlineUsers => setter({ onlineUsers }))
+
         return () => {
             roomSocket.off('getRooms')
             roomSocket.off('joining')
             roomSocket.off('lastMsgUpdate')
+            roomSocket.off('updateOnlineUsers')
         }
     }, [_id])
 

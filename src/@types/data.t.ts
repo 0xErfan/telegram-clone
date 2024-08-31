@@ -49,6 +49,7 @@ interface RoomModel {
     avatar: string
     participants: [_id: string]
     admins: [_id: string]
+    type: 'group' | 'private' | 'chanel'
     creator: string
     messages: MessageModel[]
     locations: LocationModel[]

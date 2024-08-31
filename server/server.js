@@ -14,6 +14,8 @@ const io = new Server(3001, {
 })
 
 let typings = []
+let onlineUsers = []
+
 await connectToDB()
 
 io.on('connection', socket => {
@@ -68,6 +70,9 @@ io.on('connection', socket => {
 
         for (const room of userRooms) socket.join(room._id.toString())
 
+        onlineUsers.push({ socketID: socket.id, userID })
+        io.to([...socket.rooms]).emit('updateOnlineUsers', onlineUsers)
+
         const processRooms = async () => {
             const promises = userRooms.map(async (room) => {
                 const lastMsgID = room.messages?.[room.messages.length - 1]?._id || null;
@@ -111,4 +116,9 @@ io.on('connection', socket => {
         typings = typings.filter(tl => tl !== data.sender.name)
         io.to(data.roomID).emit('stop-typing', data)
     })
+
+    socket.on('disconnect', () => {
+        onlineUsers = onlineUsers.filter(data => data.socketID !== socket.id)
+        io.to([...socket.rooms]).emit('updateOnlineUsers', onlineUsers)
+    });
 })

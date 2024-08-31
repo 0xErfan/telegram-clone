@@ -16,7 +16,7 @@ const ChatContent = () => {
     const { _id, name: myName } = useUserStore(state => state)
     const { setter } = useGlobalVariablesStore(state => state)
     const { rooms } = useSockets(state => state)
-    const selectedRoom = useGlobalVariablesStore(state => state.selectedRoom!)
+    const { selectedRoom, onlineUsers } = useGlobalVariablesStore(state => state) || {}
     const [typings, setTypings] = useState<string[]>([])
     const [isLoaded, setIsLoaded] = useState(false)
     const [isLastMsgInView, setIsLastMsgInView] = useState(false);
@@ -29,6 +29,10 @@ const ChatContent = () => {
         name,
         participants
     } = useGlobalVariablesStore(state => state.selectedRoom!)
+
+    const onlineMembersCount = useMemo(() => {
+        return onlineUsers.filter(data => participants.includes(data.userID)).length
+    }, [onlineUsers.length])
 
     const notSeenMessages = useMemo(() => {
 
@@ -57,7 +61,7 @@ const ChatContent = () => {
                 setter({
                     selectedRoom: {
                         ...selectedRoom,
-                        messages: [...selectedRoom.messages, newMsg]
+                        messages: [...selectedRoom!.messages, newMsg]
                     }
                 })
             }
@@ -65,7 +69,7 @@ const ChatContent = () => {
 
         rooms?.on('newMessageIdUpdate', ({ tempID, _id }) => {
 
-            const updatedMsgID = [...selectedRoom.messages]
+            const updatedMsgID = [...selectedRoom!.messages]
 
             updatedMsgID.some(msg => {
                 if (msg._id === tempID) {
@@ -185,7 +189,7 @@ const ChatContent = () => {
                                         </div>
                                         :
                                         <>
-                                            {participants?.length + ' members, ' + 2 + ' online'}
+                                            {participants?.length + ' members, ' + (onlineMembersCount ? onlineMembersCount + ' online' : null)}
                                         </>
                                 }
                             </div>
@@ -238,7 +242,6 @@ const ChatContent = () => {
             <MessageSender />
 
         </section>
-
     )
 }
 

@@ -17,12 +17,17 @@ export const ChatCard = ({
 }: RoomModel & { lastMsgData: MessageModel }
 ) => {
 
-    const { selectedRoom } = useGlobalVariablesStore(state => state)
+    const { selectedRoom, onlineUsers } = useGlobalVariablesStore(state => state)
     const { _id: myID } = useUserStore(state => state) || {}
     const { rooms } = useSockets(state => state)
     const latestMessageTime = getTimeFromDate(lastMsgData?.createdAt)
 
     const isActive = selectedRoom?._id == _id
+
+    const isOnline = onlineUsers.some(data => {
+        if (data.userID === myID) return true
+    })
+
     const notSeenMessages = messages?.length || null
     const [draftMessage, setDraftMessage] = useState('')
 
@@ -50,12 +55,12 @@ export const ChatCard = ({
                         :
                         <div className="size-[50px] shrink-0 bg-darkBlue rounded-full flex-center text-bold text-center text-white text-2xl">{name.length && name[0]}</div>
                 }
-                {/* {
-                    isOnline
+                {
+                    (selectedRoom?.type === 'private' && isOnline)
                         ?
                         <span className={`absolute bg-lightBlue transition-all duration-300 ${isActive ? 'left-12' : 'left-9'} size-[10px] bottom-3 rounded-full`}></span>
                         : null
-                } */}
+                }
             </>
 
             <div className="flex flex-col w-full ch:w-full gap-1 text-darkGray text-[14px]">

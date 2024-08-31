@@ -17,7 +17,6 @@ export const POST = async (req: Request) => {
         const verifiedToken = tokenDecoder(token) as { phone: string }
 
         const userData = await UserModel.findOne({ phone: verifiedToken?.phone }).lean()
-        console.log(userData)
 
         if (!userData || !verifiedToken) {
             cookies().delete('token')
