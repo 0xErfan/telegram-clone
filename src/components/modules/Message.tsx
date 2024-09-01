@@ -74,7 +74,7 @@ const Message = ({
                                 alt='avatar'
                             />
                             :
-                            <div className='size-[35px] rounded-full bg-lightBlue flex-center text-center font-bold text-2xl'>{sender.name[0]}</div>
+                            <div className='size-[35px] rounded-full bg-lightBlue flex-center text-center font-bold text-xl pb-1'>{sender.name[0]}</div>
                     }
                 </div>
             }
@@ -106,8 +106,8 @@ const Message = ({
                             className={`${isFromMe ? 'bg-lightBlue/25 rounded-l-md' : 'bg-green-500/15 rounded-r-md'} cursor-pointer rounded-md rounded-t-md text-sm relative w-full py-1 px-3 overflow-hidden`}
                         >
                             <span className={`absolute ${isFromMe ? 'bg-white' : 'bg-green-500'} left-0  inset-y-0 w-[3px] h-full `}></span>
-                            <p className='font-extrabold font-segoeBold'>{replayedTo.username}</p>
-                            <p className='font-thin'>{replayedTo.message}</p>
+                            <p className='font-extrabold font-segoeBold break-words line-clamp-1 overflow-ellipsis'>{replayedTo.username}</p>
+                            <p className='font-thin break-words line-clamp-1 overflow-ellipsis'>{replayedTo.message}</p>
                         </div>
                     }
                     <p>{message}</p>

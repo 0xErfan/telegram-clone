@@ -92,12 +92,18 @@ const MessageSender = ({ replayData, closeReplay }: Props) => {
         <section className='sticky -mx-4 md:mx-0 bg-chatBg z-[999999] bottom-0 md:pb-3 inset-x-0'
         >
 
-            <div className={`${replayData?._id ? 'opacity-100 h-[37px]' : 'opacity-0 h-0'} flex flex-row-reverse duration-200 transition-all items-center gap-3 px-4 line-clamp-1 overflow-ellipsis absolute rounded-t-xl bg-white/[5.12%] inset-x-0 z-40 bottom-[53px] md:bottom-16`}>
+            <div className={`${replayData?._id ? 'opacity-100 h-[50px] pb-1' : 'opacity-0 h-0'} flex flex-row-reverse justify-between duration-200 transition-all items-center gap-3 px-4 line-clamp-1 overflow-ellipsis absolute rounded-t-xl bg-white/[5.12%] inset-x-0 z-40 bottom-[53px] md:bottom-16`}>
+
                 <IoMdClose onClick={closeReplay} className="size-8 transition-all cursor-pointer active:bg-inherit active:rounded-full p-1" />
-                <p className="line-clamp-1 break-words overflow-ellipsis">{replayData?.message}</p>
+
+                <div className="flex flex-col text-left">
+                    <h4 className="text-lightBlue text-[15px]">Reply to {replayData?.sender?.name}</h4>
+                    <p className="line-clamp-1 text-[13px] text-white/60 break-words overflow-ellipsis">{replayData?.message}</p>
+                </div>
+
             </div>
 
-            <span className={`${replayData?._id ? 'opacity-100 h-[37px]' : 'opacity-0 h-0'} duration-200 transition-all border-b border-white/5 z-30 absolute inset-x-0 bottom-[53px] md:bottom-16 bg-inherit`}></span>
+            <span className={`${replayData?._id ? 'opacity-100 h-[50px] pb-1' : 'opacity-0 h-0'} duration-200 transition-all border-b border-white/5 z-30 absolute inset-x-0 bottom-[53px] md:bottom-16 bg-inherit`}></span>
 
             <div className='flex items-center relative w-full px-2 ch:w-full gap-1 bg-white/[5.12%] h-[53px] rounded'>
 

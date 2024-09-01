@@ -12,10 +12,13 @@ export const ChatCard = ({
     messages,
     _id,
     name,
+    type,
     avatar,
-    lastMsgData
+    lastMsgData,
 }: RoomModel & { lastMsgData: MessageModel }
 ) => {
+
+    const [draftMessage, setDraftMessage] = useState('')
 
     const { selectedRoom, onlineUsers } = useGlobalVariablesStore(state => state)
     const { _id: myID } = useUserStore(state => state) || {}
@@ -23,13 +26,8 @@ export const ChatCard = ({
     const latestMessageTime = getTimeFromDate(lastMsgData?.createdAt)
 
     const isActive = selectedRoom?._id == _id
-
-    const isOnline = onlineUsers.some(data => {
-        if (data.userID === myID) return true
-    })
-
+    const isOnline = onlineUsers.some(data => { if (data.userID === myID) return true})
     const notSeenMessages = messages?.length || null
-    const [draftMessage, setDraftMessage] = useState('')
 
     useEffect(() => {
         setDraftMessage(localStorage.getItem(_id) || '')
@@ -56,7 +54,7 @@ export const ChatCard = ({
                         <div className="size-[50px] shrink-0 bg-darkBlue rounded-full flex-center text-bold text-center text-white text-2xl">{name.length && name[0]}</div>
                 }
                 {
-                    (selectedRoom?.type === 'private' && isOnline)
+                    (type === 'private' && isOnline)
                         ?
                         <span className={`absolute bg-lightBlue transition-all duration-300 ${isActive ? 'left-12' : 'left-9'} size-[10px] bottom-3 rounded-full`}></span>
                         : null
@@ -82,7 +80,7 @@ export const ChatCard = ({
                         }
                     </div>
 
-                    <div className="flex items-center justify-between w-14">
+                    <div className="flex items-center justify-between w-14 gap-2">
                         <div className="flex-center text-center w-min px-2 bg-darkBlue text-white rounded-full">{notSeenMessages}</div>
                         <Image
                             priority
