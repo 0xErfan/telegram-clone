@@ -182,6 +182,24 @@ const scrollIntoElem = (elem: Element) => {
     elem?.scrollIntoView({ behavior: 'smooth' })
 }
 
+const scrollToMessage = (id: string) => {
+
+    const replayTargetElem = document.getElementsByClassName(id!)[0]
+
+    if (replayTargetElem) {
+
+        replayTargetElem.scrollIntoView({ block: 'center', behavior: 'smooth' })
+
+        replayTargetElem.className += ' duration-500 rounded-xl transition-all py-px '
+        replayTargetElem.classList.add('bg-lightBlue/5')
+
+        setTimeout(() => {
+            replayTargetElem.classList.remove('bg-lightBlue/5')
+            replayTargetElem.className.replace(' duration-500 rounded-xl transition-all py-px ', '')
+        }, 800);
+    }
+}
+
 export {
     getTimer,
     showToast,
@@ -197,5 +215,6 @@ export {
     isLoginCheck,
     delay,
     getTimeFromDate,
-    scrollIntoElem
+    scrollIntoElem,
+    scrollToMessage
 }

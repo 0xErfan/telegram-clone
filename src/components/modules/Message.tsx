@@ -1,5 +1,5 @@
 import { useOnScreen } from '@/hook/useOnScreen'
-import { getTimeFromDate } from '@/utils'
+import { getTimeFromDate, scrollToMessage } from '@/utils'
 import { MdOutlineReplay } from "react-icons/md";
 import useSockets from '@/zustand/useSockets'
 import Image from 'next/image'
@@ -51,8 +51,6 @@ const Message = ({
     return (
         <div
             ref={messageRef}
-            onMouseEnter={() => setIsReplayBtnShown(true)}
-            onMouseLeave={() => setIsReplayBtnShown(false)}
             className={`
                 flex items-end gap-2 relative
                 ${isFromMe ? 'flex-row-reverse bottomBorderRight' : 'flex-row bottomBorderLeft'}
@@ -80,7 +78,11 @@ const Message = ({
                     }
                 </div>
             }
-            <div className={`${isFromMe ? 'bg-darkBlue rounded-l-md rounded-tr-xl text-right pl-1 pr-3' : 'bg-white/10 rounded-r-md rounded-tl-xl text-left pr-1 pl-3'} relative w-fit max-w-[80%] min-w-24 xl:max-w-[60%]`}>
+            <div
+                onMouseEnter={() => setIsReplayBtnShown(true)}
+                onMouseLeave={() => setIsReplayBtnShown(false)}
+                className={`${isFromMe ? 'bg-darkBlue rounded-l-md rounded-tr-xl text-right pl-1 pr-3' : 'bg-white/10 rounded-r-md rounded-tl-xl text-left pr-1 pl-3'} relative w-fit max-w-[80%] min-w-24 xl:max-w-[60%]`}
+            >
                 {
                     isFromMe
                         ?
@@ -99,7 +101,10 @@ const Message = ({
                     {
                         replayedTo
                         &&
-                        <div className={`${isFromMe ? 'bg-lightBlue/25 rounded-l-md' : 'bg-green-500/15 rounded-r-md'} cursor-pointer rounded-md rounded-t-md text-sm relative w-full py-1 px-3 overflow-hidden`}>
+                        <div
+                            onClick={() => scrollToMessage(replayedTo?.msgID)}
+                            className={`${isFromMe ? 'bg-lightBlue/25 rounded-l-md' : 'bg-green-500/15 rounded-r-md'} cursor-pointer rounded-md rounded-t-md text-sm relative w-full py-1 px-3 overflow-hidden`}
+                        >
                             <span className={`absolute ${isFromMe ? 'bg-white' : 'bg-green-500'} left-0  inset-y-0 w-[3px] h-full `}></span>
                             <p className='font-extrabold font-segoeBold'>{replayedTo.username}</p>
                             <p className='font-thin'>{replayedTo.message}</p>
