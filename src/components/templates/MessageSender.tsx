@@ -18,7 +18,10 @@ let draftMsg: string;
 const MessageSender = ({ replayData, closeReplay }: Props) => {
 
     const [text, setText] = useState('')
+
     const typingTimer = useRef<NodeJS.Timeout | null>(null)
+    const inputRef = useRef<HTMLInputElement | null>(null)
+
     const { _id } = useGlobalVariablesStore(state => state?.selectedRoom) || {}
     const { rooms } = useSockets(state => state)
     const userData = useUserStore(state => state)
@@ -36,6 +39,10 @@ const MessageSender = ({ replayData, closeReplay }: Props) => {
         }
 
     }, [_id])
+
+    useEffect(() => {
+        replayData?._id && inputRef.current?.focus()
+    }, [replayData?._id])
 
     const sendMessage = () => {
 
@@ -100,6 +107,7 @@ const MessageSender = ({ replayData, closeReplay }: Props) => {
                     value={text}
                     onChange={msgTextUpdater}
                     onKeyUp={e => e.key == "Enter" && text.trim().length && sendMessage()}
+                    ref={inputRef}
                     className="bg-transparent resize-none outline-none h-full flex-center"
                     type="text"
                     placeholder="Message"
