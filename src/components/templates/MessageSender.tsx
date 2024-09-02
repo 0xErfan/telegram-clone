@@ -105,7 +105,7 @@ const MessageSender = ({ replayData, closeReplay }: Props) => {
 
             <span className={`${replayData?._id ? 'opacity-100 h-[50px] pb-1' : 'opacity-0 h-0'} duration-200 transition-all border-b border-white/5 z-30 absolute inset-x-0 bottom-[53px] md:bottom-16 bg-inherit`}></span>
 
-            <div className='flex items-center relative w-full px-2 ch:w-full gap-1 bg-white/[5.12%] h-[53px] rounded'>
+            <div className='flex items-center relative w-full md:px-2 px-4 ch:w-full md:gap-1 gap-3 bg-white/[5.12%] h-[53px] rounded'>
 
                 <BsEmojiSmile className="shrink-0 basis-[5%]" />
 

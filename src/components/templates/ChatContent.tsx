@@ -16,7 +16,7 @@ const ChatContent = () => {
     const { _id, name: myName } = useUserStore(state => state)
     const { setter } = useGlobalVariablesStore(state => state)
     const { rooms } = useSockets(state => state)
-    const { selectedRoom, onlineUsers } = useGlobalVariablesStore(state => state) || {}
+    const { selectedRoom, onlineUsers, isGroupDetailsShown } = useGlobalVariablesStore(state => state) || {}
     const [typings, setTypings] = useState<string[]>([])
     const [isLoaded, setIsLoaded] = useState(false)
     const [isLastMsgInView, setIsLastMsgInView] = useState(false);
@@ -156,7 +156,7 @@ const ChatContent = () => {
     }
 
     return (
-        <section data-aos="fade-right">
+        <section data-aos="fade-right" className="relative">
 
             <div className="flex items-center justify-between sticky top-0 border-b border-white/5 bg-chatBg z-30 py-3 xl:py-0 xl:h-[97px]">
 
@@ -167,7 +167,10 @@ const ChatContent = () => {
                         className='cursor-pointer size-6 text-white/80'
                     />
 
-                    <div className="flex items-start gap-3">
+                    <div
+                        onClick={() => setter({ isGroupDetailsShown: !isGroupDetailsShown })}
+                        className="flex items-start cursor-pointer gap-3"
+                    >
                         {
                             avatar
                                 ?
@@ -249,6 +252,16 @@ const ChatContent = () => {
                 replayData={replayDataMsg}
                 closeReplay={() => setReplayData(null)}
             />
+
+            {/* shadow layout */}
+            {
+                isGroupDetailsShown &&
+                <span
+                    onClick={() => setter({ isGroupDetailsShown: false })}
+                    className='inset-0 xl:static absolute transition-all duration-200 z-[999999]'
+                >
+                </span>
+            }
 
         </section>
     )

@@ -4,15 +4,12 @@ import { Suspense, lazy } from "react"
 
 const ChatContent = lazy(() => import('./ChatContent'))
 
-const RightBar = () => {
+const MiddleBar = () => {
 
-    const { selectedRoom } = useGlobalVariablesStore(state => state)
+    const { selectedRoom, isGroupDetailsShown } = useGlobalVariablesStore(state => state)
 
     return (
-        <div
-            data-aos-duration="400"
-            data-aos='fade-right'
-            className={`flex-[2.4] bg-chatBg relative ${!selectedRoom && 'hidden'} md:block xl:rounded-l-2xl px-2 md:px-4 xl:px-8 text-white overflow-x-hidden noScrollWidth`}
+        <div className={`flex-[2.4] bg-chatBg relative ${!selectedRoom && 'hidden'} ${isGroupDetailsShown ? 'xl:rounded-2xl' : 'xl:rounded-l-2xl'}  md:block px-2 md:px-4 xl:px-8 text-white overflow-x-hidden noScrollWidth`}
         >
             {
                 selectedRoom !== null
@@ -31,4 +28,4 @@ const RightBar = () => {
     )
 }
 
-export default RightBar
+export default MiddleBar
