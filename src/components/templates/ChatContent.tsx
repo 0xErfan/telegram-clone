@@ -16,7 +16,7 @@ const ChatContent = () => {
     const { _id, name: myName } = useUserStore(state => state)
     const { setter } = useGlobalVariablesStore(state => state)
     const { rooms } = useSockets(state => state)
-    const { selectedRoom, onlineUsers, isGroupDetailsShown } = useGlobalVariablesStore(state => state) || {}
+    const { selectedRoom, onlineUsers, isRoomDetailsShown } = useGlobalVariablesStore(state => state) || {}
     const [typings, setTypings] = useState<string[]>([])
     const [isLoaded, setIsLoaded] = useState(false)
     const [isLastMsgInView, setIsLastMsgInView] = useState(false);
@@ -168,7 +168,7 @@ const ChatContent = () => {
                     />
 
                     <div
-                        onClick={() => setter({ isGroupDetailsShown: !isGroupDetailsShown })}
+                        onClick={() => setter({ isRoomDetailsShown: !isRoomDetailsShown })}
                         className="flex items-start cursor-pointer gap-3"
                     >
                         {
@@ -255,9 +255,9 @@ const ChatContent = () => {
 
             {/* shadow layout */}
             {
-                isGroupDetailsShown &&
+                isRoomDetailsShown &&
                 <span
-                    onClick={() => setter({ isGroupDetailsShown: false })}
+                    onClick={() => setter({ isRoomDetailsShown: false })}
                     className='inset-0 xl:static absolute transition-all duration-200 z-[999999]'
                 >
                 </span>

@@ -55,6 +55,7 @@ interface RoomModel {
     messages: MessageModel[]
     locations: LocationModel[]
     medias: MediaModel[]
+    link: string
     createdAt: string
     updatedAt: string
 }
