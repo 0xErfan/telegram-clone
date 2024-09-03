@@ -81,7 +81,17 @@ io.on('connection', socket => {
 
         const userRooms = await RoomModel.find({ participants: { $in: userID } }).lean()
 
-        for (const room of userRooms) socket.join(room._id.toString())
+        const userPvs = await RoomModel.find({
+            $and: [
+                { participants: { $in: userID } },
+                { type: 'private' }
+            ]
+        }).lean().populate('participants')
+
+        for (const room of userRooms) {
+            room.participants = userPvs.find(data => data._id.toString() == room._id.toString())?.participants || room.participants
+            socket.join(room._id.toString())
+        }
 
         onlineUsers.push({ socketID: socket.id, userID })
         io.to([...socket.rooms]).emit('updateOnlineUsers', onlineUsers)
@@ -122,6 +132,8 @@ io.on('connection', socket => {
                 },
             });
 
+        roomData?.type == 'private' && await roomData.populate('participants')
+
         socket.emit('joining', roomData)
     })
 
@@ -141,4 +153,5 @@ io.on('connection', socket => {
         onlineUsers = onlineUsers.filter(data => data.socketID !== socket.id)
         io.to([...socket.rooms]).emit('updateOnlineUsers', onlineUsers)
     });
+
 })

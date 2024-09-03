@@ -6,6 +6,11 @@ import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { MessageModel } from '@/@types/data.t';
 
+interface Props {
+    myId: string,
+    addReplay: (_id: string) => void
+    isPv?: boolean
+}
 
 const Message = ({
     createdAt,
@@ -16,8 +21,9 @@ const Message = ({
     myId,
     roomID,
     replayedTo,
-    addReplay
-}: MessageModel & { myId: string, addReplay: (_id: string) => void }) => {
+    addReplay,
+    isPv = false
+}: MessageModel & Props) => {
 
     const messageRef = useRef(null)
     const [isReplayBtnShown, setIsReplayBtnShown] = useState(false)
@@ -53,7 +59,8 @@ const Message = ({
             ref={messageRef}
             className={`
                 flex items-end gap-2 relative
-                ${isFromMe ? 'flex-row-reverse bottomBorderRight' : 'flex-row bottomBorderLeft'}
+                ${isFromMe ? 'flex-row-reverse' : 'flex-row'}
+                ${!isPv && (isFromMe ? 'bottomBorderRight' : 'bottomBorderLeft')}
                 ${isMounted ? 'opacity-100 scale-x-100' : 'opacity-0 scale-0'}
                 transition-all
                 duration-500
@@ -61,7 +68,7 @@ const Message = ({
             `}
         >
             {
-                !isFromMe &&
+                !isFromMe && !isPv &&
                 <div className='cursor-pointer'>
                     {
                         sender.avatar
@@ -84,7 +91,7 @@ const Message = ({
                 className={`${isFromMe ? 'bg-darkBlue rounded-l-md rounded-tr-xl text-right pl-1 pr-3' : 'bg-white/10 rounded-r-md rounded-tl-xl text-left pr-1 pl-3'} relative w-fit max-w-[80%] min-w-24 xl:max-w-[60%]`}
             >
                 {
-                    isFromMe
+                    (isFromMe || isPv)
                         ?
                         <div className='my-1'></div>
                         :

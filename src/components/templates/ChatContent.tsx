@@ -13,7 +13,7 @@ import ScrollToBottom from "./ScrollToBottom";
 const ChatContent = () => {
 
     let lastMsgRef = useRef<HTMLDivElement>(null)
-    const { _id, name: myName } = useUserStore(state => state)
+    const { _id: myID, name: myName } = useUserStore(state => state)
     const { setter } = useGlobalVariablesStore(state => state)
     const { rooms } = useSockets(state => state)
     const { selectedRoom, onlineUsers, isRoomDetailsShown } = useGlobalVariablesStore(state => state) || {}
@@ -26,10 +26,21 @@ const ChatContent = () => {
     const {
         _id: roomID,
         messages,
-        avatar,
-        name,
+        type,
         participants
-    } = useGlobalVariablesStore(state => state.selectedRoom!)
+    } = useGlobalVariablesStore(state => state.selectedRoom!);
+
+    const { avatar, name, _id } = useMemo(() => {
+        return type == 'private'
+            ?
+            (
+                participants?.find((data: any) => data?._id !== myID)
+                ||
+                participants?.find((data: any) => data?._id == myID)
+            )
+            :
+            (selectedRoom || '') as any
+    }, [selectedRoom?._id])
 
     const replayDataMsg = useMemo(() => {
         return messages.find(msg => msg._id == replayData)
@@ -44,16 +55,16 @@ const ChatContent = () => {
         let count = 0
 
         if (messages.length) {
-            const msgs = [...messages].filter(msg => msg.sender._id !== _id && !msg.seen.includes(_id))
+            const msgs = [...messages].filter(msg => msg.sender._id !== myID && !msg.seen.includes(myID))
             count = msgs.length
         }
 
         return count;
-    }, [messages.length, _id, forceRender])
+    }, [messages.length, myID, forceRender])
 
     const manageScroll = () => {
         if (isLoaded) {
-            const isFromMe = messages[messages?.length - 1]?.sender._id === _id;
+            const isFromMe = messages[messages?.length - 1]?.sender._id === myID;
             if (isFromMe || isLastMsgInView) lastMsgRef.current?.scrollIntoView({ behavior: 'smooth' })
         }
     }
@@ -136,12 +147,12 @@ const ChatContent = () => {
 
     useEffect(() => {
         if (!isLoaded && _id && messages.length) {
-            const lastSeenMsg = [...messages].reverse().find(msg => msg.sender._id === _id || msg.seen.includes(_id))
+            const lastSeenMsg = [...messages].reverse().find(msg => msg.sender._id === myID || msg.seen.includes(myID))
             const lastSeenMsgElem = document.getElementsByClassName(lastSeenMsg?._id!)[0]
             lastSeenMsgElem.scrollIntoView()
             setIsLoaded(true)
         } // not working properly, the element get selected correctly but the scroll is not
-    }, [messages.length, isLoaded, _id])
+    }, [messages.length, isLoaded, myID])
 
     useEffect(() => {
         return () => {
@@ -176,13 +187,15 @@ const ChatContent = () => {
                                 ?
                                 <Image
                                     src={avatar}
-                                    width={50}
-                                    height={50}
+                                    width={55}
+                                    height={55}
+                                    className="size-[55px] object-center object-cover rounded-full"
                                     alt="avatar"
                                 />
                                 :
                                 <div className='flex-center bg-darkBlue rounded-full size-[50px] shrink-0 text-center font-bold text-2xl'>{name[0]}</div>
                         }
+
                         <div className="flex justify-center flex-col gap-1">
 
                             <h3 className="font-bold text-[16px] font-segoeBold">{name}</h3>
@@ -197,12 +210,19 @@ const ChatContent = () => {
                                         </div>
                                         :
                                         <>
-                                            {participants?.length + ' members, ' + (onlineMembersCount ? onlineMembersCount + ' online' : null)}
+                                            {
+                                                type == 'private'
+                                                    ?
+                                                    onlineUsers.some(data => { if (data.userID === _id) return true }) ? <span className="text-lightBlue">Online</span> : 'last seen recently'
+                                                    :
+                                                    participants?.length + ' members, ' + (onlineMembersCount ? onlineMembersCount + ' online' : null)
+                                            }
                                         </>
                                 }
                             </div>
 
                         </div>
+
                     </div>
 
                 </div>
@@ -229,7 +249,8 @@ const ChatContent = () => {
                             >
                                 <Message
                                     addReplay={data => setReplayData(data)}
-                                    myId={_id}
+                                    myId={myID}
+                                    isPv={type === 'private'}
                                     {...data}
 
                                 />

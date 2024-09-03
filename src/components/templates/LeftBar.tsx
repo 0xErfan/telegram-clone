@@ -46,7 +46,7 @@ const LeftBar = () => {
             })
         })
 
-        roomSocket.on('updateOnlineUsers', onlineUsers => setter({ onlineUsers }))
+        roomSocket.on('updateOnlineUsers', onlineUsers => setter({ onlineUsers })) // check if its accessible for all(bug) or not
 
         return () => {
             roomSocket.off('getRooms')

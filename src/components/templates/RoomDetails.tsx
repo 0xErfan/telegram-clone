@@ -7,26 +7,40 @@ import { TbMessage } from "react-icons/tb";
 import { IoCopyOutline } from "react-icons/io5";
 import { PiDotsThreeVerticalBold } from "react-icons/pi";
 import { Switch } from "@nextui-org/switch";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import useUserStore from "@/zustand/userStore";
 
 
 const RoomDetails = () => {
 
     const { setter, isRoomDetailsShown, selectedRoom, onlineUsers } = useGlobalVariablesStore(state => state) || {}
-    const { avatar, name, participants, type, link } = { ...selectedRoom }
-
+    const myID = useUserStore(state => state._id)
     const [isCopied, setIsCopied] = useState(false)
     const [notifications, setNotifications] = useState(true)
 
+    const { participants, type } = { ...selectedRoom }
+
+    const { avatar, name, username, link, _id, biography } = useMemo(() => {
+        return type == 'private'
+            ?
+            (
+                participants?.find((data: any) => data?._id !== myID)
+                ||
+                participants?.find((data: any) => data?._id == myID)
+            )
+            :
+            (selectedRoom || '') as any
+    }, [selectedRoom?._id])
+
     const copyText = () => {
-        navigator.clipboard.writeText(link!).then(() => setIsCopied(true))
-        setTimeout(() => { setIsCopied(false), console.log('hi') }, 1000);
+        navigator.clipboard.writeText(username || link).then(() => setIsCopied(true))
+        setTimeout(() => setIsCopied(false), 1000);
     }
 
-    if (!selectedRoom?._id) return
-
     return (
-        <section className={`flex-col ${isRoomDetailsShown ? 'xl:flex right-0 opacity-100' : 'xl:hidden -right-[400px] opacity-0'} duration-200 transition-all md:max-w-[400px] xl:static fixed xl:max-w-[400px] w-full bg-leftBarBg text-white md:inset-y-0 z-50`}>
+        <section
+            className={`flex-col ${isRoomDetailsShown ? 'xl:flex right-0 opacity-100' : 'xl:hidden -right-[400px] opacity-0'} duration-200 transition-all md:max-w-[400px] xl:static fixed xl:max-w-[400px] w-full bg-leftBarBg text-white md:inset-y-0 z-50`}
+        >
 
             <div className="bg-[#2E323F] p-3 relative">
 
@@ -40,7 +54,7 @@ const RoomDetails = () => {
                         avatar ?
                             <Image
                                 src={avatar}
-                                className="cursor-pointer"
+                                className="cursor-pointer object-cover size-[60px] rounded-full"
                                 width={60}
                                 height={60}
                                 alt="avatar"
@@ -54,7 +68,13 @@ const RoomDetails = () => {
                         <h3 className="font-bold text-[16px] font-segoeBold text-xl line-clamp-1 overflow-ellipsis">{name}</h3>
 
                         <div className="font-bold text-[14px] text-darkGray font-segoeBold line-clamp-1 whitespace-normal text-nowrap">
-                            {type == 'private' ? 'last seen recently' : `${participants?.length} members, ${onlineUsers.filter(data => participants?.includes(data.userID))?.length + ' online'}`}
+                            {
+                                type == 'private'
+                                    ?
+                                    onlineUsers.some(data => { if (data.userID == _id) return true }) ? <span className="text-lightBlue">Online</span> : 'last seen recently'
+                                    :
+                                    `${participants?.length} members, ${onlineUsers.filter(data => participants?.includes(data.userID))?.length + ' online'}`
+                            }
                         </div>
 
                     </div>
@@ -73,15 +93,18 @@ const RoomDetails = () => {
 
                 <p className="text-lightBlue font-segoeBold">Info</p>
 
-                <div>
-                    <p className="text-[16px]">Some gangster shit text of a 12 y-o boy from rubika</p>
-                    <p className="text-darkGray text-[13px]">Bio</p>
-                </div>
+                {
+                    biography &&
+                    <div>
+                        <p className="text-[16px]">{biography}</p>
+                        <p className="text-darkGray text-[13px]">Bio</p>
+                    </div>
+                }
 
                 <div className="flex items-center justify-between">
 
                     <div>
-                        <p className="font-segoeLight text-[17px]">{link ?? ''}</p>
+                        <p className="font-segoeLight text-[17px]">@{username || link}</p>
                         <p className="text-darkGray text-[13px]">{type === 'private' ? 'Username' : 'Link'}</p>
                     </div>
 

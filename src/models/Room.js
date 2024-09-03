@@ -10,7 +10,8 @@ const RoomSchema = new Schema({
     medias: [{ type: Schema.ObjectId, ref: 'Media', required: true }],
     messages: [{ type: Schema.ObjectId, ref: 'Message', required: true }],
     locations: [{ type: Schema.ObjectId, ref: 'Location', required: true }],
-    link: String
+    link: String,
+    biography: String
 }, { timestamps: true })
 
 const RoomModel = mongoose.models.Room || mongoose.model('Room', RoomSchema);

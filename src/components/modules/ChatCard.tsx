@@ -1,20 +1,21 @@
 'use client'
-import { MessageModel, RoomModel } from "@/@types/data.t"
+import { MessageModel, RoomModel, UserModel } from "@/@types/data.t"
 import { getTimeFromDate } from "@/utils"
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import useSockets from "@/zustand/useSockets"
 import useUserStore from "@/zustand/userStore"
 import Image from "next/image"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 
 export const ChatCard = ({
     messages,
     _id,
-    name,
+    name: roomName,
     type,
-    avatar,
+    avatar: roomAvatar,
     lastMsgData,
+    participants
 }: RoomModel & { lastMsgData: MessageModel }
 ) => {
 
@@ -25,8 +26,22 @@ export const ChatCard = ({
     const { rooms } = useSockets(state => state)
     const latestMessageTime = getTimeFromDate(lastMsgData?.createdAt)
 
+    const { avatar, name, _id: roomID } = useMemo(() => {
+        // if type is private, we should view the user infos instead of room infos
+        return type == 'private'
+            ?
+            (
+                // if we couldn't find the participant id that is not equal to myID, so its the saved msgs room
+                participants.find((data: any) => data?._id !== myID)
+                ||
+                participants.find((data: any) => data?._id == myID)
+            )
+            :
+            ({ name: roomName, avatar: roomAvatar } as any)
+    }, [])
+
     const isActive = selectedRoom?._id == _id
-    const isOnline = onlineUsers.some(data => { if (data.userID === myID) return true})
+    const isOnline = onlineUsers.some(data => { if (data.userID === roomID) return true })
     const notSeenMessages = messages?.length || null
 
     useEffect(() => {
@@ -51,7 +66,7 @@ export const ChatCard = ({
                             alt="avatar"
                         />
                         :
-                        <div className="size-[50px] shrink-0 bg-darkBlue rounded-full flex-center text-bold text-center text-white text-2xl">{name.length && name[0]}</div>
+                        <div className="size-[50px] shrink-0 bg-darkBlue rounded-full flex-center text-bold text-center text-white text-2xl">{name?.length && name[0]}</div>
                 }
                 {
                     (type === 'private' && isOnline)
