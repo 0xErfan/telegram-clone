@@ -65,7 +65,7 @@ const RoomDetails = () => {
 
                     <div className="flex justify-center flex-col gap-1">
 
-                        <h3 className="font-bold text-[16px] font-segoeBold text-xl line-clamp-1 overflow-ellipsis">{name}</h3>
+                        <h3 className="font-bold text-[16px] font-segoeBold text-xl line-clamp-1 overflow-ellipsis">{_id == myID ? 'Saved messages' : name}</h3>
 
                         <div className="font-bold text-[14px] text-darkGray font-segoeBold line-clamp-1 whitespace-normal text-nowrap">
                             {

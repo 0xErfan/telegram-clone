@@ -79,7 +79,7 @@ export const ChatCard = ({
             <div className="flex flex-col w-full ch:w-full gap-1 text-darkGray text-[14px]">
 
                 <div className="flex items-center justify-between">
-                    <p className="text-white font-bold text-[16px] font-segoeBold line-clamp-1">{name}</p>
+                    <p className="text-white font-bold text-[16px] font-segoeBold line-clamp-1">{roomID == myID ? 'Saved messages' : name}</p>
                     <p className="whitespace-nowrap">{latestMessageTime || null}</p>
                 </div>
 
