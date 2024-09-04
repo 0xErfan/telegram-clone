@@ -236,7 +236,7 @@ const ChatContent = () => {
 
             <div
                 onScroll={checkIsLastMsgInView}
-                className="flex flex-col z-40 gap-2 relative fillScreen md:pb-2 overflow-x-hidden overflow-y-auto noScrollWidth"
+                className="flex flex-col z-40 gap-2 ch:relative relative fillScreen md:pb-2 overflow-x-hidden overflow-y-auto noScrollWidth"
             >
                 {
                     messages?.length

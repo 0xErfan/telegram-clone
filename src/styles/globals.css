@@ -56,6 +56,11 @@
   z-index: 999999999999999999999
 }
 
+.highLightedMessage::after {
+  content: '';
+  @apply bg-lightBlue/15 p-1 rounded-md transition-all duration-200 absolute inset-0 w-full z-[9999999999999]
+}
+
 @media (min-width: 768px) {
   .fillScreen {
     height: calc(100vh - 140px);

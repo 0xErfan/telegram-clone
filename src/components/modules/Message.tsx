@@ -93,7 +93,15 @@ const Message = ({
                 {
                     (isFromMe || isPv)
                         ?
-                        <div className='my-1'></div>
+                        <>
+                            <div className='my-1'></div>
+                            <div className={`absolute flex-center ${isFromMe ? 'left-2 ch:bg-white ch:text-black/70' : 'right-2'} rounded-full inset-y-0`}>
+                                <MdOutlineReplay
+                                    onClick={() => addReplay(_id)}
+                                    className={`${isReplayBtnShown ? 'opacity-100' : 'opacity-0'} duration-200 transition-all size-[19px] mt-1 shrink-0 cursor-pointer text-white/60  bg-darkGray rounded-full mb-auto p-px`}
+                                />
+                            </div>
+                        </>
                         :
                         <div className='flex items-center gap-2 w-full justify-between'>
                             <p className='w-full text-left text-[14px] font-bold mt-px font-segoeBold text-[#C8504F]'>{sender.name}</p>

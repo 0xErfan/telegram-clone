@@ -189,14 +189,9 @@ const scrollToMessage = (id: string) => {
     if (replayTargetElem) {
 
         replayTargetElem.scrollIntoView({ block: 'center', behavior: 'smooth' })
+        replayTargetElem.classList.add('highLightedMessage')
 
-        replayTargetElem.className += ' duration-500 rounded-xl transition-all py-px '
-        replayTargetElem.classList.add('bg-lightBlue/5')
-
-        setTimeout(() => {
-            replayTargetElem.classList.remove('bg-lightBlue/5')
-            replayTargetElem.className.replace(' duration-500 rounded-xl transition-all py-px ', '')
-        }, 800);
+        setTimeout(() => replayTargetElem.classList.remove('highLightedMessage'), 1000);
     }
 }
 
