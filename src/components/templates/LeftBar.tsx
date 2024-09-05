@@ -3,7 +3,7 @@ import Image from "next/image"
 import { BiSearch } from "react-icons/bi"
 import ChatFolders from "../modules/ChatFolders"
 import { ChatCard } from "../modules/ChatCard"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { RoomModel } from "@/@types/data.t"
 import { io } from 'socket.io-client'
 import useUserStore from "@/zustand/userStore"
@@ -21,6 +21,17 @@ const LeftBar = () => {
     const updater = useSockets(state => state.updater)
     const { setter: userDataUpdater } = useUserStore(state => state)
     const { selectedRoom, setter } = useGlobalVariablesStore(state => state)
+    const [forceRender, setForceRender] = useState(false)
+
+    const sortedRooms = useMemo(() => {
+        console.log('runes')
+        return rooms
+            .sort((a: any, b: any) => {
+                const aTime = new Date(a?.lastMsgData?.createdAt).getTime()
+                const bTime = new Date(b?.lastMsgData?.createdAt).getTime()
+                return bTime - aTime
+            })
+    }, [rooms.length, forceRender])
 
     useEffect(() => {
 
@@ -39,10 +50,9 @@ const LeftBar = () => {
             userDataUpdater({ rooms })
 
             roomSocket.on('lastMsgUpdate', newMsg => {
+                setForceRender(prev => !prev)
                 setRooms(prev => prev.map((roomData: any) => {
-                    if (roomData._id === newMsg.roomID) {
-                        roomData.lastMsgData = newMsg
-                    }
+                    if (roomData._id === newMsg.roomID) roomData.lastMsgData = newMsg
                     return roomData
                 }))
             })
@@ -62,7 +72,7 @@ const LeftBar = () => {
             roomSocket.off('lastMsgUpdate')
             roomSocket.off('updateOnlineUsers')
         }
-    }, [_id])
+    }, [_id, rooms?.length])
 
     useEffect(() => {
 
@@ -118,21 +128,16 @@ const LeftBar = () => {
 
             <div className="flex flex-col mt-2 overflow-auto">
                 {
-                    rooms?.length
+                    sortedRooms?.length
                         ?
-                        rooms
-                            .sort((a: any, b: any) => {
-                                const aTime = new Date(a?.lastMsgData?.createdAt).getTime()
-                                const bTime = new Date(b?.lastMsgData?.createdAt).getTime()
-                                return bTime - aTime
-                            })
-                            .map((data: any) =>
-                                <ChatCard
-                                    {...data}
-                                    key={data?._id}
-                                />
-                            )
-                        : <div className="text-xl text-white font-bold w-full text-center font-segoeBold pt-20">No chats found bud</div>
+                        sortedRooms.map((data: any) =>
+                            <ChatCard
+                                {...data}
+                                key={data?._id}
+                            />
+                        )
+                        :
+                        <div className="text-xl text-white font-bold w-full text-center font-segoeBold pt-20">No chats found bud</div>
                 }
             </div>
 

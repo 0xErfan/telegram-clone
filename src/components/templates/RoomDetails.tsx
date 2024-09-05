@@ -51,8 +51,11 @@ const RoomDetails = () => {
                     setIsLoading(true)
 
                     try {
-                        const { data: membersData, statusText } = await axios.post('/api/getMembers', { _id: roomID })
-                        setGroupMembers(membersData)
+                        const { data: membersData } = await axios.post('/api/getMembers', { _id: roomID })
+
+                        const membersWithoutMe = membersData.filter((data: UserModel) => data._id !== myID)
+                        setGroupMembers(membersWithoutMe)
+
                     } catch (error) { showToast(false, error as string) }
                     finally { setIsLoading(false) }
                 }

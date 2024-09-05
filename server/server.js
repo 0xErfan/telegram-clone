@@ -128,19 +128,20 @@ io.on('connection', socket => {
         onlineUsers.push({ socketID: socket.id, userID })
         io.to([...socket.rooms]).emit('updateOnlineUsers', onlineUsers)
 
-        const processRooms = async () => {
+        const getRoomsLastMsgData = async () => {
             const promises = userRooms.map(async (room) => {
-                const lastMsgID = room.messages?.[room.messages.length - 1]?._id || null;
-                const lastMsgData = await MessageModel.findOne({ _id: lastMsgID });
-                return { ...room, lastMsgData };
+                if (room?.messages?.length) {
+                    const lastMsgID = room.messages[room.messages.length - 1]?._id || null;
+                    const lastMsgData = await MessageModel.findOne({ _id: lastMsgID });
+                    return { ...room, lastMsgData };
+                } else return room
             });
             return Promise.all(promises);
         };
 
-        const rooms = await processRooms()
-        const sortedRooms = rooms.sort((a, b) => new Date(b.lastMsgData?.createdAt).getMilliseconds() - new Date(a.lastMsgData?.createdAt).getMilliseconds())
+        const rooms = await getRoomsLastMsgData()
 
-        socket.emit('getRooms', sortedRooms)
+        socket.emit('getRooms', rooms)
     })
 
     socket.on('joining', async newRoom => {
