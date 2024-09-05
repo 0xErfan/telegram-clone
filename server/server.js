@@ -64,6 +64,38 @@ io.on('connection', socket => {
 
     })
 
+    socket.on('createRoom', async ({ newRoomData, message = null }) => {
+
+        socket.emit('createRoom', newRoomData)
+
+        let isRoomExist = false
+
+        if (newRoomData.type === 'private') isRoomExist = await RoomModel.findOne({ name: newRoomData.name })
+
+        if (!isRoomExist) {
+
+            let msgData = message
+            delete newRoomData.message
+
+            const newRoom = await RoomModel.create(newRoomData)
+
+            if (msgData) {
+                const newMsg = await MessageModel.create({ ...msgData, roomID: newRoom._id })
+                msgData = newMsg
+                newRoom.messages = [newMsg._id]
+                newRoom.lastMsgData = msgData
+                await newRoom.save()
+            }
+
+            socket.join(newRoom._id)
+            io.emit('newRoom', newRoom._id)
+
+            const otherRoomMembersSocket = onlineUsers.filter(data => newRoom.participants.some(pID => { if (data.userID === pID.toString()) return true }))
+            otherRoomMembersSocket.forEach(data => io.to(data.socketID).emit('createRoom', newRoom))
+
+        }
+    })
+
     socket.on('seenMsg', async (seenData) => {
 
         io.to(seenData.roomID).emit('seenMsg', seenData)
@@ -106,7 +138,7 @@ io.on('connection', socket => {
         };
 
         const rooms = await processRooms()
-        const sortedRooms = rooms.sort((a, b) => b.lastMsgData?.createdAt - a.lastMsgData?.createdAt)
+        const sortedRooms = rooms.sort((a, b) => new Date(b.lastMsgData?.createdAt).getMilliseconds() - new Date(a.lastMsgData?.createdAt).getMilliseconds())
 
         socket.emit('getRooms', sortedRooms)
     })

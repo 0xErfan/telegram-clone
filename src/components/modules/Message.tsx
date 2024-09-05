@@ -104,7 +104,7 @@ const Message = ({
                         </>
                         :
                         <div className='flex items-center gap-2 w-full justify-between'>
-                            <p className='w-full text-left text-[14px] font-bold mt-px font-segoeBold text-[#C8504F]'>{sender.name}</p>
+                            <p dir='auto' className='w-full text-[14px] font-bold mt-px font-segoeBold text-[#C8504F]'>{sender.name}</p>
                             <MdOutlineReplay
                                 onClick={() => addReplay(_id)}
                                 className={`${isReplayBtnShown ? 'opacity-100' : 'opacity-0'} duration-200 transition-all size-[19px] mt-1 shrink-0 cursor-pointer text-white/60`}
@@ -112,7 +112,7 @@ const Message = ({
                         </div>
                 }
 
-                <div className='flex flex-col text-[16px] text-left gap-1 p-1 mt-1 break-words mb-[13px]'>
+                <div className='flex flex-col text-[16px] gap-1 p-1 mt-1 break-words mb-[13px]'>
                     {
                         replayedTo
                         &&
@@ -125,7 +125,7 @@ const Message = ({
                             <p className='font-thin break-words line-clamp-1 overflow-ellipsis'>{replayedTo.message}</p>
                         </div>
                     }
-                    <p>{message}</p>
+                    <p dir='auto'>{message}</p>
                 </div>
 
                 <span className={`flex items-center justify-end gap-1 absolute bottom-px right-3 w-full text-[12px]  ${isFromMe ? 'text-[#B7D9F3]' : 'text-darkGray'} text-right`}>

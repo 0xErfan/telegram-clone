@@ -4,6 +4,7 @@ import { create } from "zustand";
 
 interface Props {
     selectedRoom: null | RoomModel
+    mockSelectedRoomData: null | RoomModel
     onlineUsers: { socketID: string, userID: string }[]
     socket: null | Socket
     isRoomDetailsShown: boolean
@@ -16,6 +17,7 @@ interface Updater {
 
 const useGlobalVariablesStore = create<Props & Updater>(set => ({
     selectedRoom: null,
+    mockSelectedRoomData: null,
     onlineUsers: [],
     socket: null,
     isRoomDetailsShown: false,

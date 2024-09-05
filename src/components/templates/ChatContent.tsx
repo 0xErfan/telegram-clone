@@ -43,24 +43,25 @@ const ChatContent = () => {
     }, [selectedRoom?._id])
 
     const replayDataMsg = useMemo(() => {
-        return messages.find(msg => msg._id == replayData)
+        return messages?.find(msg => msg._id == replayData)
     }, [replayData, roomID])
 
     const onlineMembersCount = useMemo(() => {
+        if (!onlineUsers?.length || !participants?.length) return 0
         return onlineUsers.filter(data => participants.includes(data.userID)).length
-    }, [onlineUsers.length])
+    }, [onlineUsers?.length, participants?.length])
 
     const notSeenMessages = useMemo(() => {
 
         let count = 0
 
-        if (messages.length) {
-            const msgs = [...messages].filter(msg => msg.sender._id !== myID && !msg.seen.includes(myID))
+        if (messages?.length) {
+            const msgs = [...messages].filter(msg => msg.sender?._id !== myID && !msg.seen?.includes(myID))
             count = msgs.length
         }
 
         return count;
-    }, [messages.length, myID, forceRender])
+    }, [messages?.length, myID, forceRender])
 
     const manageScroll = () => {
         if (isLoaded) {
@@ -146,13 +147,13 @@ const ChatContent = () => {
     }, [messages?.length])
 
     useEffect(() => {
-        if (!isLoaded && _id && messages.length) {
+        if (!isLoaded && _id && messages?.length) {
             const lastSeenMsg = [...messages].reverse().find(msg => msg.sender._id === myID || msg.seen.includes(myID))
             const lastSeenMsgElem = document.getElementsByClassName(lastSeenMsg?._id!)[0]
             lastSeenMsgElem.scrollIntoView()
             setIsLoaded(true)
         } // not working properly, the element get selected correctly but the scroll is not
-    }, [messages.length, isLoaded, myID])
+    }, [messages?.length, isLoaded, myID])
 
     useEffect(() => {
         return () => {
@@ -193,7 +194,7 @@ const ChatContent = () => {
                                     alt="avatar"
                                 />
                                 :
-                                <div className='flex-center bg-darkBlue rounded-full size-[50px] shrink-0 text-center font-bold text-2xl'>{name[0]}</div>
+                                <div className='flex-center bg-darkBlue rounded-full size-[50px] shrink-0 text-center font-bold text-2xl'>{name?.length && name[0]}</div>
                         }
 
                         <div className="flex justify-center flex-col gap-1">
@@ -215,7 +216,7 @@ const ChatContent = () => {
                                                     ?
                                                     onlineUsers.some(data => { if (data.userID === _id) return true }) ? <span className="text-lightBlue">Online</span> : 'last seen recently'
                                                     :
-                                                    participants?.length + ' members, ' + (onlineMembersCount ? onlineMembersCount + ' online' : null)
+                                                    participants?.length + ' members, ' + (onlineMembersCount ? onlineMembersCount + ' online' : '')
                                             }
                                         </>
                                 }

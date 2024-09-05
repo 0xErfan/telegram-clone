@@ -19,6 +19,7 @@ const LeftBar = () => {
 
     const _id = useUserStore(state => state._id)
     const updater = useSockets(state => state.updater)
+    const { setter: userDataUpdater } = useUserStore(state => state)
     const { selectedRoom, setter } = useGlobalVariablesStore(state => state)
 
     useEffect(() => {
@@ -35,6 +36,7 @@ const LeftBar = () => {
         roomSocket.on('getRooms', (rooms: RoomModel[]) => {
 
             setRooms(rooms)
+            userDataUpdater({ rooms })
 
             roomSocket.on('lastMsgUpdate', newMsg => {
                 setRooms(prev => prev.map((roomData: any) => {
@@ -46,11 +48,17 @@ const LeftBar = () => {
             })
         })
 
+        roomSocket.on('createRoom', roomData => {
+            roomSocket.emit('getRooms', _id)
+            roomData.creator === _id && roomSocket.emit('joining', roomData._id)
+        })
+
         roomSocket.on('updateOnlineUsers', onlineUsers => setter({ onlineUsers })) // check if its accessible for all(bug) or not
 
         return () => {
-            roomSocket.off('getRooms')
             roomSocket.off('joining')
+            roomSocket.off('getRooms')
+            roomSocket.off('createRoom')
             roomSocket.off('lastMsgUpdate')
             roomSocket.off('updateOnlineUsers')
         }

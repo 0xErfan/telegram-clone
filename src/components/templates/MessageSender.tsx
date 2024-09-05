@@ -22,9 +22,12 @@ const MessageSender = ({ replayData, closeReplay }: Props) => {
     const typingTimer = useRef<NodeJS.Timeout | null>(null)
     const inputRef = useRef<HTMLInputElement | null>(null)
 
-    const { _id } = useGlobalVariablesStore(state => state?.selectedRoom) || {}
+    const selectedRoom = useGlobalVariablesStore(state => state?.selectedRoom)
+    const userRooms = useUserStore(state => state.rooms)
     const { rooms } = useSockets(state => state)
     const userData = useUserStore(state => state)
+
+    const _id = selectedRoom?._id
 
     useEffect(() => {
 
@@ -46,21 +49,31 @@ const MessageSender = ({ replayData, closeReplay }: Props) => {
 
     const sendMessage = () => {
 
-        rooms?.emit('newMessage', {
-            roomID: _id,
-            message: text,
-            sender: userData,
-            replayData: replayData ?
-                {
-                    targetID: replayData?._id,
-                    replayedTo: {
-                        message: replayData?.message,
-                        msgID: replayData?._id,
-                        username: replayData.sender?.name
+        const roomHistory = userRooms.some(room => { if (room._id === _id) return true })
+
+        roomHistory ?
+            rooms?.emit('newMessage', {
+                roomID: _id,
+                message: text,
+                sender: userData,
+                replayData: replayData ?
+                    {
+                        targetID: replayData?._id,
+                        replayedTo: {
+                            message: replayData?.message,
+                            msgID: replayData?._id,
+                            username: replayData.sender?.name
+                        }
                     }
-                }
-                : null
-        })
+                    : null
+            })
+            :
+            rooms?.emit('createRoom',
+                {
+                    newRoomData: selectedRoom,
+                    message: { sender: userData, message: text }
+                });
+
 
         closeReplay()
         setText('')
@@ -110,6 +123,7 @@ const MessageSender = ({ replayData, closeReplay }: Props) => {
                 <BsEmojiSmile className="shrink-0 basis-[5%]" />
 
                 <input
+                    dir="auto"
                     value={text}
                     onChange={msgTextUpdater}
                     onKeyUp={e => e.key == "Enter" && text.trim().length && sendMessage()}

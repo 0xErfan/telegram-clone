@@ -48,8 +48,8 @@ interface RoomModel {
     _id: string
     name: string
     avatar: string
-    participants: [_id: string]
-    admins: [_id: string]
+    participants: string[]
+    admins: string[]
     type: 'group' | 'private' | 'chanel'
     creator: string
     messages: MessageModel[]
