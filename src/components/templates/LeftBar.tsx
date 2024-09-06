@@ -3,28 +3,29 @@ import Image from "next/image"
 import { BiSearch } from "react-icons/bi"
 import ChatFolders from "../modules/ChatFolders"
 import { ChatCard } from "../modules/ChatCard"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react"
 import { RoomModel } from "@/@types/data.t"
 import { io } from 'socket.io-client'
 import useUserStore from "@/zustand/userStore"
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import useSockets from "@/zustand/useSockets"
+const SearchPage = lazy(() => import('@/components/templates/SearchPage'))
 
 const roomSocket = io('http://localhost:3001')
 
 const LeftBar = () => {
 
     const [rooms, setRooms] = useState<RoomModel[]>([])
+    const [forceRender, setForceRender] = useState(false)
+    const [isSearchOpen, setIsSearchOpen] = useState(true)
     const chatFolderRef = useRef<HTMLDivElement>(null)
 
     const _id = useUserStore(state => state._id)
     const updater = useSockets(state => state.updater)
     const { setter: userDataUpdater } = useUserStore(state => state)
     const { selectedRoom, setter } = useGlobalVariablesStore(state => state)
-    const [forceRender, setForceRender] = useState(false)
 
     const sortedRooms = useMemo(() => {
-        console.log('runes')
         return rooms
             .sort((a: any, b: any) => {
                 const aTime = new Date(a?.lastMsgData?.createdAt).getTime()
@@ -91,7 +92,7 @@ const LeftBar = () => {
         <div
             data-aos-duration="400"
             data-aos='fade-right'
-            className={`flex-1 ${selectedRoom && 'hidden'} md:block bg-leftBarBg noScrollWidth px-4 overflow-y-auto`}
+            className={`flex-1 ${selectedRoom && 'hidden'} md:block bg-leftBarBg relative noScrollWidth px-4 overflow-y-auto`}
         >
 
             <div className="w-full sticky top-0 bg-leftBarBg space-y-1 pt-1 border-b border-white/5 z-30">
@@ -109,7 +110,7 @@ const LeftBar = () => {
                         <h1 className="font-bold font-segoeBold">Telegram</h1>
                     </div>
 
-                    <BiSearch className="cursor-pointer size-[23px] text-white/90 mt-3" />
+                    <BiSearch onClick={() => setIsSearchOpen(true)} className="cursor-pointer size-[23px] text-white/90 mt-3" />
 
                 </div>
 
@@ -140,6 +141,13 @@ const LeftBar = () => {
                         <div className="text-xl text-white font-bold w-full text-center font-segoeBold pt-20">No chats found bud</div>
                 }
             </div>
+
+            {
+                isSearchOpen &&
+                <SearchPage
+                    closeSearch={() => setIsSearchOpen(false)}
+                />
+            }
 
         </div>
     )

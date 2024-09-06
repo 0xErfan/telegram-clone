@@ -14,6 +14,7 @@ import axios from "axios";
 import { showToast } from "@/utils";
 import { Button } from "@nextui-org/button";
 import useSockets from "@/zustand/useSockets";
+import RoomCard from "../modules/RoomCard";
 
 
 const RoomDetails = () => {
@@ -217,7 +218,7 @@ const RoomDetails = () => {
                                     groupMembers.length
                                         ?
                                         groupMembers.map(member =>
-                                            <GroupMember
+                                            <RoomCard
                                                 key={member._id}
                                                 {...member}
                                                 myData={myData}
@@ -232,64 +233,6 @@ const RoomDetails = () => {
             }
 
         </section >
-    )
-}
-
-const GroupMember = (userTarget: Partial<UserModel> & { isOnline: boolean, myData: UserModel }) => {
-
-    const { avatar, name, _id, isOnline, myData } = userTarget
-    const setter = useGlobalVariablesStore(state => state.setter)
-
-    const roomData: Partial<RoomModel> = {
-        admins: [myData._id, _id!],
-        avatar,
-        createdAt: Date.now().toString(),
-        creator: myData._id,
-        link: Date.now().toString(),
-        locations: [],
-        medias: [],
-        messages: [],
-        name: myData._id + '-' + _id,
-        participants: [userTarget as any, myData],
-        type: 'private',
-        updatedAt: Date.now().toString()
-    }
-
-    const showProfile = () => {
-        setter({ mockSelectedRoomData: roomData })
-    }
-
-    return (
-        <div onClick={showProfile} className="flex items-center gap-2 cursor-pointer">
-            {
-                avatar ?
-                    <Image
-                        src={avatar}
-                        className="cursor-pointer object-cover size-[45px] rounded-full"
-                        width={45}
-                        height={45}
-                        alt="avatar"
-                    />
-                    :
-                    <div className='flex-center bg-darkBlue rounded-full size-[45px] shrink-0 text-center font-bold text-2xl'>{name![0]}</div>
-            }
-            <div className="flex flex-col justify-between border-b border-black/40 w-full py-2">
-
-                <p className="text-[17px] font-segoeBold">{name}</p>
-
-                <p className="text-sm text-darkGray">
-                    {
-                        isOnline
-                            ?
-                            <span className="text-lightBlue">Online</span>
-                            :
-                            'last seen recently'
-                    }
-                </p>
-
-            </div>
-
-        </div>
     )
 }
 
