@@ -48,8 +48,8 @@ const ChatContent = () => {
 
     const onlineMembersCount = useMemo(() => {
         if (!onlineUsers?.length || !participants?.length) return 0
-        return onlineUsers.filter(data => participants.includes(data.userID)).length
-    }, [onlineUsers?.length, participants?.length])
+        return participants?.filter(pId => onlineUsers.some(data => { if (data.userID === pId) return true })).length
+    }, [onlineUsers?.length])
 
     const notSeenMessages = useMemo(() => {
 

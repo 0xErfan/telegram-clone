@@ -30,6 +30,7 @@ const RoomDetails = () => {
     const { _id: myID, rooms } = myData
     const selectedRoomData = mockSelectedRoomData || selectedRoom
     const { participants, type, _id: roomID } = { ...selectedRoomData }
+    const onlineUsersCount = participants?.filter(pId => onlineUsers.some(data => { if (data.userID === pId) return true })).length
 
     const { avatar, name, username, link, _id, biography } = useMemo(() => {
         return type == 'private'
@@ -132,7 +133,7 @@ const RoomDetails = () => {
                                     ?
                                     onlineUsers.some(data => { if (data.userID == _id) return true }) ? <span className="text-lightBlue">Online</span> : 'last seen recently'
                                     :
-                                    `${participants?.length} members, ${onlineUsers.filter(data => participants?.includes(data.userID))?.length + ' online'}`
+                                    `${participants?.length} members, ${onlineUsersCount + ' online'}`
                             }
                         </div>
 
