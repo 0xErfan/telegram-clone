@@ -170,7 +170,7 @@ const ChatContent = () => {
     return (
         <section data-aos="fade-right" className="relative">
 
-            <div className="flex items-center justify-between sticky top-0 border-b border-white/5 bg-chatBg z-30 py-3 xl:py-0 xl:h-[97px]">
+            <div className="flex items-center justify-between sticky top-0 border-b border-white/5 bg-chatBg z-50 py-3 xl:py-0 xl:h-[97px]">
 
                 <div className='flex items-center gap-5'>
 
@@ -237,7 +237,7 @@ const ChatContent = () => {
 
             <div
                 onScroll={checkIsLastMsgInView}
-                className="flex flex-col z-40 gap-2 ch:relative relative fillScreen md:pb-2 overflow-x-hidden overflow-y-auto noScrollWidth"
+                className="flex flex-col z-40 gap-2 relative fillScreen mb-1 md:pb-2 overflow-x-hidden overflow-y-auto noScrollWidth"
             >
                 {
                     messages?.length
