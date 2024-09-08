@@ -68,7 +68,7 @@ const ChatContent = () => {
 
     const manageScroll = () => {
         if (isLoaded) {
-            const isFromMe = messages[messages?.length - 1]?.sender._id === myID;
+            const isFromMe = messages?.length && messages[messages.length - 1]?.sender?._id === myID;
             if (isFromMe || isLastMsgInView) lastMsgRef.current?.scrollIntoView({ behavior: 'smooth' })
         }
     }
@@ -165,6 +165,10 @@ const ChatContent = () => {
         }
     }, [roomID])
 
+    const deleteRoom = () => {
+        rooms?.emit('deleteRoom', roomID)
+    }
+
     const checkIsLastMsgInView = (e: any) => {
         const isInView = e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight <= 0
         setIsLastMsgInView(isInView)
@@ -233,7 +237,7 @@ const ChatContent = () => {
 
                 <div className="flex items-center gap-2 *:cursor-pointer ch:bg-white/[7%] ch:p-[10px] justify-end">
                     <div className="size-[44px] ch:size-full rounded-full flex-center">
-                        <PiDotsThreeVerticalBold />
+                        <PiDotsThreeVerticalBold onClick={deleteRoom} />
                     </div>
                 </div>
 

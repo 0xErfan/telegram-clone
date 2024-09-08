@@ -5,6 +5,7 @@ import useSockets from '@/zustand/useSockets'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { MessageModel } from '@/@types/data.t';
+import useGlobalVariablesStore from '@/zustand/globalVariablesStore';
 
 interface Props {
     myId: string,
@@ -33,6 +34,7 @@ const Message = ({
     const messageTime = getTimeFromDate(createdAt)
     const [isMounted, setIsMounted] = useState(false)
     const { rooms } = useSockets(state => state)
+    const setter = useGlobalVariablesStore(state => state.setter)
 
     useEffect(() => {
 
@@ -54,6 +56,14 @@ const Message = ({
 
     useEffect(() => { setIsMounted(true) }, [])
 
+    const openProfile = () => {
+        setter({
+            mockSelectedRoomData: sender,
+            shouldCloseAll: true,
+            isRoomDetailsShown: true
+        })
+    }
+
     return (
         <div
             ref={messageRef}
@@ -69,7 +79,7 @@ const Message = ({
         >
             {
                 !isFromMe && !isPv &&
-                <div className='cursor-pointer'>
+                <div onClick={openProfile} className='cursor-pointer'>
                     {
                         sender.avatar
                             ?

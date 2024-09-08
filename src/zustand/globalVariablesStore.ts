@@ -8,6 +8,7 @@ interface Props {
     onlineUsers: { socketID: string, userID: string }[]
     socket: null | Socket
     isRoomDetailsShown: boolean
+    shouldCloseAll: boolean
 }
 
 interface Updater {
@@ -20,6 +21,7 @@ const useGlobalVariablesStore = create<Props & Updater>(set => ({
     mockSelectedRoomData: null,
     onlineUsers: [],
     socket: null,
+    shouldCloseAll: false,
     isRoomDetailsShown: false,
 
     updater(key: keyof Props, value: Props[keyof Props]) {

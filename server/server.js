@@ -111,6 +111,11 @@ io.on('connection', socket => {
 
     })
 
+    socket.on('deleteRoom', async roomID => {
+        await RoomModel.findOneAndDelete({_id: roomID})
+        io.to(roomID).emit('deleteRoom')
+    })
+
     socket.on('seenMsg', async (seenData) => {
 
         io.to(seenData.roomID).emit('seenMsg', seenData)

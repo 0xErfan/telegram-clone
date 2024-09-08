@@ -24,7 +24,7 @@ const RoomDetails = () => {
     const [notifications, setNotifications] = useState(true)
     const [groupMembers, setGroupMembers] = useState<UserModel[]>([])
 
-    const { setter, isRoomDetailsShown, selectedRoom, mockSelectedRoomData, onlineUsers } = useGlobalVariablesStore(state => state) || {}
+    const { setter, isRoomDetailsShown, selectedRoom, shouldCloseAll, mockSelectedRoomData, onlineUsers } = useGlobalVariablesStore(state => state) || {}
     const myData = useUserStore(state => state)
     const roomSocket = useSockets(state => state.rooms)
 
@@ -73,7 +73,7 @@ const RoomDetails = () => {
     }, [selectedRoom?._id])
 
     const copyText = () => {
-        navigator.clipboard.writeText(username || link).then(() => setIsCopied(true))
+        navigator?.clipboard?.writeText(username || link).then(() => setIsCopied(true))
         setTimeout(() => setIsCopied(false), 1000);
     }
 
@@ -90,11 +90,26 @@ const RoomDetails = () => {
             data._id == roomID
         )
 
+        const fuckYou: any = {
+            admins: [myData._id, _id],
+            avatar,
+            createdAt: Date.now().toString(),
+            creator: myData._id || _id,
+            link: (Math.random() * 9999999).toString(),
+            locations: [],
+            medias: [],
+            messages: [],
+            name: myData._id + '-' + _id,
+            participants: [myData, selectedRoomData],
+            type: 'private',
+            updatedAt: Date.now().toString()
+        }
+
         if (roomHistory) {
             roomSocket?.emit('joining', roomHistory._id)
         } else {
             setter({
-                selectedRoom: mockSelectedRoomData,
+                selectedRoom: type === 'private' ? fuckYou : mockSelectedRoomData,
                 mockSelectedRoomData: null
             })
         }
@@ -103,11 +118,18 @@ const RoomDetails = () => {
     }
 
     const closeRoomDetails = () => {
+
+        if (shouldCloseAll) return setter({
+            isRoomDetailsShown: false,
+            mockSelectedRoomData: null,
+            shouldCloseAll: false // reset the value to default
+        })
+
         mockSelectedRoomData
             ?
             setter({ mockSelectedRoomData: null })
             :
-            setter({ isRoomDetailsShown: false })
+            setter({ isRoomDetailsShown: false })``
     }
 
     const isUserOnline = useCallback((userId: string) => {
@@ -116,7 +138,7 @@ const RoomDetails = () => {
 
     return (
         <section
-            className={`flex-col ${isRoomDetailsShown ? 'xl:flex right-0 opacity-100' : 'xl:hidden -right-[400px] opacity-0'} duration-200 transition-all md:max-w-[400px] xl:static fixed xl:max-w-[400px] w-full bg-leftBarBg text-white md:inset-y-0 z-50`}
+            className={`flex-col ${isRoomDetailsShown ? 'xl:flex right-0 opacity-100' : 'xl:hidden -right-[400px] opacity-0'} duration-200 transition-all md:max-w-[400px] xl:static fixed xl:max-w-[400px] w-full bg-leftBarBg text-white md:inset-y-0 h-screen z-50`}
         >
 
             <div className="bg-[#2E323F] p-3 relative">
