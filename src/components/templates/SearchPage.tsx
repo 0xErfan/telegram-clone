@@ -24,9 +24,7 @@ const SearchPage = ({ closeSearch }: Props) => {
         const fetchQuery = async () => {
 
             const trimmedQuery = query.trim()
-
             if (!trimmedQuery.length) return
-            setIsLoading(true)
 
             if (trimmedQuery.startsWith('@')) {
 
@@ -34,7 +32,6 @@ const SearchPage = ({ closeSearch }: Props) => {
                     const { data, status } = await axios.post('/api/users/find', { query: trimmedQuery })
                     if (status === 200) setSearchResult([data])
                 } catch (error) { setSearchResult([]) }
-                finally { setIsLoading(false) }
 
             } else {
 
@@ -46,7 +43,7 @@ const SearchPage = ({ closeSearch }: Props) => {
                     data?.messages.some(msgData => msgData?.message?.includes(trimmedQuery))
                 )
 
-                setSearchResult(searchResults ?? [])
+                setSearchResult(searchResults)
 
             }
 
@@ -55,8 +52,6 @@ const SearchPage = ({ closeSearch }: Props) => {
         timer.current = setTimeout(fetchQuery, 1000);
         return () => { clearTimeout(timer.current!) }
     }, [query])
-
-    console.log(searchResult)
 
     return (
         <section
@@ -79,7 +74,7 @@ const SearchPage = ({ closeSearch }: Props) => {
                             {
                                 searchResult?.length
                                     ?
-                                    searchResult?.map(member =>
+                                    searchResult.map(member =>
                                         <div onClick={closeSearch}>
                                             <RoomCard
                                                 key={member._id}

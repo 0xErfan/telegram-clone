@@ -7,6 +7,7 @@ export const schema = new Schema({
     phone: { type: Number, required: true, unique: true },
     avatar: { type: String || null, required: false },
     biography: String,
+    type: { type: String, enum: ['private'], default: 'private' },
     status: { type: String, enum: ["online", "offline"], default: "offline" },
     password: { type: String, required: true },
 }, { timestamps: true })

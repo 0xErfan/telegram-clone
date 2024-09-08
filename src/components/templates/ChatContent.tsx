@@ -9,6 +9,7 @@ import MessageSender from "./MessageSender";
 import useSockets from "@/zustand/useSockets";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ScrollToBottom from "./ScrollToBottom";
+import JoinToRoom from "./JoinToRoom";
 
 const ChatContent = () => {
 
@@ -28,19 +29,21 @@ const ChatContent = () => {
         messages,
         type,
         participants
-    } = useGlobalVariablesStore(state => state.selectedRoom!);
+    } = selectedRoom!;
 
-    const { avatar, name, _id } = useMemo(() => {
+    const { avatar = '', name, _id } = useMemo(() => {
         return type == 'private'
             ?
             (
                 participants?.find((data: any) => data?._id !== myID)
                 ||
                 participants?.find((data: any) => data?._id == myID)
+                ||
+                selectedRoom
             )
             :
             (selectedRoom || '') as any
-    }, [selectedRoom?._id])
+    }, [selectedRoom?._id, type])
 
     const replayDataMsg = useMemo(() => {
         return messages?.find(msg => msg._id == replayData)
@@ -216,7 +219,7 @@ const ChatContent = () => {
                                                     ?
                                                     onlineUsers.some(data => { if (data.userID === _id) return true }) ? <span className="text-lightBlue">Online</span> : 'last seen recently'
                                                     :
-                                                    participants?.length + ' members, ' + (onlineMembersCount ? onlineMembersCount + ' online' : '')
+                                                    participants?.length + ' members ' + (onlineMembersCount ? ' ,' + onlineMembersCount + ' online' : '')
                                             }
                                         </>
                                 }
@@ -233,6 +236,7 @@ const ChatContent = () => {
                         <PiDotsThreeVerticalBold />
                     </div>
                 </div>
+
             </div>
 
             <div
@@ -270,10 +274,21 @@ const ChatContent = () => {
 
             </div>
 
-            <MessageSender
-                replayData={replayDataMsg}
-                closeReplay={() => setReplayData(null)}
-            />
+            {
+                (type === 'private' || participants?.includes(myID))
+                    ?
+                    <MessageSender
+                        replayData={replayDataMsg}
+                        closeReplay={() => setReplayData(null)}
+                    />
+                    :
+                    <JoinToRoom
+                        roomData={selectedRoom!}
+                        roomSocket={rooms as any}
+                        userID={myID}
+                    />
+            }
+
 
             {/* shadow layout */}
             {

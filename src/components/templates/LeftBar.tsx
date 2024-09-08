@@ -3,7 +3,7 @@ import Image from "next/image"
 import { BiSearch } from "react-icons/bi"
 import ChatFolders from "../modules/ChatFolders"
 import { ChatCard } from "../modules/ChatCard"
-import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react"
+import { lazy, useEffect, useMemo, useRef, useState } from "react"
 import { RoomModel } from "@/@types/data.t"
 import { io } from 'socket.io-client'
 import useUserStore from "@/zustand/userStore"
@@ -17,7 +17,7 @@ const LeftBar = () => {
 
     const [rooms, setRooms] = useState<RoomModel[]>([])
     const [forceRender, setForceRender] = useState(false)
-    const [isSearchOpen, setIsSearchOpen] = useState(true)
+    const [isSearchOpen, setIsSearchOpen] = useState(false)
     const chatFolderRef = useRef<HTMLDivElement>(null)
 
     const _id = useUserStore(state => state._id)
@@ -34,11 +34,14 @@ const LeftBar = () => {
             })
     }, [rooms.length, forceRender])
 
+    console.log(selectedRoom)
+
     useEffect(() => {
 
         if (!_id) return
 
         updater('rooms', roomSocket)
+        userDataUpdater({ rooms })
 
         roomSocket.emit('joining', selectedRoom?._id)
         roomSocket.emit('getRooms', _id)
@@ -142,12 +145,7 @@ const LeftBar = () => {
                 }
             </div>
 
-            {
-                isSearchOpen &&
-                <SearchPage
-                    closeSearch={() => setIsSearchOpen(false)}
-                />
-            }
+            {isSearchOpen && <SearchPage closeSearch={() => setIsSearchOpen(false)} />}
 
         </div>
     )

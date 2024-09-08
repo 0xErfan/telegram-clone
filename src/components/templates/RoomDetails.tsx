@@ -9,7 +9,7 @@ import { PiDotsThreeVerticalBold } from "react-icons/pi";
 import { Switch } from "@nextui-org/switch";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import useUserStore from "@/zustand/userStore";
-import { RoomModel, UserModel } from "@/@types/data.t";
+import { UserModel } from "@/@types/data.t";
 import axios from "axios";
 import { showToast } from "@/utils";
 import { Button } from "@nextui-org/button";
@@ -29,26 +29,29 @@ const RoomDetails = () => {
     const roomSocket = useSockets(state => state.rooms)
 
     const { _id: myID, rooms } = myData
-    const selectedRoomData = mockSelectedRoomData || selectedRoom
+    const selectedRoomData = mockSelectedRoomData ?? selectedRoom
     const { participants, type, _id: roomID } = { ...selectedRoomData }
+
     const onlineUsersCount = participants?.filter(pId => onlineUsers.some(data => { if (data.userID === pId) return true })).length
 
-    const { avatar, name, username, link, _id, biography } = useMemo(() => {
-        return type == 'private'
+    const { avatar = '', name, username, link, _id, biography }: any = useMemo(() => {
+        return type === 'private'
             ?
             (
                 participants?.find((data: any) => data?._id !== myID)
                 ||
                 participants?.find((data: any) => data?._id == myID)
+                ||
+                selectedRoomData
             )
             :
-            (selectedRoom || '') as any
-    }, [roomID])
+            selectedRoomData || ''
+    }, [roomID, type])
 
     useEffect(() => {
         (
             async () => {
-                if (type !== 'private' && roomID) {
+                if (type?.length && type !== 'private' && roomID) {
 
                     setIsLoading(true)
 
@@ -63,7 +66,7 @@ const RoomDetails = () => {
                 }
             }
         )()
-    }, [roomID, type])
+    }, [roomID])
 
     useEffect(() => {
         setter({ mockSelectedRoomData: null })
@@ -76,7 +79,16 @@ const RoomDetails = () => {
 
     const openChat = () => {
 
-        const roomHistory = rooms.find(data => data.name === myID + '-' + _id || data.name === _id + '-' + myID)
+        const isInRoom = selectedRoom?._id == roomID
+        if (isInRoom) return setter({ isRoomDetailsShown: false })
+
+        const roomHistory = rooms.find(data =>
+            data.name === myID + '-' + _id
+            ||
+            data.name === _id + '-' + myID
+            ||
+            data._id == roomID
+        )
 
         if (roomHistory) {
             roomSocket?.emit('joining', roomHistory._id)
@@ -91,12 +103,18 @@ const RoomDetails = () => {
     }
 
     const closeRoomDetails = () => {
-        mockSelectedRoomData ? setter({ mockSelectedRoomData: null }) : setter({ isRoomDetailsShown: false })
+        mockSelectedRoomData
+            ?
+            setter({ mockSelectedRoomData: null })
+            :
+            setter({ isRoomDetailsShown: false })
     }
 
     const isUserOnline = useCallback((userId: string) => {
         return onlineUsers.some(data => { if (data.userID === userId) return true })
     }, [onlineUsers.length])
+
+    console.log(onlineUsers)
 
     return (
         <section
@@ -126,7 +144,7 @@ const RoomDetails = () => {
 
                     <div className="flex justify-center flex-col gap-1">
 
-                        <h3 className="font-bold text-[16px] font-segoeBold text-xl line-clamp-1 overflow-ellipsis">{_id == myID ? 'Saved messages' : name}</h3>
+                        <h3 className="font-bold text-[16px] font-segoeBold text-xl line-clamp-1 overflow-ellipsis">{name}</h3>
 
                         <div className="font-bold text-[14px] text-darkGray font-segoeBold line-clamp-1 whitespace-normal text-nowrap">
                             {
@@ -134,7 +152,7 @@ const RoomDetails = () => {
                                     ?
                                     onlineUsers.some(data => { if (data.userID == _id) return true }) ? <span className="text-lightBlue">Online</span> : 'last seen recently'
                                     :
-                                    `${participants?.length} members, ${onlineUsersCount + ' online'}`
+                                    `${participants?.length} members ${onlineUsersCount ? ' ,' + onlineUsersCount + ' online' : ''}`
                             }
                         </div>
 
@@ -165,7 +183,7 @@ const RoomDetails = () => {
                 <div className="flex items-center justify-between">
 
                     <div>
-                        <p className="font-segoeLight text-[17px]">@{username || link}</p>
+                        <p className="font-segoeLight text-[17px]">{username || link}</p>
                         <p className="text-darkGray text-[13px]">{type === 'private' ? 'Username' : 'Link'}</p>
                     </div>
 
@@ -215,7 +233,7 @@ const RoomDetails = () => {
                             :
                             <div className="flex flex-col mt-3 w-full ch:w-full">
                                 {
-                                    groupMembers.length
+                                    groupMembers?.length
                                         ?
                                         groupMembers.map(member =>
                                             <RoomCard

@@ -10,55 +10,45 @@ interface Props {
     shouldOpenChat?: boolean
 }
 
-const RoomCard = (userTarget: Partial<UserModel> & Props) => {
+const RoomCard = (roomData: Partial<UserModel | RoomModel> & Props) => {
 
-    const { avatar, name, _id, isOnline, myData, shouldOpenChat = false } = userTarget
+    const { avatar, name, _id, isOnline, myData, shouldOpenChat = false } = roomData!
     const setter = useGlobalVariablesStore(state => state.setter)
-    const { selectedRoom, mockSelectedRoomData } = useGlobalVariablesStore(state => state)
     const rooms = useUserStore(state => state.rooms)
     const roomSocket = useSockets(state => state.rooms)
 
-    const roomData: Partial<RoomModel> = {
-        admins: [myData._id, _id!],
-        avatar,
-        createdAt: Date.now().toString(),
-        creator: myData._id,
-        link: Date.now().toString(),
-        locations: [],
-        medias: [],
-        messages: [],
-        name: myData._id + '-' + _id,
-        participants: [userTarget as any, myData],
-        type: 'private',
-        updatedAt: Date.now().toString()
-    }
-
     const showProfile = () => {
-        selectedRoom
-            ?
-            setter({ mockSelectedRoomData: roomData })
-            :
-            setter({ selectedRoom: roomData })
+        setter({ mockSelectedRoomData: roomData })
     }
 
     const openChat = () => {
 
         const roomHistory = rooms.find(data =>
-            data.name === myData._id + '-' + _id
+            data._id === _id // For chanel & groups
             ||
-            data.name === _id + '-' + myData._id
+            data.name === myData._id + '-' + _id // for private chats
+            ||
+            data.name === _id + '-' + myData._id // for private chats
         )
 
-        if (roomHistory) {
-            roomSocket?.emit('joining', roomHistory._id)
-        } else {
-            setter({
-                selectedRoom: mockSelectedRoomData,
-                mockSelectedRoomData: null
-            })
+        const fuckYou: any = {
+            admins: [myData._id, _id],
+            avatar,
+            createdAt: Date.now().toString(),
+            creator: myData._id,
+            link: (Math.random() * 9999999).toString(),
+            locations: [],
+            medias: [],
+            messages: [],
+            name: myData._id + '-' + _id,
+            participants: [myData, roomData],
+            type: 'private',
+            updatedAt: Date.now().toString()
         }
 
-        setter({ isRoomDetailsShown: false })
+        roomSocket?.emit('joining', roomHistory?._id || roomData?._id, fuckYou)
+
+        setter({ isRoomDetailsShown: false, selectedRoom: fuckYou })
     }
 
     return (

@@ -22,7 +22,7 @@ export const ChatCard = ({
     const [draftMessage, setDraftMessage] = useState('')
 
     const { selectedRoom, onlineUsers } = useGlobalVariablesStore(state => state)
-    const { _id: myID } = useUserStore(state => state) || {}
+    const { _id: myID } = useUserStore(state => state) || ''
     const { rooms } = useSockets(state => state)
     const latestMessageTime = getTimeFromDate(lastMsgData?.createdAt)
 

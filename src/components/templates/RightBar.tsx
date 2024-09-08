@@ -5,10 +5,10 @@ const RoomDetails = lazy(() => import('@/components/templates/RoomDetails'))
 
 const RightBar = () => {
 
-    const roomID = useGlobalVariablesStore(state => state.selectedRoom?._id)
+    const { selectedRoom, mockSelectedRoomData } = useGlobalVariablesStore(state => state)
 
     return (
-        roomID && <Suspense><RoomDetails /></Suspense>
+        (selectedRoom || mockSelectedRoomData) ? <Suspense><RoomDetails /></Suspense> : null
     )
 }
 

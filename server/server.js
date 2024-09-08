@@ -88,12 +88,27 @@ io.on('connection', socket => {
             }
 
             socket.join(newRoom._id)
-            io.emit('newRoom', newRoom._id)
+            io.to(newRoom._id).emit('newRoom', newRoom._id)
 
             const otherRoomMembersSocket = onlineUsers.filter(data => newRoom.participants.some(pID => { if (data.userID === pID.toString()) return true }))
             otherRoomMembersSocket.forEach(data => io.to(data.socketID).emit('createRoom', newRoom))
 
         }
+    })
+
+    socket.on('joinRoom', async ({ roomID, userID }) => {
+
+        const roomTarget = await RoomModel.findOne({ _id: roomID })
+
+        if (roomTarget && !roomTarget?.participants.includes(userID)) {
+
+            roomTarget.participants = [...roomTarget.participants, userID]
+            socket.join(roomID)
+            await roomTarget.save()
+
+            io.to(roomID).emit('joinRoom', { userID })
+        }
+
     })
 
     socket.on('seenMsg', async (seenData) => {
@@ -144,30 +159,39 @@ io.on('connection', socket => {
         socket.emit('getRooms', rooms)
     })
 
-    socket.on('joining', async newRoom => {
+    socket.on('joining', async (query, defaultRoomData = null) => {
 
-        const roomData = await RoomModel.findOne({ _id: newRoom })
-            .populate('messages', '', MessageModel)
-            .populate('medias', '', MediaModel)
-            .populate('locations', '', LocationModel)
-            .populate({
-                path: 'messages',
-                populate: {
-                    path: 'sender',
-                    model: UserModel
-                }
-            })
-            .populate({
-                path: 'messages',
-                populate: {
-                    path: 'replay',
-                    model: MessageModel,
-                },
-            });
+        try {
 
-        roomData?.type == 'private' && await roomData.populate('participants')
+            let roomData = await RoomModel.findOne({ $or: [{ _id: query }, { name: query }] })
+                .populate('messages', '', MessageModel)
+                .populate('medias', '', MediaModel)
+                .populate('locations', '', LocationModel)
+                .populate({
+                    path: 'messages',
+                    populate: {
+                        path: 'sender',
+                        model: UserModel
+                    }
+                })
+                .populate({
+                    path: 'messages',
+                    populate: {
+                        path: 'replay',
+                        model: MessageModel,
+                    },
+                });
 
-        socket.emit('joining', roomData)
+            roomData && roomData?.type == 'private' && await roomData.populate('participants')
+
+            if (!roomData?._id) {
+                roomData = defaultRoomData
+            }
+
+            socket.emit('joining', roomData)
+
+        } catch (error) { socket.emit('joining', defaultRoomData) }
+
     })
 
     socket.on('typing', data => {
