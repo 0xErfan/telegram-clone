@@ -114,8 +114,6 @@ const RoomDetails = () => {
         return onlineUsers.some(data => { if (data.userID === userId) return true })
     }, [onlineUsers.length])
 
-    console.log(onlineUsers)
-
     return (
         <section
             className={`flex-col ${isRoomDetailsShown ? 'xl:flex right-0 opacity-100' : 'xl:hidden -right-[400px] opacity-0'} duration-200 transition-all md:max-w-[400px] xl:static fixed xl:max-w-[400px] w-full bg-leftBarBg text-white md:inset-y-0 z-50`}

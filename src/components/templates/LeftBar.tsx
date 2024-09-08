@@ -34,8 +34,6 @@ const LeftBar = () => {
             })
     }, [rooms.length, forceRender])
 
-    console.log(selectedRoom)
-
     useEffect(() => {
 
         if (!_id) return
