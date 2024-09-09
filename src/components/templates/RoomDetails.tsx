@@ -172,7 +172,7 @@ const RoomDetails = () => {
                                     ?
                                     onlineUsers.some(data => { if (data.userID == _id) return true }) ? <span className="text-lightBlue">Online</span> : 'last seen recently'
                                     :
-                                    `${participants?.length} members ${onlineUsersCount ? ' ,' + onlineUsersCount + ' online' : ''}`
+                                    `${participants?.length} members ${onlineUsersCount ? ', ' + onlineUsersCount + ' online' : ''}`
                             }
                         </div>
 

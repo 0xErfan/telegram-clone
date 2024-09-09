@@ -223,7 +223,7 @@ const ChatContent = () => {
                                                     ?
                                                     onlineUsers.some(data => { if (data.userID === _id) return true }) ? <span className="text-lightBlue">Online</span> : 'last seen recently'
                                                     :
-                                                    participants?.length + ' members ' + (onlineMembersCount ? ' ,' + onlineMembersCount + ' online' : '')
+                                                    participants?.length + ' members ' + (onlineMembersCount ? ', ' + onlineMembersCount + ' online' : '')
                                             }
                                         </>
                                 }

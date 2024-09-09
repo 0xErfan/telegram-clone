@@ -70,7 +70,7 @@ const RoomCard = (roomData: Partial<UserModel | RoomModel> & Props) => {
             }
             <div className="flex flex-col justify-between border-b border-black/40 w-full py-2">
 
-                <p className="text-[17px] font-segoeBold">{name}</p>
+                <p className="text-[17px] font-segoeBold line-clamp-1 overflow-ellipsis">{name}</p>
 
                 <p className="text-sm text-darkGray">
                     {

@@ -22,6 +22,14 @@ const SearchPage = ({ closeSearch }: Props) => {
     const timer = useRef<NodeJS.Timeout | null>(null)
     const inputRef = useRef<HTMLInputElement>(null)
 
+    const searchQuery = (query: string) => {
+        return rooms.filter(data =>
+            data?.name?.includes(query)
+            ||
+            data?.link?.includes(query)
+        )
+    }
+
     useEffect(() => { inputRef.current?.focus() }, [])
 
     useEffect(() => {
@@ -42,28 +50,12 @@ const SearchPage = ({ closeSearch }: Props) => {
 
         const fetchQuery = async () => {
 
-            if (trimmedQuery.startsWith('@')) {
-
-                try {
-                    const { data, status } = await axios.post('/api/users/find', { query: trimmedQuery })
-                    if (status === 200) setSearchResult([data])
-                } catch (error) { setSearchResult([]) }
-                finally { setIsLoading(false), setSearchFinished(true) }
-
-            } else {
-
-                const searchResults = rooms.filter(data =>
-                    data?.name?.includes(trimmedQuery)
-                    ||
-                    data?.link?.includes(trimmedQuery)
-                    ||
-                    data?.messages.some(msgData => msgData?.message?.includes(trimmedQuery))
-                )
-
-                setIsLoading(false)
-                setSearchResult(searchResults)
-
-            }
+            try {
+                const { data, status } = await axios.post('/api/users/find', { query: { userID: myData._id, payload: trimmedQuery } })
+                console.log(data)
+                if (status === 200) setSearchResult(data)
+            } catch (error) { setSearchResult([]) }
+            finally { setIsLoading(false), setSearchFinished(true) }
 
         }
 
@@ -74,7 +66,8 @@ const SearchPage = ({ closeSearch }: Props) => {
     return (
         <section
             data-aos='fade-up'
-            className={` text-white absolute size-full inset-0 bg-leftBarBg z-[99999999] transition-all`}
+            onKeyUp={e => e.key == 'Escape' && closeSearch()}
+            className={` text-white absolute size-full h-screen inset-0 bg-leftBarBg z-[99999999] transition-all`}
         >
             <div className="flex gap-3 bg-inherit items-center justify-between w-full ch:w-full px-2 py-4">
 
