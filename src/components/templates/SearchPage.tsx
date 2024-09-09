@@ -1,8 +1,10 @@
 import { RoomModel, UserModel } from "@/@types/data.t"
 import useUserStore from "@/zustand/userStore"
+import { IoMdArrowRoundBack } from "react-icons/io";
 import axios from "axios"
 import { useEffect, useRef, useState } from "react"
 import RoomCard from "../modules/RoomCard"
+import { Button } from "@nextui-org/button";
 
 interface Props {
     closeSearch: () => void
@@ -16,15 +18,29 @@ const SearchPage = ({ closeSearch }: Props) => {
     const [query, setQuery] = useState('')
     const [searchResult, setSearchResult] = useState<UserModel[] | RoomModel[]>([])
     const [isLoading, setIsLoading] = useState(false)
+    const [searchFinished, setSearchFinished] = useState(false)
     const timer = useRef<NodeJS.Timeout | null>(null)
+    const inputRef = useRef<HTMLInputElement>(null)
+
+    useEffect(() => { inputRef.current?.focus() }, [])
 
     useEffect(() => {
+
         clearTimeout(timer.current!)
 
-        const fetchQuery = async () => {
+        const trimmedQuery = query.trim()
 
-            const trimmedQuery = query.trim()
-            if (!trimmedQuery.length) return
+        if (!trimmedQuery.length) {
+            setIsLoading(false)
+            setSearchResult([])
+            setSearchFinished(false)
+            return
+        }
+
+        setSearchFinished(true)
+        setIsLoading(true)
+
+        const fetchQuery = async () => {
 
             if (trimmedQuery.startsWith('@')) {
 
@@ -32,6 +48,7 @@ const SearchPage = ({ closeSearch }: Props) => {
                     const { data, status } = await axios.post('/api/users/find', { query: trimmedQuery })
                     if (status === 200) setSearchResult([data])
                 } catch (error) { setSearchResult([]) }
+                finally { setIsLoading(false), setSearchFinished(true) }
 
             } else {
 
@@ -43,6 +60,7 @@ const SearchPage = ({ closeSearch }: Props) => {
                     data?.messages.some(msgData => msgData?.message?.includes(trimmedQuery))
                 )
 
+                setIsLoading(false)
                 setSearchResult(searchResults)
 
             }
@@ -50,7 +68,7 @@ const SearchPage = ({ closeSearch }: Props) => {
         }
 
         timer.current = setTimeout(fetchQuery, 1000);
-        return () => { clearTimeout(timer.current!) }
+        return () => { clearTimeout(timer.current!), setIsLoading(false) }
     }, [query])
 
     return (
@@ -58,19 +76,45 @@ const SearchPage = ({ closeSearch }: Props) => {
             data-aos='fade-up'
             className={` text-white absolute size-full inset-0 bg-leftBarBg z-[99999999] transition-all`}
         >
-            <input
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                placeholder="Search for other rooms..."
-                className="w-full px-2 bg-darkGray py-2 rounded outline-none"
-                type="text"
-            />
+            <div className="flex gap-3 bg-inherit items-center justify-between w-full ch:w-full px-2 py-4">
+
+                <IoMdArrowRoundBack
+                    onClick={closeSearch}
+                    className="size-6 -mx-2 cursor-pointer basis-[10%]"
+                />
+
+                <input
+                    value={query}
+                    ref={inputRef}
+                    onChange={e => setQuery(e.target.value)}
+                    placeholder="Search"
+                    className="bg-inherit placeholder:text-white/60 basis-[90%] outline-none"
+                    type="text"
+                />
+
+            </div>
 
             <div className="px-3 mt-6">
                 {
-                    isLoading ? null
+                    isLoading ?
+
+                        <Button
+                            isLoading={isLoading}
+                            className="rounded-full bg-inherit overflow-hidden m-auto w-full"
+                            size="lg"
+                            color="primary"
+                        />
+
                         :
                         <div className="flex flex-col mt-3 w-full ch:w-full">
+
+                            {
+                                searchResult?.length
+                                    ?
+                                    <span className="text-darkGray text-sm">{searchResult.length} result(s)</span>
+                                    : null
+                            }
+
                             {
                                 searchResult?.length
                                     ?
@@ -84,7 +128,8 @@ const SearchPage = ({ closeSearch }: Props) => {
                                             />
                                         </div>
                                     )
-                                    : null
+                                    :
+                                    searchFinished && <div data-aos='fade-up' className="text-center text-darkGray">Nothing found bud.</div>
                             }
                         </div>
                 }

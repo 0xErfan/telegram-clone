@@ -17,7 +17,7 @@ const LeftBar = () => {
 
     const [rooms, setRooms] = useState<RoomModel[]>([])
     const [forceRender, setForceRender] = useState(false)
-    const [isSearchOpen, setIsSearchOpen] = useState(false)
+    const [isSearchOpen, setIsSearchOpen] = useState(true)
     const chatFolderRef = useRef<HTMLDivElement>(null)
 
     const _id = useUserStore(state => state._id)
