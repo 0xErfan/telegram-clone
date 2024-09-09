@@ -4,6 +4,7 @@ import useUserStore from "@/zustand/userStore"
 import { Button } from "@nextui-org/button"
 import { Socket } from "dgram"
 import { useEffect, useRef, useState } from "react"
+import RoomDetails from "./RoomDetails"
 
 interface Props {
     roomData: RoomModel
@@ -44,9 +45,10 @@ const JoinToRoom = ({ roomData, roomSocket, userID }: Props) => {
                 rooms: [...rooms, updatedRoom]
             })
 
+            roomSocket.emit('joining', roomData._id)
             setIsLoading(true)
         })
-        
+
     }, [])
 
     return (

@@ -147,7 +147,7 @@ const ChatContent = () => {
             rooms?.off('typing')
             rooms?.off('stop-typing')
         }
-    }, [messages?.length])
+    }, [messages?.length, participants?.length])
 
     useEffect(() => {
         if (!isLoaded && _id && messages?.length) {

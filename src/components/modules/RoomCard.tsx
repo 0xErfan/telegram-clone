@@ -35,7 +35,7 @@ const RoomCard = (roomData: Partial<UserModel | RoomModel> & Props) => {
             admins: [myData._id, _id],
             avatar,
             createdAt: Date.now().toString(),
-            creator: myData._id || _id,
+            creator: myData._id,
             link: (Math.random() * 9999999).toString(),
             locations: [],
             medias: [],

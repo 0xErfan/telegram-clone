@@ -48,7 +48,10 @@ const LeftBar = () => {
 
         roomSocket.on('joining', data => { setter({ selectedRoom: data }) })
 
-        roomSocket.on('deleteRoom', () => { roomSocket.emit('getRooms') })
+        roomSocket.on('deleteRoom', () => {
+            roomSocket.emit('getRooms')
+            setter({selectedRoom: null})
+        })
 
         roomSocket.on('getRooms', (rooms: RoomModel[]) => {
 

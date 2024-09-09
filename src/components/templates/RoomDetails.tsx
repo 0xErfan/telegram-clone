@@ -94,7 +94,7 @@ const RoomDetails = () => {
             admins: [myData._id, _id],
             avatar,
             createdAt: Date.now().toString(),
-            creator: myData._id || _id,
+            creator: myData._id,
             link: (Math.random() * 9999999).toString(),
             locations: [],
             medias: [],
@@ -129,7 +129,7 @@ const RoomDetails = () => {
             ?
             setter({ mockSelectedRoomData: null })
             :
-            setter({ isRoomDetailsShown: false })``
+            setter({ isRoomDetailsShown: false })
     }
 
     const isUserOnline = useCallback((userId: string) => {
