@@ -25,6 +25,8 @@ const LeftBar = () => {
     const { setter: userDataUpdater, rooms: userRooms } = useUserStore(state => state)
     const { selectedRoom, setter } = useGlobalVariablesStore(state => state)
 
+    console.log(selectedRoom)
+
     const sortedRooms = useMemo(() => {
         return rooms
             .sort((a: any, b: any) => {
@@ -32,9 +34,7 @@ const LeftBar = () => {
                 const bTime = new Date(b?.lastMsgData?.createdAt).getTime()
                 return bTime - aTime
             })
-    }, [rooms.length, forceRender, userRooms?.length])
-
-    console.log(selectedRoom)
+    }, [rooms?.length, forceRender, userRooms?.length])
 
     useEffect(() => {
 
@@ -47,11 +47,6 @@ const LeftBar = () => {
         roomSocket.emit('getRooms', _id)
 
         roomSocket.on('joining', roomData => { roomData && setter({ selectedRoom: roomData }) })
-
-        roomSocket.on('deleteRoom', roomID => {
-            roomSocket.emit('getRooms')
-            roomID == selectedRoom?._id && setter({ selectedRoom: null })
-        })
 
         roomSocket.on('getRooms', (rooms: RoomModel[]) => {
 
@@ -78,7 +73,6 @@ const LeftBar = () => {
             roomSocket.off('joining')
             roomSocket.off('getRooms')
             roomSocket.off('createRoom')
-            roomSocket.off('deleteRoom')
             roomSocket.off('lastMsgUpdate')
             roomSocket.off('updateOnlineUsers')
         }
@@ -89,6 +83,17 @@ const LeftBar = () => {
             rooms?.length < userRooms?.length && setRooms(userRooms)
         }
     }, [userRooms?.length, rooms?.length])
+
+    useEffect(() => {
+        roomSocket.on('deleteRoom', roomID => {
+            roomSocket.emit('getRooms')
+            roomID == selectedRoom?._id && setter({ selectedRoom: null })
+        })
+
+        return () => {
+            roomSocket.off('deleteRoom')
+        }
+    }, [selectedRoom?._id])
 
     useEffect(() => {
 
