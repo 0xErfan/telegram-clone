@@ -30,8 +30,8 @@ const LeftBar = () => {
     const sortedRooms = useMemo(() => {
         return rooms
             .sort((a: any, b: any) => {
-                const aTime = new Date(a?.lastMsgData?.createdAt).getTime()
-                const bTime = new Date(b?.lastMsgData?.createdAt).getTime()
+                const aTime = new Date(a?.lastMsgData?.createdAt).getTime() || 0
+                const bTime = new Date(b?.lastMsgData?.createdAt).getTime() || 0
                 return bTime - aTime
             })
     }, [rooms?.length, forceRender, userRooms?.length])
