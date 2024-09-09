@@ -46,11 +46,11 @@ const LeftBar = () => {
         roomSocket.emit('joining', selectedRoom?._id)
         roomSocket.emit('getRooms', _id)
 
-        roomSocket.on('joining', data => { setter({ selectedRoom: data }) })
+        roomSocket.on('joining', roomData => { roomData && setter({ selectedRoom: roomData }) })
 
-        roomSocket.on('deleteRoom', () => {
+        roomSocket.on('deleteRoom', roomID => {
             roomSocket.emit('getRooms')
-            setter({selectedRoom: null})
+            roomID == selectedRoom?._id && setter({ selectedRoom: null })
         })
 
         roomSocket.on('getRooms', (rooms: RoomModel[]) => {
@@ -69,7 +69,7 @@ const LeftBar = () => {
 
         roomSocket.on('createRoom', roomData => {
             roomSocket.emit('getRooms', _id)
-            roomData.creator === _id && roomSocket.emit('joining', roomData._id)
+            roomData.creator == _id && roomSocket.emit('joining', roomData._id)
         })
 
         roomSocket.on('updateOnlineUsers', onlineUsers => setter({ onlineUsers })) // check if its accessible for all(bug) or not

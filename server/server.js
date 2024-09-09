@@ -66,8 +66,6 @@ io.on('connection', socket => {
 
     socket.on('createRoom', async ({ newRoomData, message = null }) => {
 
-        socket.emit('createRoom', newRoomData)
-
         let isRoomExist = false
 
         if (newRoomData.type === 'private') isRoomExist = await RoomModel.findOne({ name: newRoomData.name })
@@ -83,15 +81,19 @@ io.on('connection', socket => {
                 const newMsg = await MessageModel.create({ ...msgData, roomID: newRoom._id })
                 msgData = newMsg
                 newRoom.messages = [newMsg._id]
-                newRoom.lastMsgData = msgData
                 await newRoom.save()
             }
 
             socket.join(newRoom._id)
-            io.to(newRoom._id).emit('newRoom', newRoom._id)
 
             const otherRoomMembersSocket = onlineUsers.filter(data => newRoom.participants.some(pID => { if (data.userID === pID.toString()) return true }))
-            otherRoomMembersSocket.forEach(data => io.to(data.socketID).emit('createRoom', newRoom))
+
+            otherRoomMembersSocket.forEach(({ socketID: userSocketID }) => {
+                const socketID = io.sockets.sockets.get(userSocketID)
+                socketID && socketID.join(newRoom._id)
+            })
+
+            io.to(newRoom._id).emit('createRoom', newRoom)
 
         }
     })
@@ -112,8 +114,8 @@ io.on('connection', socket => {
     })
 
     socket.on('deleteRoom', async roomID => {
-        await RoomModel.findOneAndDelete({_id: roomID})
-        io.to(roomID).emit('deleteRoom')
+        await RoomModel.findOneAndDelete({ _id: roomID })
+        io.to(roomID).emit('deleteRoom', roomID)
     })
 
     socket.on('seenMsg', async (seenData) => {
@@ -166,36 +168,32 @@ io.on('connection', socket => {
 
     socket.on('joining', async (query, defaultRoomData = null) => {
 
-        try {
+        let roomData = await RoomModel.findOne({ $or: [{ _id: query }, { name: query }] })
+            .populate('messages', '', MessageModel)
+            .populate('medias', '', MediaModel)
+            .populate('locations', '', LocationModel)
+            .populate({
+                path: 'messages',
+                populate: {
+                    path: 'sender',
+                    model: UserModel
+                }
+            })
+            .populate({
+                path: 'messages',
+                populate: {
+                    path: 'replay',
+                    model: MessageModel,
+                },
+            });
 
-            let roomData = await RoomModel.findOne({ $or: [{ _id: query }, { name: query }] })
-                .populate('messages', '', MessageModel)
-                .populate('medias', '', MediaModel)
-                .populate('locations', '', LocationModel)
-                .populate({
-                    path: 'messages',
-                    populate: {
-                        path: 'sender',
-                        model: UserModel
-                    }
-                })
-                .populate({
-                    path: 'messages',
-                    populate: {
-                        path: 'replay',
-                        model: MessageModel,
-                    },
-                });
+        roomData && roomData?.type == 'private' && await roomData.populate('participants')
 
-            roomData && roomData?.type == 'private' && await roomData.populate('participants')
+        if (!roomData?._id) {
+            roomData = defaultRoomData
+        }
 
-            if (!roomData?._id) {
-                roomData = defaultRoomData
-            }
-
-            socket.emit('joining', roomData)
-
-        } catch (error) { socket.emit('joining', defaultRoomData) }
+        socket.emit('joining', roomData)
 
     })
 
