@@ -25,8 +25,6 @@ const LeftBar = () => {
     const { setter: userDataUpdater, rooms: userRooms } = useUserStore(state => state)
     const { selectedRoom, setter } = useGlobalVariablesStore(state => state)
 
-    console.log(selectedRoom)
-
     const sortedRooms = useMemo(() => {
         return rooms
             .sort((a: any, b: any) => {

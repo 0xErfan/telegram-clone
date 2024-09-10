@@ -14,16 +14,18 @@ export const POST = async (req: Request) => {
         const payload = purePayload.toLowerCase()
 
         let result;
-        ''.toLowerCase
+
         if (payload.startsWith('@')) {
+
             result = await RoomModel.findOne({ link: payload })
             if (!result) result = await UserModel.findOne({ username: payload })
 
             if (result) return Response.json([result], { status: 200 })
             return Response.json(null, { status: 404 })
+
         }
 
-        const userRoomsData: RoomModelType[] = await RoomModel
+        const userRoomsData: (RoomModelType)[] = await RoomModel
             .find({ participants: { $in: userID } })
             .populate('messages', '', MessageModel)
             .populate('participants')
@@ -39,7 +41,8 @@ export const POST = async (req: Request) => {
                 searchResult.push({
                     ...roomData,
                     findBy: 'participants',
-                    name: roomData.participants.filter((data: any) => data._id !== roomData.creator).at(-1)?.name ?? ""
+                    // @ts-expect-error
+                    name: roomData.participants.filter((data: any) => data._id !== roomData.creator).at(-1)?.name ?? "-"
                 })
             }
 
@@ -48,7 +51,9 @@ export const POST = async (req: Request) => {
                     searchResult.push({
                         ...roomData,
                         findBy: 'messages',
-                        name: roomData.type == 'private' ? roomData.participants.filter((data: any) => data._id !== roomData.creator).at(-1)?.name ?? "" : roomData.name
+                        messages: [msgData],
+                        // @ts-expect-error
+                        name: roomData.type == 'private' ? roomData.participants.filter((data: any) => data._id !== roomData.creator).at(-1)?.name ?? "-" : roomData.name
                     })
                 }
             })

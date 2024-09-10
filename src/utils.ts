@@ -182,13 +182,13 @@ const scrollIntoElem = (elem: Element) => {
     elem?.scrollIntoView({ behavior: 'smooth' })
 }
 
-const scrollToMessage = (id: string) => {
+const scrollToMessage = (id: string, behavior: 'smooth' | 'auto' = 'smooth') => {
 
     const replayTargetElem = document.getElementsByClassName(id!)[0]
 
     if (replayTargetElem) {
 
-        replayTargetElem.scrollIntoView({ block: 'center', behavior: 'smooth' })
+        replayTargetElem.scrollIntoView({ block: 'center', behavior })
         replayTargetElem.classList.add('highLightedMessage')
 
         setTimeout(() => replayTargetElem.classList.remove('highLightedMessage'), 1000);

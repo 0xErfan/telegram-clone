@@ -9,6 +9,7 @@ interface Props {
     socket: null | Socket
     isRoomDetailsShown: boolean
     shouldCloseAll: boolean
+    isChatPageLoaded: boolean
 }
 
 interface Updater {
@@ -23,6 +24,7 @@ const useGlobalVariablesStore = create<Props & Updater>(set => ({
     socket: null,
     shouldCloseAll: false,
     isRoomDetailsShown: false,
+    isChatPageLoaded: false,
 
     updater(key: keyof Props, value: Props[keyof Props]) {
         set({ [key]: value })

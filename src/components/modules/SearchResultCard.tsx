@@ -1,19 +1,41 @@
 import { RoomModel, UserModel } from "@/@types/data.t"
+import { scrollToMessage } from "@/utils"
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import useSockets from "@/zustand/useSockets"
 import useUserStore from "@/zustand/userStore"
 import Image from "next/image"
-import { useRef } from "react"
 
 interface Props {
     myData: UserModel
     query: string
 }
 
+const highlightChars = (query: string, name: string) => {
+
+    const lowerCaseQuery = query.toLowerCase()
+    const lowerCaseName = name!.toLowerCase()
+
+    const isQueryIncludesInName = lowerCaseName.includes(lowerCaseQuery)
+    let startToHighlightIndex = lowerCaseName.indexOf(lowerCaseQuery)
+    let endToHighlightIndex = startToHighlightIndex + lowerCaseQuery.length - 1
+
+
+    return isQueryIncludesInName
+        ?
+        name?.split('').map((char, index) => {
+
+            const isInHighlightRange = index >= startToHighlightIndex! && index <= endToHighlightIndex!
+            return <span key={index} className={isInHighlightRange ? 'text-lightBlue' : ''}>{char}</span>
+
+        })
+        :
+        <span>{name}</span>
+}
+
 const SearchResultCard = (roomData: Partial<RoomModel & { findBy?: keyof RoomModel }> & Props) => {
 
     const { avatar, name, _id, myData, findBy = null, query } = roomData!
-    const setter = useGlobalVariablesStore(state => state.setter)
+    const { setter, isChatPageLoaded } = useGlobalVariablesStore(state => state)
     const rooms = useUserStore(state => state.rooms)
     const roomSocket = useSockets(state => state.rooms)
 
@@ -43,30 +65,12 @@ const SearchResultCard = (roomData: Partial<RoomModel & { findBy?: keyof RoomMod
         }
 
         roomSocket?.emit('joining', roomHistory?._id || roomData?._id, fuckYou)
-
         setter({ isRoomDetailsShown: false, selectedRoom: fuckYou })
+
+        setTimeout(() => {
+            roomData.messages?.length && scrollToMessage(roomData.messages[0]._id)
+        }, isChatPageLoaded ? 800 : 1400);
     }
-
-    const highlightChars = (() => {
-
-        const lowerCaseQuery = query.toLowerCase()
-        const lowerCaseName = name!.toLowerCase()
-
-        const isQueryIncludesInName = lowerCaseName.includes(lowerCaseQuery)
-
-        const startToHighlightIndex = lowerCaseName.indexOf(lowerCaseQuery)
-        const endToHighlightIndex = lowerCaseName.lastIndexOf(lowerCaseQuery.at(-1)!)
-
-        return isQueryIncludesInName && (findBy == 'name' || findBy == 'participants')
-            ?
-            name?.split('').map((char, index) => {
-                const isInHighlightRange = index >= startToHighlightIndex! && index <= endToHighlightIndex!
-                return <span className={isInHighlightRange ? 'text-lightBlue' : ''}>{char}</span>
-            })
-            :
-            <span>{name}</span>
-    }
-    )()
 
     return (
         <div
@@ -88,14 +92,20 @@ const SearchResultCard = (roomData: Partial<RoomModel & { findBy?: keyof RoomMod
             <div className="flex flex-col justify-between border-b border-black/40 w-full py-2">
 
                 <p className="text-[17px] font-segoeBold line-clamp-1 overflow-ellipsis">
-                    {highlightChars}
+                    {
+                        (findBy == 'participants' || findBy == 'name')
+                            ?
+                            highlightChars(query, name!)
+                            :
+                            name
+                    }
                 </p>
 
                 <p className="text-sm text-darkGray">
                     {
-                        'isOnline'
+                        findBy == 'messages' && roomData.messages?.length
                             ?
-                            <span className="text-lightBlue">Online</span>
+                            highlightChars(query, roomData.messages[0].message)
                             :
                             'last seen recently'
                     }

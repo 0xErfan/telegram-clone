@@ -3,7 +3,6 @@ import useUserStore from "@/zustand/userStore"
 import { IoMdArrowRoundBack } from "react-icons/io";
 import axios from "axios"
 import { useEffect, useRef, useState } from "react"
-import RoomCard from "../modules/RoomCard"
 import { Button } from "@nextui-org/button";
 import SearchResultCard from "../modules/SearchResultCard";
 
@@ -22,14 +21,6 @@ const SearchPage = ({ closeSearch }: Props) => {
     const [searchFinished, setSearchFinished] = useState(false)
     const timer = useRef<NodeJS.Timeout | null>(null)
     const inputRef = useRef<HTMLInputElement>(null)
-
-    const searchQuery = (query: string) => {
-        return rooms.filter(data =>
-            data?.name?.includes(query)
-            ||
-            data?.link?.includes(query)
-        )
-    }
 
     useEffect(() => { inputRef.current?.focus() }, [])
 
@@ -53,7 +44,6 @@ const SearchPage = ({ closeSearch }: Props) => {
 
             try {
                 const { data, status } = await axios.post('/api/users/find', { query: { userID: myData._id, payload: trimmedQuery } })
-                console.log(data)
                 if (status === 200) setSearchResult(data)
             } catch (error) { setSearchResult([]) }
             finally { setIsLoading(false), setSearchFinished(true) }
@@ -62,6 +52,7 @@ const SearchPage = ({ closeSearch }: Props) => {
 
         timer.current = setTimeout(fetchQuery, 1000);
         return () => { clearTimeout(timer.current!), setIsLoading(false) }
+
     }, [query])
 
     return (
@@ -117,7 +108,7 @@ const SearchPage = ({ closeSearch }: Props) => {
                                             <SearchResultCard
                                                 key={index}
                                                 {...data}
-                                                query={query.trim()}
+                                                query={query}
                                                 myData={myData}
                                             />
                                         </div>
