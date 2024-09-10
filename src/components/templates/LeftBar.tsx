@@ -1,7 +1,6 @@
 'use client'
 import Image from "next/image"
 import { BiSearch } from "react-icons/bi"
-import ChatFolders from "../modules/ChatFolders"
 import { ChatCard } from "../modules/ChatCard"
 import { lazy, useEffect, useMemo, useRef, useState } from "react"
 import { RoomModel } from "@/@types/data.t"
@@ -9,6 +8,7 @@ import { io } from 'socket.io-client'
 import useUserStore from "@/zustand/userStore"
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import useSockets from "@/zustand/useSockets"
+import RoomFolders from "./RoomFolders"
 const SearchPage = lazy(() => import('@/components/templates/SearchPage'))
 
 const roomSocket = io('http://localhost:3001')
@@ -17,8 +17,7 @@ const LeftBar = () => {
 
     const [rooms, setRooms] = useState<RoomModel[]>([])
     const [forceRender, setForceRender] = useState(false)
-    const [isSearchOpen, setIsSearchOpen] = useState(true)
-    const chatFolderRef = useRef<HTMLDivElement>(null)
+    const [isSearchOpen, setIsSearchOpen] = useState(false)
 
     const _id = useUserStore(state => state._id)
     const updater = useSockets(state => state.updater)
@@ -74,13 +73,13 @@ const LeftBar = () => {
             roomSocket.off('lastMsgUpdate')
             roomSocket.off('updateOnlineUsers')
         }
-    }, [_id, rooms?.length])
+    }, [_id]) //, rooms?.length
 
     useEffect(() => {
         if (rooms?.length && userRooms?.length) {
             rooms?.length < userRooms?.length && setRooms(userRooms)
         }
-    }, [userRooms?.length, rooms?.length])
+    }, [userRooms?.length]) //rooms?.length
 
     useEffect(() => {
         roomSocket.on('deleteRoom', roomID => {
@@ -93,18 +92,10 @@ const LeftBar = () => {
         }
     }, [selectedRoom?._id])
 
-    useEffect(() => {
-
-        const handleScroll = (event: WheelEvent) => {
-            event.preventDefault();
-            const scrollAmount = event.deltaY < 0 ? -30 : 30
-            chatFolderRef.current!.scrollBy({ left: scrollAmount });
-        }
-
-        chatFolderRef.current!.addEventListener('wheel', handleScroll);
-        return () => chatFolderRef.current!?.removeEventListener('wheel', handleScroll);
-
-    }, [])
+    const filterRooms = (filteredFolders: RoomModel[]) => {
+        setRooms(filteredFolders)
+        setForceRender(prev => !prev)
+    }
 
     return (
         <div
@@ -132,16 +123,7 @@ const LeftBar = () => {
 
                 </div>
 
-                <div
-                    ref={chatFolderRef}
-                    className="flex items-center noScrollWidth gap-5 overflow-x-auto h-10 text-darkGray ch:py-1 ch:w-fit z-40"
-                >
-                    <ChatFolders key={2} count={2} name="All" />
-                    <ChatFolders key={32} count={32} name="Groups" />
-                    <ChatFolders key={212} count={212} isActive name="Private" />
-                    <ChatFolders key={5} count={5} name="Bots" />
-                    <ChatFolders key={53} count={5} name="Bots" />
-                </div>
+                <RoomFolders filterFolders={filterRooms} />
 
             </div>
 

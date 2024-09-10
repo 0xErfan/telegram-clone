@@ -82,14 +82,12 @@ const SearchPage = ({ closeSearch }: Props) => {
             <div className="px-3 mt-6">
                 {
                     isLoading ?
-
                         <Button
                             isLoading={isLoading}
                             className="rounded-full bg-inherit overflow-hidden m-auto w-full"
                             size="lg"
                             color="primary"
                         />
-
                         :
                         <div className="flex flex-col mt-3 w-full ch:w-full">
 
