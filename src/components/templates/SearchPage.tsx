@@ -5,6 +5,7 @@ import axios from "axios"
 import { useEffect, useRef, useState } from "react"
 import RoomCard from "../modules/RoomCard"
 import { Button } from "@nextui-org/button";
+import SearchResultCard from "../modules/SearchResultCard";
 
 interface Props {
     closeSearch: () => void
@@ -111,12 +112,12 @@ const SearchPage = ({ closeSearch }: Props) => {
                             {
                                 searchResult?.length
                                     ?
-                                    searchResult.map(member =>
+                                    searchResult.map((data, index) =>
                                         <div onClick={closeSearch}>
-                                            <RoomCard
-                                                key={member._id}
-                                                {...member}
-                                                shouldOpenChat
+                                            <SearchResultCard
+                                                key={index}
+                                                {...data}
+                                                query={query.trim()}
                                                 myData={myData}
                                             />
                                         </div>

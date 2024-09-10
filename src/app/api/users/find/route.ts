@@ -39,7 +39,7 @@ export const POST = async (req: Request) => {
                 searchResult.push({
                     ...roomData,
                     findBy: 'participants',
-                    name: roomData.participants.find((data: any) => data._id == roomData.creator)?.name
+                    name: roomData.participants.filter((data: any) => data._id !== roomData.creator).at(-1)?.name ?? ""
                 })
             }
 
@@ -48,7 +48,7 @@ export const POST = async (req: Request) => {
                     searchResult.push({
                         ...roomData,
                         findBy: 'messages',
-                        name: roomData.type == 'private' ? roomData.participants.find((data: any) => data._id == roomData.creator)?.name ?? "" : roomData.name
+                        name: roomData.type == 'private' ? roomData.participants.filter((data: any) => data._id !== roomData.creator).at(-1)?.name ?? "" : roomData.name
                     })
                 }
             })
