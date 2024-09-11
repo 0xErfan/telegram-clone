@@ -16,15 +16,12 @@ export const ChatCard = ({
     avatar: roomAvatar,
     lastMsgData,
     participants
-}: RoomModel & { lastMsgData: MessageModel }
-) => {
+}: RoomModel & { lastMsgData: MessageModel }) => {
 
     const [draftMessage, setDraftMessage] = useState('')
-
     const { selectedRoom, onlineUsers } = useGlobalVariablesStore(state => state)
     const { _id: myID } = useUserStore(state => state) || ''
     const { rooms } = useSockets(state => state)
-    const latestMessageTime = getTimeFromDate(lastMsgData?.createdAt)
 
     const { avatar, name, _id: roomID } = useMemo(() => {
         // if type is private, we should view the user infos instead of room infos
@@ -40,9 +37,10 @@ export const ChatCard = ({
             ({ name: roomName, avatar: roomAvatar } as any)
     }, [])
 
-    const isActive = selectedRoom?._id == _id
     const isOnline = onlineUsers.some(data => { if (data.userID === roomID) return true })
     const notSeenMessages = messages?.length || null
+    const latestMessageTime = getTimeFromDate(lastMsgData?.createdAt)
+    const isActive = selectedRoom?._id == _id
 
     useEffect(() => {
         setDraftMessage(localStorage.getItem(_id) || '')
@@ -85,7 +83,7 @@ export const ChatCard = ({
 
                 <div className="flex items-center justify-between">
 
-                    <div className="line-clamp-1">
+                    <div className="line-clamp-1 w-[80%]">
                         {
                             draftMessage?.length
                                 ?
@@ -95,7 +93,7 @@ export const ChatCard = ({
                         }
                     </div>
 
-                    <div className="flex items-center justify-between w-14 gap-2">
+                    <div className="flex items-center justify-between gap-2">
                         <div className="flex-center text-center w-min px-2 bg-darkBlue text-white rounded-full">{notSeenMessages}</div>
                         <Image
                             priority
