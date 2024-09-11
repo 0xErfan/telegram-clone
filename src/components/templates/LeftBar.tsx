@@ -2,7 +2,7 @@
 import Image from "next/image"
 import { BiSearch } from "react-icons/bi"
 import { ChatCard } from "../modules/ChatCard"
-import { lazy, useEffect, useMemo, useRef, useState } from "react"
+import { lazy, useEffect, useMemo, useState } from "react"
 import { RoomModel } from "@/@types/data.t"
 import { io } from 'socket.io-client'
 import useUserStore from "@/zustand/userStore"
@@ -12,7 +12,6 @@ import RoomFolders from "./RoomFolders"
 const SearchPage = lazy(() => import('@/components/templates/SearchPage'))
 
 const roomSocket = io('http://localhost:3001')
-const folders = ['all', 'group', 'private', 'channel', 'bot']
 
 const LeftBar = () => {
 
@@ -80,13 +79,13 @@ const LeftBar = () => {
             roomSocket.off('lastMsgUpdate')
             roomSocket.off('updateOnlineUsers')
         }
-    }, [_id, rooms?.length]) //, rooms?.length
+    }, [_id, rooms?.length])
 
     useEffect(() => {
         if (rooms?.length && userRooms?.length) {
             rooms?.length < userRooms?.length && setRooms(userRooms)
         }
-    }, [userRooms?.length, rooms?.length]) //rooms?.length
+    }, [userRooms?.length, rooms?.length])
 
     useEffect(() => {
         roomSocket.on('deleteRoom', roomID => {

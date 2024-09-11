@@ -12,6 +12,7 @@
   "dependencies": {
     "@nextui-org/autocomplete": "^2.1.5",
     "@nextui-org/button": "^2.0.37",
+    "@nextui-org/dropdown": "^2.1.29",
     "@nextui-org/input": "^2.2.4",
     "@nextui-org/switch": "^2.0.33",
     "@nextui-org/system": "^2.2.5",

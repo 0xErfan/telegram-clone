@@ -13,7 +13,6 @@ interface Props {
 const SearchPage = ({ closeSearch }: Props) => {
 
     const myData = useUserStore(state => state)
-    const rooms = myData.rooms
 
     const [query, setQuery] = useState('')
     const [searchResult, setSearchResult] = useState<UserModel[] | RoomModel[]>([])

@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { MessageModel } from '@/@types/data.t';
 import useGlobalVariablesStore from '@/zustand/globalVariablesStore';
+import MessageActions from './MessageActions';
 
 interface Props {
     myId: string,
@@ -28,6 +29,7 @@ const Message = ({
 
     const messageRef = useRef(null)
     const [isReplayBtnShown, setIsReplayBtnShown] = useState(false)
+    const [isMessageOptionsOpen, setIsMessageOptionsOpen] = useState(false)
 
     const isFromMe = sender._id == myId
     const isInViewport = useOnScreen(messageRef)
@@ -75,6 +77,7 @@ const Message = ({
                 transition-all
                 duration-500
                 overflow-hidden
+                ch:overflow-hidden
             `}
         >
             {
@@ -98,6 +101,8 @@ const Message = ({
             <div
                 onMouseEnter={() => setIsReplayBtnShown(true)}
                 onMouseLeave={() => setIsReplayBtnShown(false)}
+                onClick={() => setIsMessageOptionsOpen(true)}
+                onContextMenu={e => { e.preventDefault(); setIsMessageOptionsOpen(true) }}
                 className={`${isFromMe ? 'bg-darkBlue rounded-l-md rounded-tr-xl text-right pl-1 pr-3' : 'bg-white/10 rounded-r-md rounded-tl-xl text-left pr-1 pl-3'} relative w-fit max-w-[80%] min-w-24 xl:max-w-[60%]`}
             >
                 {
@@ -152,6 +157,13 @@ const Message = ({
                             : null
                     }
                 </span>
+
+                <MessageActions
+                    isOpen={isMessageOptionsOpen}
+                    isFromMe={isFromMe}
+                    closeDropDown={() => setIsMessageOptionsOpen(false)}
+                />
+
             </div>
         </div>
     )

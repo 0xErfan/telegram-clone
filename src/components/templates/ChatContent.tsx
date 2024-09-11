@@ -159,7 +159,7 @@ const ChatContent = () => {
     }, [messages?.length, isLoaded, myID])
 
     useEffect(() => {
-        setter({isChatPageLoaded: true})
+        setter({ isChatPageLoaded: true })
         return () => {
             setIsLoaded(false)
             setTypings([])
