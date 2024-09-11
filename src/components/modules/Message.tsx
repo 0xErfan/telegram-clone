@@ -14,18 +14,9 @@ interface Props {
     isPv?: boolean
 }
 
-const Message = ({
-    createdAt,
-    message,
-    seen,
-    _id,
-    sender,
-    myId,
-    roomID,
-    replayedTo,
-    addReplay,
-    isPv = false
-}: MessageModel & Props) => {
+const Message = (msgData: MessageModel & Props) => {
+
+    const { createdAt, message, seen, _id, sender, myId, roomID, replayedTo, addReplay, isPv = false } = msgData
 
     const messageRef = useRef(null)
     const [isReplayBtnShown, setIsReplayBtnShown] = useState(false)
@@ -160,7 +151,9 @@ const Message = ({
 
                 <MessageActions
                     isOpen={isMessageOptionsOpen}
+                    reply={() => addReplay(_id)}
                     isFromMe={isFromMe}
+                    msgData={msgData}
                     closeDropDown={() => setIsMessageOptionsOpen(false)}
                 />
 

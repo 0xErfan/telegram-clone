@@ -195,6 +195,10 @@ const scrollToMessage = (id: string, behavior: 'smooth' | 'auto' = 'smooth') => 
     }
 }
 
+const copyText = async (text: string) => {
+    await navigator?.clipboard?.writeText(text)
+}
+
 export {
     getTimer,
     showToast,
@@ -211,5 +215,6 @@ export {
     delay,
     getTimeFromDate,
     scrollIntoElem,
-    scrollToMessage
+    scrollToMessage,
+    copyText
 }

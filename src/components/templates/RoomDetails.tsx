@@ -15,6 +15,7 @@ import { showToast } from "@/utils";
 import { Button } from "@nextui-org/button";
 import useSockets from "@/zustand/useSockets";
 import RoomCard from "../modules/RoomCard";
+import { copyText as copyFn } from "@/utils";
 
 
 const RoomDetails = () => {
@@ -72,8 +73,9 @@ const RoomDetails = () => {
         setter({ mockSelectedRoomData: null })
     }, [selectedRoom?._id])
 
-    const copyText = () => {
-        navigator?.clipboard?.writeText(username || link).then(() => setIsCopied(true))
+    const copyText = async () => {
+        await copyFn(username || link)
+        setIsCopied(true)
         setTimeout(() => setIsCopied(false), 1000);
     }
 

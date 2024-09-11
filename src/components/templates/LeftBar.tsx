@@ -9,21 +9,24 @@ import useUserStore from "@/zustand/userStore"
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import useSockets from "@/zustand/useSockets"
 import RoomFolders from "./RoomFolders"
+
 const SearchPage = lazy(() => import('@/components/templates/SearchPage'))
+const Modal = lazy(() => import('../modules/Modal'))
 
 const roomSocket = io('http://localhost:3001')
 
 const LeftBar = () => {
 
     const [rooms, setRooms] = useState<RoomModel[]>([])
+    const [filterBy, setFilterBy] = useState('all')
+    const [isPageLoaded, setIsPageLoaded] = useState(false)
     const [forceRender, setForceRender] = useState(false)
     const [isSearchOpen, setIsSearchOpen] = useState(false)
-    const [filterBy, setFilterBy] = useState('all')
 
     const _id = useUserStore(state => state._id)
     const updater = useSockets(state => state.updater)
     const { setter: userDataUpdater, rooms: userRooms } = useUserStore(state => state)
-    const { selectedRoom, setter } = useGlobalVariablesStore(state => state)
+    const { selectedRoom, setter, modalData } = useGlobalVariablesStore(state => state)
 
     const sortedRooms = useMemo(() => {
 
@@ -43,6 +46,7 @@ const LeftBar = () => {
 
         if (!_id) return
 
+        setIsPageLoaded(true)
         updater('rooms', roomSocket)
         userDataUpdater({ rooms })
 
@@ -98,6 +102,10 @@ const LeftBar = () => {
         }
     }, [selectedRoom?._id])
 
+    const openModal = () => {
+        setter({ modalData: { ...modalData, isOpen: true, isCheckedText: 'Hi, do you like to be remembered?' } })
+    }
+
     return (
         <div
             data-aos-duration="400"
@@ -109,7 +117,7 @@ const LeftBar = () => {
 
                 <div className="flex items-center justify-between gap-6">
 
-                    <div className="flex items-center flex-1 gap-5 mt-3 w-full text-white tex-[14px]">
+                    <div onClick={openModal} className="flex items-center flex-1 gap-5 mt-3 w-full text-white tex-[14px]">
                         <Image
                             className="cursor-pointer"
                             src="/shapes/hamberger.svg"
@@ -144,6 +152,10 @@ const LeftBar = () => {
             </div>
 
             {isSearchOpen && <SearchPage closeSearch={() => setIsSearchOpen(false)} />}
+
+            {
+                isPageLoaded && <Modal />
+            }
 
         </div>
     )
