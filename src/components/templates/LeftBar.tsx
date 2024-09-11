@@ -12,12 +12,14 @@ import RoomFolders from "./RoomFolders"
 const SearchPage = lazy(() => import('@/components/templates/SearchPage'))
 
 const roomSocket = io('http://localhost:3001')
+const folders = ['all', 'group', 'private', 'channel', 'bot']
 
 const LeftBar = () => {
 
     const [rooms, setRooms] = useState<RoomModel[]>([])
     const [forceRender, setForceRender] = useState(false)
     const [isSearchOpen, setIsSearchOpen] = useState(false)
+    const [filterBy, setFilterBy] = useState('all')
 
     const _id = useUserStore(state => state._id)
     const updater = useSockets(state => state.updater)
@@ -25,13 +27,18 @@ const LeftBar = () => {
     const { selectedRoom, setter } = useGlobalVariablesStore(state => state)
 
     const sortedRooms = useMemo(() => {
-        return rooms
+
+        const filteredRooms = filterBy == 'all' ? rooms : [...rooms].filter(data => data.type === filterBy)
+
+        const sortAndFilteredRooms = filteredRooms
             .sort((a: any, b: any) => {
                 const aTime = new Date(a?.lastMsgData?.createdAt).getTime() || 0
                 const bTime = new Date(b?.lastMsgData?.createdAt).getTime() || 0
                 return bTime - aTime
             })
-    }, [rooms?.length, forceRender, userRooms?.length])
+
+        return sortAndFilteredRooms;
+    }, [rooms?.length, forceRender, userRooms?.length, filterBy])
 
     useEffect(() => {
 
@@ -73,13 +80,13 @@ const LeftBar = () => {
             roomSocket.off('lastMsgUpdate')
             roomSocket.off('updateOnlineUsers')
         }
-    }, [_id]) //, rooms?.length
+    }, [_id, rooms?.length]) //, rooms?.length
 
     useEffect(() => {
         if (rooms?.length && userRooms?.length) {
             rooms?.length < userRooms?.length && setRooms(userRooms)
         }
-    }, [userRooms?.length]) //rooms?.length
+    }, [userRooms?.length, rooms?.length]) //rooms?.length
 
     useEffect(() => {
         roomSocket.on('deleteRoom', roomID => {
@@ -91,11 +98,6 @@ const LeftBar = () => {
             roomSocket.off('deleteRoom')
         }
     }, [selectedRoom?._id])
-
-    const filterRooms = (filteredFolders: RoomModel[]) => {
-        setRooms(filteredFolders)
-        setForceRender(prev => !prev)
-    }
 
     return (
         <div
@@ -123,7 +125,7 @@ const LeftBar = () => {
 
                 </div>
 
-                <RoomFolders filterFolders={filterRooms} />
+                <RoomFolders updateFilterBy={filterBy => setFilterBy(filterBy)} />
 
             </div>
 

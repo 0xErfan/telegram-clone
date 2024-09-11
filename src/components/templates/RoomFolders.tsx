@@ -1,27 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import ChatFolders from '../modules/ChatFolders'
 import useUserStore from '@/zustand/userStore'
-import { RoomModel } from '@/@types/data.t'
 
 const folders = ['all', 'group', 'private', 'channel', 'bot']
 
-const RoomFolders = ({ filterFolders }: { filterFolders: (rooms: RoomModel[]) => void }) => {
+const RoomFolders = ({ updateFilterBy }: { updateFilterBy: (filterBy: string) => void }) => {
 
     const [activeFolder, setActiveFolder] = useState('all')
     const chatFolderRef = useRef<HTMLDivElement>(null)
     const { rooms } = useUserStore(state => state)
 
-    useEffect(() => {
-
-        if (activeFolder == 'all') {
-            filterFolders(rooms)
-        } else {
-            const allRooms = [...rooms].filter(room => room.type == activeFolder)
-            console.log(allRooms)
-            filterFolders(allRooms)
-        }
-
-    }, [activeFolder])
+    useEffect(() => { updateFilterBy(activeFolder) }, [activeFolder])
 
     useEffect(() => {
 
