@@ -23,7 +23,7 @@ const MessageActions = () => {
                 isCheckedText: 'Do you want to delete this message for all?',
                 onSubmit: () => {
                     const isChecked = useGlobalVariablesStore.getState().modalData.isChecked
-                    roomSocket?.emit('deleteMsg', { forAll: isChecked, msgID: msgData?._id, roomID: msgData?.roomID})
+                    roomSocket?.emit('deleteMsg', { forAll: isChecked, msgID: msgData?._id, roomID: msgData?.roomID })
                 }
             }
         }))
@@ -36,25 +36,20 @@ const MessageActions = () => {
     }
 
     return (
-        <div
-            className="absolute ch:-z-20 inset-0 size-full -z-10 bg-inherit"
+        <Dropdown
+            isOpen={Boolean(msgData)}
+            onClose={onClose}
         >
-            <Dropdown
-                isOpen={Boolean(msgData)}
-                onClose={onClose}
-                crossOffset={'isFromMe' ? -150 : 150} // **
-            >
-                <DropdownTrigger><span></span></DropdownTrigger>
+            <DropdownTrigger><span></span></DropdownTrigger>
 
-                <DropdownMenu variant="faded" aria-label="Static Actions">
-                    <DropdownItem onClick={reply} startContent={<GoReply className="size-5" />} key="new">Reply</DropdownItem>
-                    <DropdownItem onClick={copy} startContent={<MdContentCopy className="size-5" />} key="edit">Copy</DropdownItem>
-                    <DropdownItem startContent={<MdOutlineModeEdit className="size-5" />} key="copy">Edit</DropdownItem>
-                    <DropdownItem onClick={deleteMessage} startContent={<AiOutlineDelete className="size-5" />} key="delete">Delete</DropdownItem>
-                </DropdownMenu>
+            <DropdownMenu variant="faded" aria-label="Static Actions">
+                <DropdownItem onClick={reply} startContent={<GoReply className="size-5" />} key="new">Reply</DropdownItem>
+                <DropdownItem onClick={copy} startContent={<MdContentCopy className="size-5" />} key="edit">Copy</DropdownItem>
+                <DropdownItem startContent={<MdOutlineModeEdit className="size-5" />} key="copy">Edit</DropdownItem>
+                <DropdownItem onClick={deleteMessage} startContent={<AiOutlineDelete className="size-5" />} key="delete">Delete</DropdownItem>
+            </DropdownMenu>
 
-            </Dropdown>
-        </div>
+        </Dropdown>
     )
 }
 

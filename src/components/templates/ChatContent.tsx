@@ -263,10 +263,12 @@ const ChatContent = () => {
                 onScroll={checkIsLastMsgInView}
                 className="flex flex-col z-40 gap-2 relative fillScreen mb-1 md:pb-2 overflow-x-hidden overflow-y-auto noScrollWidth"
             >
+
                 {
                     messages?.length
                         ?
                         messages.map((data, index) =>
+                            !data?.hideFor?.includes(myID) &&
                             <div
                                 className={data._id}
                                 key={data._id}
@@ -317,8 +319,6 @@ const ChatContent = () => {
                 >
                 </span>
             }
-
-            <MessageActions />
 
         </section>
     )

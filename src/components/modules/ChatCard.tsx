@@ -14,12 +14,12 @@ export const ChatCard = ({
     name: roomName,
     type,
     avatar: roomAvatar,
-    lastMsgData: lastMsg,
+    lastMsgData: lastMessageData,
     participants
 }: RoomModel & { lastMsgData: MessageModel }) => {
 
     const [draftMessage, setDraftMessage] = useState('')
-    const [lastMsgData, setLastMsgData] = useState(lastMsg)
+    const [lastMsgData, setLastMsgData] = useState(lastMessageData)
     const { selectedRoom, onlineUsers } = useGlobalVariablesStore(state => state)
     const { _id: myID } = useUserStore(state => state) || ''
     const { rooms } = useSockets(state => state)
@@ -44,14 +44,13 @@ export const ChatCard = ({
     const isActive = selectedRoom?._id == _id
 
     useEffect(() => {
-        setDraftMessage(localStorage.getItem(_id) || '')
-    }, [localStorage.getItem(_id), _id])
+        // if (selectedRoom?._id == roomID) return setLastMsgData(selectedRoom?.messages.at(-1)!)
+        setLastMsgData(lastMessageData)
+    }, [lastMessageData._id, selectedRoom?.messages?.length, roomID])
 
     useEffect(() => {
-        if (selectedRoom?.messages?.length && selectedRoom._id == roomID) {
-            setLastMsgData(selectedRoom?.messages.at(-1)!)
-        }
-    }, [selectedRoom?.messages?.length, roomID])
+        setDraftMessage(localStorage.getItem(_id) || '')
+    }, [localStorage.getItem(_id), _id])
 
     const joinToRoom = () => { rooms?.emit('joining', _id) }
 
