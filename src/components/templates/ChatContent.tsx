@@ -10,7 +10,7 @@ import useSockets from "@/zustand/useSockets";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ScrollToBottom from "./ScrollToBottom";
 import JoinToRoom from "./JoinToRoom";
-import MessageActions from "../modules/MessageActions";
+import { MessageModel } from "@/@types/data.t";
 
 const ChatContent = () => {
 
@@ -24,6 +24,7 @@ const ChatContent = () => {
     const [isLastMsgInView, setIsLastMsgInView] = useState(false);
     const [forceRender, setForceRender] = useState(false)
     const [replayData, setReplayData] = useState<string | null>(null)
+    const [editData, setEditData] = useState<MessageModel | null>(null)
 
     const {
         _id: roomID,
@@ -100,6 +101,22 @@ const ChatContent = () => {
                     messages: updatedMessages,
                 }
             })
+        })
+
+        rooms?.on('editMessage', ({ msgID, roomID, editedMsg }) => {
+
+            const updatedMsg = messages.map(data => {
+                if (data._id === msgID) data.message = editedMsg
+                return data
+            })
+
+            setter({
+                selectedRoom: {
+                    ...selectedRoom,
+                    messages: updatedMsg,
+                }
+            })
+
         })
 
         rooms?.on('newMessageIdUpdate', ({ tempID, _id }) => {
@@ -275,11 +292,11 @@ const ChatContent = () => {
                                 ref={index == messages.length - 1 ? lastMsgRef : null}
                             >
                                 <Message
-                                    addReplay={data => setReplayData(data)}
+                                    addReplay={replyData => setReplayData(replyData)}
+                                    edit={() => setEditData(data)}
                                     myId={myID}
                                     isPv={type === 'private'}
                                     {...data}
-
                                 />
                             </div>
                         )
@@ -301,6 +318,8 @@ const ChatContent = () => {
                     ?
                     <MessageSender
                         replayData={replayDataMsg}
+                        editData={editData!}
+                        closeEdit={() => setEditData(null)}
                         closeReplay={() => setReplayData(null)}
                     />
                     :

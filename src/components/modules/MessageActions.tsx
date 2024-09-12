@@ -14,6 +14,7 @@ const MessageActions = () => {
 
     const copy = () => copyText(msgData!.message)
     const reply = () => msgData?.addReplay(msgData._id)
+    const edit = () => msgData?.edit(msgData._id)
 
     const deleteMessage = () => {
         setter(() => ({
@@ -40,6 +41,7 @@ const MessageActions = () => {
     return (
         <Dropdown
             isOpen={Boolean(msgData)}
+            className="bg-[#2E323F] text-white"
             onClose={onClose}
         >
             <DropdownTrigger><span></span></DropdownTrigger>
@@ -47,7 +49,7 @@ const MessageActions = () => {
             <DropdownMenu variant="faded" aria-label="Static Actions">
                 <DropdownItem onClick={reply} startContent={<GoReply className="size-5" />} key="new">Reply</DropdownItem>
                 <DropdownItem onClick={copy} startContent={<MdContentCopy className="size-5" />} key="edit">Copy</DropdownItem>
-                <DropdownItem startContent={<MdOutlineModeEdit className="size-5" />} key="copy">Edit</DropdownItem>
+                <DropdownItem onClick={edit} startContent={<MdOutlineModeEdit className="size-5" />} key="copy">Edit</DropdownItem>
                 <DropdownItem onClick={deleteMessage} startContent={<AiOutlineDelete className="size-5" />} key="delete">Delete</DropdownItem>
             </DropdownMenu>
 

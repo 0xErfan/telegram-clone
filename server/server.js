@@ -150,6 +150,11 @@ io.on('connection', socket => {
 
     })
 
+    socket.on('editMessage', async ({ msgID, editedMsg, roomID }) => {
+        io.to(roomID).emit('editMessage', { msgID, editedMsg, roomID })
+        await MessageModel.findOneAndUpdate({ _id: msgID }, { message: editedMsg })
+    })
+
     socket.on('seenMsg', async (seenData) => {
 
         io.to(seenData.roomID).emit('seenMsg', seenData)

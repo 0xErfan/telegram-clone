@@ -1,6 +1,5 @@
 import { useOnScreen } from '@/hook/useOnScreen'
 import { getTimeFromDate, scrollToMessage } from '@/utils'
-import { MdOutlineReplay } from "react-icons/md";
 import useSockets from '@/zustand/useSockets'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
@@ -12,12 +11,13 @@ import MessageActions from './MessageActions';
 interface Props {
     myId: string,
     addReplay: (_id: string) => void
+    edit: (data: MessageModel) => void
     isPv?: boolean
 }
 
 const Message = (msgData: MessageModel & Props) => {
 
-    const { createdAt, message, seen, _id, sender, myId, roomID, replayedTo, addReplay, isPv = false } = msgData
+    const { createdAt, message, seen, _id, sender, myId, roomID, replayedTo, addReplay, edit, isPv = false } = msgData
 
     const messageRef = useRef(null)
     const modalMsgID = useGlobalVariablesStore(state => state.modalData.msgData?._id)
@@ -61,6 +61,7 @@ const Message = (msgData: MessageModel & Props) => {
             modalData: {
                 ...prev.modalData,
                 msgData,
+                edit,
                 reply: () => addReplay(_id)
             }
         }))

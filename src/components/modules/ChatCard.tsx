@@ -14,12 +14,11 @@ export const ChatCard = ({
     name: roomName,
     type,
     avatar: roomAvatar,
-    lastMsgData: lastMessageData,
+    lastMsgData,
     participants
 }: RoomModel & { lastMsgData: MessageModel }) => {
 
     const [draftMessage, setDraftMessage] = useState('')
-    const [lastMsgData, setLastMsgData] = useState(lastMessageData)
     const { selectedRoom, onlineUsers } = useGlobalVariablesStore(state => state)
     const { _id: myID } = useUserStore(state => state) || ''
     const { rooms } = useSockets(state => state)
@@ -43,10 +42,7 @@ export const ChatCard = ({
     const latestMessageTime = getTimeFromDate(lastMsgData?.createdAt)
     const isActive = selectedRoom?._id == _id
 
-    useEffect(() => {
-        // if (selectedRoom?._id == roomID) return setLastMsgData(selectedRoom?.messages.at(-1)!)
-        setLastMsgData(lastMessageData)
-    }, [lastMessageData._id, selectedRoom?.messages?.length, roomID])
+    // fix last msg data when delete a msg
 
     useEffect(() => {
         setDraftMessage(localStorage.getItem(_id) || '')
