@@ -1,5 +1,5 @@
 'use client'
-import { MessageModel, RoomModel, UserModel } from "@/@types/data.t"
+import { MessageModel, RoomModel } from "@/@types/data.t"
 import { getTimeFromDate } from "@/utils"
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import useSockets from "@/zustand/useSockets"
@@ -14,11 +14,12 @@ export const ChatCard = ({
     name: roomName,
     type,
     avatar: roomAvatar,
-    lastMsgData,
+    lastMsgData: lastMsg,
     participants
 }: RoomModel & { lastMsgData: MessageModel }) => {
 
     const [draftMessage, setDraftMessage] = useState('')
+    const [lastMsgData, setLastMsgData] = useState(lastMsg)
     const { selectedRoom, onlineUsers } = useGlobalVariablesStore(state => state)
     const { _id: myID } = useUserStore(state => state) || ''
     const { rooms } = useSockets(state => state)
@@ -45,6 +46,12 @@ export const ChatCard = ({
     useEffect(() => {
         setDraftMessage(localStorage.getItem(_id) || '')
     }, [localStorage.getItem(_id), _id])
+
+    useEffect(() => {
+        if (selectedRoom?.messages?.length && selectedRoom._id == roomID) {
+            setLastMsgData(selectedRoom?.messages.at(-1)!)
+        }
+    }, [selectedRoom?.messages?.length, roomID])
 
     const joinToRoom = () => { rooms?.emit('joining', _id) }
 

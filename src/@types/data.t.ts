@@ -21,6 +21,7 @@ interface MessageModel {
     replays: string[]
     replayedTo: { message: string, msgID: string, username: string } | null
     roomID: string
+    hideFor: string[]
     createdAt: string
     updatedAt: string
 }

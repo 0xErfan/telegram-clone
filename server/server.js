@@ -118,6 +118,37 @@ io.on('connection', socket => {
         io.to(roomID).emit('deleteRoom', roomID)
     })
 
+    socket.on('deleteMsg', async ({ forAll, msgID, roomID }) => {
+
+        if (forAll) {
+
+            io.to(roomID).emit('deleteMsg', msgID)
+
+            await MessageModel.findOneAndDelete({ _id: msgID })
+
+            await RoomModel.findOneAndUpdate(
+                { _id: roomID },
+                { $pull: { messages: msgID } }
+            )
+
+        } else {
+
+            socket.emit('deleteMsg', msgID)
+
+            const userID = onlineUsers.find(ud => ud.socketID == socket.id)?.userID
+
+            userID &&
+                await MessageModel.findOneAndUpdate(
+                    { _id: msgID },
+                    {
+                        $push: { hideFor: userID }
+                    }
+                )
+
+        }
+
+    })
+
     socket.on('seenMsg', async (seenData) => {
 
         io.to(seenData.roomID).emit('seenMsg', seenData)

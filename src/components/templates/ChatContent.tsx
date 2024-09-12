@@ -88,6 +88,20 @@ const ChatContent = () => {
             }
         })
 
+        rooms?.on('deleteMsg', msgID => {
+
+            const msgToDeleteID = messages.findIndex(msg => msg._id === msgID)
+            const updatedMessages = [...messages]
+            updatedMessages?.splice(msgToDeleteID, 1)
+
+            setter({
+                selectedRoom: {
+                    ...selectedRoom,
+                    messages: updatedMessages,
+                }
+            })
+        })
+
         rooms?.on('newMessageIdUpdate', ({ tempID, _id }) => {
 
             const updatedMsgID = [...selectedRoom!.messages]
@@ -154,7 +168,7 @@ const ChatContent = () => {
         if (!isLoaded && _id && messages?.length) {
             const lastSeenMsg = [...messages].reverse().find(msg => msg.sender._id === myID || msg.seen.includes(myID))
             const lastSeenMsgElem = document.getElementsByClassName(lastSeenMsg?._id!)[0]
-            lastSeenMsgElem.scrollIntoView()
+            lastSeenMsgElem?.scrollIntoView()
             setIsLoaded(true)
         } // not working properly, the element get selected correctly but the scroll is not
     }, [messages?.length, isLoaded, myID])

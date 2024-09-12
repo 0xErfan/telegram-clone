@@ -16,7 +16,7 @@ interface Props {
 
 const Message = (msgData: MessageModel & Props) => {
 
-    const { createdAt, message, seen, _id, sender, myId, roomID, replayedTo, addReplay, isPv = false } = msgData
+    const { createdAt, message, seen, _id, sender, myId, roomID, replayedTo, hideFor, addReplay, isPv = false } = msgData
 
     const messageRef = useRef(null)
     const [isReplayBtnShown, setIsReplayBtnShown] = useState(false)
@@ -27,6 +27,8 @@ const Message = (msgData: MessageModel & Props) => {
     const [isMounted, setIsMounted] = useState(false)
     const { rooms } = useSockets(state => state)
     const setter = useGlobalVariablesStore(state => state.setter)
+
+    if (hideFor?.includes(myId)) return null;
 
     useEffect(() => {
 

@@ -4,10 +4,12 @@ import { GoReply } from "react-icons/go";
 import { MdContentCopy, MdOutlineModeEdit } from "react-icons/md";
 import { AiOutlineDelete } from "react-icons/ai";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
+import useSockets from "@/zustand/useSockets";
 
 const MessageActions = () => {
 
     const { modalData, setter } = useGlobalVariablesStore(state => state)
+    const roomSocket = useSockets(state => state.rooms)
     const { msgData } = modalData
 
     const copy = () => copyText(msgData!.message)
@@ -21,8 +23,8 @@ const MessageActions = () => {
                 isCheckedText: 'Do you want to delete this message for all?',
                 onSubmit: () => {
                     const isChecked = useGlobalVariablesStore.getState().modalData.isChecked
-
-                },
+                    roomSocket?.emit('deleteMsg', { forAll: isChecked, msgID: msgData?._id, roomID: msgData?.roomID})
+                }
             }
         }))
     }
