@@ -27,7 +27,6 @@ const Message = (msgData: MessageModel & Props) => {
     const [isMounted, setIsMounted] = useState(false)
     const { rooms } = useSockets(state => state)
     const setter = useGlobalVariablesStore(state => state.setter)
-    const [isModalOnThisPage, setIsModalOnThisPage] = useState(false)
 
     useEffect(() => {
 
@@ -65,12 +64,7 @@ const Message = (msgData: MessageModel & Props) => {
                 reply: () => addReplay(_id)
             }
         }))
-        setIsModalOnThisPage(true)
     }
-
-    useEffect(() => {
-        modalMsgID && setIsModalOnThisPage(modalMsgID === _id)
-    }, [modalMsgID])
 
     return (
         <div
@@ -107,7 +101,7 @@ const Message = (msgData: MessageModel & Props) => {
 
             <div
                 onClick={updateModalMsgData}
-                onContextMenu={updateModalMsgData}
+                onContextMenu={e => { e.preventDefault(), updateModalMsgData() }}
                 className={`${isFromMe ? 'bg-darkBlue rounded-l-md rounded-tr-xl text-right pl-1 pr-3' : 'bg-white/10 rounded-r-md rounded-tl-xl text-left pr-1 pl-3'} relative w-fit max-w-[80%] min-w-24 xl:max-w-[60%]`}
             >
 
@@ -116,7 +110,7 @@ const Message = (msgData: MessageModel & Props) => {
                         replayedTo
                         &&
                         <div
-                            onClick={() => scrollToMessage(replayedTo?.msgID)}
+                            onClick={e => { e.stopPropagation(), scrollToMessage(replayedTo?.msgID) }}
                             className={`${isFromMe ? 'bg-lightBlue/25 rounded-l-md' : 'bg-green-500/15 rounded-r-md'} cursor-pointer rounded-md rounded-t-md text-sm relative w-full py-1 px-3 overflow-hidden`}
                         >
                             <span className={`absolute ${isFromMe ? 'bg-white' : 'bg-green-500'} left-0  inset-y-0 w-[3px] h-full `}></span>
@@ -145,10 +139,7 @@ const Message = (msgData: MessageModel & Props) => {
             </div>
 
             {
-                isModalOnThisPage
-                    ?
-                    <MessageActions />
-                    : null
+                modalMsgID === _id ? <MessageActions /> : null
             }
 
         </div>

@@ -31,8 +31,6 @@ const Modal = () => {
         })
     }
 
-    console.log('isOpen', isOpen)
-
     return (
         <NextUiModal
             isOpen={isOpen}
