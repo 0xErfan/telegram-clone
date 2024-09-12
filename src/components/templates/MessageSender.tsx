@@ -28,6 +28,7 @@ const MessageSender = ({ replayData, closeReplay }: Props) => {
     const userData = useUserStore(state => state)
 
     const _id = selectedRoom?._id
+    replayData?._id && inputRef.current?.focus()
 
     useEffect(() => {
 
@@ -42,10 +43,6 @@ const MessageSender = ({ replayData, closeReplay }: Props) => {
         }
 
     }, [_id])
-
-    useEffect(() => {
-        replayData?._id && inputRef.current?.focus()
-    }, [replayData?._id])
 
     const sendMessage = () => {
 

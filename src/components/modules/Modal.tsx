@@ -35,7 +35,9 @@ const Modal = () => {
         <NextUiModal
             isOpen={isOpen}
             placement="center"
+            className="mx-5 md:mx-0 bg-[#232735] text-white"
             onClose={() => { resetModal!(), onClose!() }}
+
         >
             <ModalContent>
                 <>
@@ -49,7 +51,8 @@ const Modal = () => {
                             hidden={Boolean(isCheckedText?.length)}
                             isSelected={isChecked}
                             onValueChange={toggleIsCheckedValue}
-                            className="text-sm"
+                            className="ch:text-white"
+                            classNames={{ label: 'text-[15px]' }}
                         >
                             {isCheckedText}
                         </Checkbox>
@@ -60,7 +63,8 @@ const Modal = () => {
 
                         <Button
                             color="danger"
-                            variant="flat"
+                            variant="light"
+                            className="text-[16px]"
                             onClick={() => { resetModal!(), onClose!() }}
                         >
                             {cancelText}
@@ -68,6 +72,8 @@ const Modal = () => {
 
                         <Button
                             color="primary"
+                            variant="light"
+                            className="text-[16px]"
                             onClick={() => { onSubmit(), resetModal!() }}
                         >
                             {okText}

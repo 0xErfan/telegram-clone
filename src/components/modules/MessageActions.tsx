@@ -20,7 +20,9 @@ const MessageActions = () => {
             modalData: {
                 ...modalData,
                 isOpen: true,
-                isCheckedText: 'Do you want to delete this message for all?',
+                title: 'Delete message',
+                bodyText: 'Are you sure you want to delete this message?',
+                isCheckedText: 'Also delete for others',
                 onSubmit: () => {
                     const isChecked = useGlobalVariablesStore.getState().modalData.isChecked
                     roomSocket?.emit('deleteMsg', { forAll: isChecked, msgID: msgData?._id, roomID: msgData?.roomID })

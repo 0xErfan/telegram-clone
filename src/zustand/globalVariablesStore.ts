@@ -36,7 +36,7 @@ const defaultModalData = {
     okText: 'Ok',
     cancelText: 'Cancel',
     title: 'Modal',
-    bodyText: "Modal buddy",
+    bodyText: "",
     isCheckedText: '',
     isChecked: false,
     msgData: null,

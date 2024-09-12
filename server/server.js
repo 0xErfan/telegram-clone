@@ -114,8 +114,9 @@ io.on('connection', socket => {
     })
 
     socket.on('deleteRoom', async roomID => {
-        await RoomModel.findOneAndDelete({ _id: roomID })
         io.to(roomID).emit('deleteRoom', roomID)
+        await RoomModel.findOneAndDelete({ _id: roomID })
+        await MessageModel.deleteMany({ roomID })
     })
 
     socket.on('deleteMsg', async ({ forAll, msgID, roomID }) => {
