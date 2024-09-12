@@ -1,8 +1,8 @@
-import { RoomModel } from "@/@types/data.t";
+import { MessageModel, RoomModel } from "@/@types/data.t";
 import { Socket } from "socket.io-client";
 import { create } from "zustand";
 
-interface Props {
+export interface Props {
     selectedRoom: null | RoomModel
     mockSelectedRoomData: null | RoomModel
     onlineUsers: { socketID: string, userID: string }[]
@@ -17,6 +17,7 @@ interface Props {
         bodyText?: string
         isChecked?: boolean
         isCheckedText?: string
+        msgData: (MessageModel & { myId: string, addReplay: (_id: string) => void, isPv?: boolean } | null)
         okText?: string
         cancelText?: string
         onSubmit: () => void
@@ -38,6 +39,7 @@ const defaultModalData = {
     bodyText: "Modal buddy",
     isCheckedText: '',
     isChecked: false,
+    msgData: null,
     onSubmit: () => { },
     onClose: () => { },
 }

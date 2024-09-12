@@ -31,6 +31,8 @@ const Modal = () => {
         })
     }
 
+    console.log('isOpen', isOpen)
+
     return (
         <NextUiModal
             isOpen={isOpen}
@@ -68,7 +70,7 @@ const Modal = () => {
 
                         <Button
                             color="primary"
-                            onClick={onSubmit}
+                            onClick={() => { onSubmit(), resetModal!() }}
                         >
                             {okText}
                         </Button>

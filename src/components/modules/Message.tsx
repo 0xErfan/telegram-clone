@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { MessageModel } from '@/@types/data.t';
 import useGlobalVariablesStore from '@/zustand/globalVariablesStore';
-import MessageActions from './MessageActions';
+import type { Props as globalVariablesStoreType } from '@/zustand/globalVariablesStore';
 
 interface Props {
     myId: string,
@@ -20,7 +20,6 @@ const Message = (msgData: MessageModel & Props) => {
 
     const messageRef = useRef(null)
     const [isReplayBtnShown, setIsReplayBtnShown] = useState(false)
-    const [isMessageOptionsOpen, setIsMessageOptionsOpen] = useState(false)
 
     const isFromMe = sender._id == myId
     const isInViewport = useOnScreen(messageRef)
@@ -55,6 +54,16 @@ const Message = (msgData: MessageModel & Props) => {
             shouldCloseAll: true,
             isRoomDetailsShown: true
         })
+    }
+
+    const updateModalMsgData = () => {
+        setter((prev: globalVariablesStoreType) => ({
+            modalData: {
+                ...prev.modalData,
+                msgData,
+                reply: () => addReplay(_id)
+            }
+        }))
     }
 
     return (
@@ -92,8 +101,8 @@ const Message = (msgData: MessageModel & Props) => {
             <div
                 onMouseEnter={() => setIsReplayBtnShown(true)}
                 onMouseLeave={() => setIsReplayBtnShown(false)}
-                onClick={() => setIsMessageOptionsOpen(true)}
-                onContextMenu={e => { e.preventDefault(); setIsMessageOptionsOpen(true) }}
+                onClick={updateModalMsgData}
+                onContextMenu={updateModalMsgData}
                 className={`${isFromMe ? 'bg-darkBlue rounded-l-md rounded-tr-xl text-right pl-1 pr-3' : 'bg-white/10 rounded-r-md rounded-tl-xl text-left pr-1 pl-3'} relative w-fit max-w-[80%] min-w-24 xl:max-w-[60%]`}
             >
                 {
@@ -149,17 +158,9 @@ const Message = (msgData: MessageModel & Props) => {
                     }
                 </span>
 
-                <MessageActions
-                    isOpen={isMessageOptionsOpen}
-                    reply={() => addReplay(_id)}
-                    isFromMe={isFromMe}
-                    msgData={msgData}
-                    closeDropDown={() => setIsMessageOptionsOpen(false)}
-                />
-
             </div>
         </div>
     )
 }
 
-export default Message
+export default Message;

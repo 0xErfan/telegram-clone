@@ -1,22 +1,36 @@
-import { MessageModel } from "@/@types/data.t";
 import { copyText } from "@/utils";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/dropdown";
 import { GoReply } from "react-icons/go";
 import { MdContentCopy, MdOutlineModeEdit } from "react-icons/md";
 import { AiOutlineDelete } from "react-icons/ai";
+import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 
-interface Props {
-    isOpen: boolean
-    isFromMe: boolean
-    msgData: MessageModel
-    reply: () => void
-    closeDropDown: () => void
-}
+const MessageActions = () => {
 
-const MessageActions = ({ isOpen, isFromMe, closeDropDown, msgData, reply }: Props) => {
+    const { modalData, setter } = useGlobalVariablesStore(state => state)
+    const { msgData } = modalData
 
-    const copy = () => {
-        copyText(msgData.message)
+    const copy = () => copyText(msgData!.message)
+    const reply = () => msgData?.addReplay(msgData._id)
+
+    const deleteMessage = () => {
+        setter(() => ({
+            modalData: {
+                ...modalData,
+                isOpen: true,
+                isCheckedText: 'Do you want to delete this message for all?',
+                onSubmit: () => {
+                    const isChecked = useGlobalVariablesStore.getState().modalData.isChecked
+
+                },
+            }
+        }))
+    }
+
+    const onClose = () => {
+        setter((prev: typeof setter) => ({
+            modalData: { ...prev.modalData, msgData: null }
+        }))
     }
 
     return (
@@ -24,9 +38,9 @@ const MessageActions = ({ isOpen, isFromMe, closeDropDown, msgData, reply }: Pro
             className="absolute ch:-z-20 inset-0 size-full -z-10 bg-inherit"
         >
             <Dropdown
-                isOpen={isOpen}
-                onClose={closeDropDown}
-                crossOffset={isFromMe ? -150 : 150}
+                isOpen={Boolean(msgData)}
+                onClose={onClose}
+                crossOffset={'isFromMe' ? -150 : 150} // **
             >
                 <DropdownTrigger><span></span></DropdownTrigger>
 
@@ -34,7 +48,7 @@ const MessageActions = ({ isOpen, isFromMe, closeDropDown, msgData, reply }: Pro
                     <DropdownItem onClick={reply} startContent={<GoReply className="size-5" />} key="new">Reply</DropdownItem>
                     <DropdownItem onClick={copy} startContent={<MdContentCopy className="size-5" />} key="edit">Copy</DropdownItem>
                     <DropdownItem startContent={<MdOutlineModeEdit className="size-5" />} key="copy">Edit</DropdownItem>
-                    <DropdownItem startContent={<AiOutlineDelete className="size-5" />} key="delete">Delete</DropdownItem>
+                    <DropdownItem onClick={deleteMessage} startContent={<AiOutlineDelete className="size-5" />} key="delete">Delete</DropdownItem>
                 </DropdownMenu>
 
             </Dropdown>

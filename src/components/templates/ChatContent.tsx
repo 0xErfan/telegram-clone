@@ -10,6 +10,7 @@ import useSockets from "@/zustand/useSockets";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ScrollToBottom from "./ScrollToBottom";
 import JoinToRoom from "./JoinToRoom";
+import MessageActions from "../modules/MessageActions";
 
 const ChatContent = () => {
 
@@ -294,8 +295,6 @@ const ChatContent = () => {
                     />
             }
 
-
-            {/* shadow layout */}
             {
                 isRoomDetailsShown &&
                 <span
@@ -304,6 +303,8 @@ const ChatContent = () => {
                 >
                 </span>
             }
+
+            <MessageActions />
 
         </section>
     )
