@@ -106,6 +106,12 @@ const Message = (msgData: MessageModel & Props) => {
                 className={`${isFromMe ? 'bg-darkBlue rounded-l-md rounded-tr-xl text-right pl-1 pr-3' : 'bg-white/10 rounded-r-md rounded-tl-xl text-left pr-1 pl-3'} relative w-fit max-w-[80%] min-w-24 xl:max-w-[60%]`}
             >
 
+                {
+                    (!isFromMe || isPv)
+                    &&
+                    <p dir='auto' className='w-full text-[14px] font-bold mt-px font-segoeBold text-[#C8504F]'>{sender.name}</p>
+                }
+                
                 <div className='flex flex-col text-[16px] gap-1 p-1 mt-1 break-words mb-[13px]'>
                     {
                         replayedTo
