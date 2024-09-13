@@ -19,7 +19,7 @@ interface Props {
 let draftMsg: string;
 
 const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) => {
-    //alert('reconnecting methods on events')
+
     const [text, setText] = useState('')
     const typingTimer = useRef<NodeJS.Timeout | null>(null)
     const inputRef = useRef<HTMLInputElement | null>(null)
@@ -29,8 +29,8 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
     const { rooms } = useSockets(state => state)
     const userData = useUserStore(state => state)
 
-    const _id = selectedRoom?._id
-    replayData?._id && inputRef.current?.focus()
+    const _id = selectedRoom?._id;
+    (replayData?._id || editData?._id) && inputRef.current?.focus()
 
     useEffect(() => {
         setText(editData?.message || '')

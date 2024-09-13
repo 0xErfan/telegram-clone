@@ -21,7 +21,7 @@ const Message = (msgData: MessageModel & Props) => {
 
     const messageRef = useRef(null)
     const modalMsgID = useGlobalVariablesStore(state => state.modalData.msgData?._id)
-    const isFromMe = sender._id == myId
+    const isFromMe = sender?._id === myId
     const isInViewport = useOnScreen(messageRef)
     const messageTime = getTimeFromDate(createdAt)
     const [isMounted, setIsMounted] = useState(false)
@@ -107,11 +107,11 @@ const Message = (msgData: MessageModel & Props) => {
             >
 
                 {
-                    (!isFromMe || isPv)
+                    (!isFromMe && !isPv)
                     &&
                     <p dir='auto' className='w-full text-[14px] font-bold mt-px font-segoeBold text-[#C8504F]'>{sender.name}</p>
                 }
-                
+
                 <div className='flex flex-col text-[16px] gap-1 p-1 mt-1 break-words mb-[13px]'>
                     {
                         replayedTo

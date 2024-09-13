@@ -15,7 +15,7 @@ import { MessageModel } from "@/@types/data.t";
 const ChatContent = () => {
 
     let lastMsgRef = useRef<HTMLDivElement>(null)
-    const { _id: myID, name: myName } = useUserStore(state => state)
+    const { _id: myID, name: myName, setter: userDataUpdater, rooms: userRooms } = useUserStore(state => state)
     const { setter } = useGlobalVariablesStore(state => state)
     const { rooms } = useSockets(state => state)
     const { selectedRoom, onlineUsers, isRoomDetailsShown } = useGlobalVariablesStore(state => state) || {}
@@ -158,6 +158,26 @@ const ChatContent = () => {
             })
 
             setForceRender(prev => !prev)
+        })
+
+        rooms?.on('joinRoom', ({ userID, roomID }) => {
+
+            if (selectedRoom?._id == roomID) {
+
+                const updatedRoom = {
+                    ...selectedRoom,
+                    participants: [...selectedRoom?.participants!, userID]
+                }
+
+                setter({ selectedRoom: updatedRoom })
+
+                if (userID == myID) {
+                    userDataUpdater({ rooms: [...userRooms, updatedRoom] })
+                    rooms?.emit('joining', selectedRoom?._id)
+                }
+
+            }
+
         })
 
         rooms?.on('typing', data => {

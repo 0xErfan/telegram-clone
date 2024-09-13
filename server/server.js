@@ -73,7 +73,7 @@ io.on('connection', socket => {
         if (!isRoomExist) {
 
             let msgData = message
-            delete newRoomData.message
+            newRoomData.participants = newRoomData.participants.map(data => data._id)
 
             const newRoom = await RoomModel.create(newRoomData)
 
@@ -108,7 +108,7 @@ io.on('connection', socket => {
             socket.join(roomID)
             await roomTarget.save()
 
-            io.to(roomID).emit('joinRoom', { userID })
+            io.to(roomID).emit('joinRoom', { userID, roomID })
         }
 
     })

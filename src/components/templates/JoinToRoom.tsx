@@ -32,21 +32,8 @@ const JoinToRoom = ({ roomData, roomSocket, userID }: Props) => {
 
     useEffect(() => {
 
-        roomSocket.on('joinRoom', ({ userID }) => {
-
-            const updatedRoom = {
-                ...roomData,
-                participants: [...roomData?.participants!, userID]
-            }
-
-            setter({ selectedRoom: updatedRoom })
-
-            userRoomsUpdater({
-                rooms: [...rooms, updatedRoom]
-            })
-
-            roomSocket.emit('joining', roomData._id)
-            setIsLoading(true)
+        roomSocket.on('joinRoom', () => {
+            setIsLoading(false)
         })
 
     }, [])
