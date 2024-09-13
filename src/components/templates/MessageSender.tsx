@@ -19,7 +19,7 @@ interface Props {
 let draftMsg: string;
 
 const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) => {
-
+    //alert('reconnecting methods on events')
     const [text, setText] = useState('')
     const typingTimer = useRef<NodeJS.Timeout | null>(null)
     const inputRef = useRef<HTMLInputElement | null>(null)
@@ -78,9 +78,9 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
                     }
                     : null
             })
+        } else {
+            rooms?.emit('createRoom', { newRoomData: selectedRoom, message: { sender: userData, message: text } });
         }
-
-        rooms?.emit('createRoom', { newRoomData: selectedRoom, message: { sender: userData, message: text } });
 
         cleanUpAfterSendingMsg()
     }
@@ -157,7 +157,7 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
                     dir="auto"
                     value={text}
                     onChange={msgTextUpdater}
-                    onKeyUp={e => e.key == "Enter" && text.trim().length && editData ? editMessage() : replayData ? sendMessage() : null}
+                    onKeyUp={e => (e.key == "Enter" && text.trim().length) && (editData ? editMessage() : sendMessage())}
                     ref={inputRef}
                     className="bg-transparent resize-none outline-none h-full flex-center"
                     type="text"
