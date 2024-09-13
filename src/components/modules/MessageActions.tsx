@@ -41,16 +41,18 @@ const MessageActions = () => {
     return (
         <Dropdown
             isOpen={Boolean(msgData)}
+            size="lg"
             className="bg-[#2E323F] text-white"
+            classNames={{ content: 'p-0 m-0' }}
             onClose={onClose}
         >
             <DropdownTrigger><span></span></DropdownTrigger>
 
             <DropdownMenu variant="faded" aria-label="Static Actions">
-                <DropdownItem onClick={reply} startContent={<GoReply className="size-5" />} key="new">Reply</DropdownItem>
-                <DropdownItem onClick={copy} startContent={<MdContentCopy className="size-5" />} key="edit">Copy</DropdownItem>
-                <DropdownItem onClick={edit} startContent={<MdOutlineModeEdit className="size-5" />} key="copy">Edit</DropdownItem>
-                <DropdownItem onClick={deleteMessage} startContent={<AiOutlineDelete className="size-5" />} key="delete">Delete</DropdownItem>
+                <DropdownItem className="p-3" onClick={reply} startContent={<GoReply className="size-5" />} key="new">Reply</DropdownItem>
+                <DropdownItem className="p-3" onClick={copy} startContent={<MdContentCopy className="size-5" />} key="edit">Copy</DropdownItem>
+                <DropdownItem className="p-3" onClick={edit} startContent={<MdOutlineModeEdit className="size-5" />} key="copy">Edit</DropdownItem>
+                <DropdownItem className="p-3" onClick={deleteMessage} startContent={<AiOutlineDelete className="size-5" />} key="delete">Delete</DropdownItem>
             </DropdownMenu>
 
         </Dropdown>

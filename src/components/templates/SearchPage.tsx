@@ -101,7 +101,7 @@ const SearchPage = ({ closeSearch }: Props) => {
                                 searchResult?.length
                                     ?
                                     searchResult.map((data, index) =>
-                                        <div onClick={closeSearch}>
+                                        <div key={index} onClick={closeSearch}>
                                             <SearchResultCard
                                                 key={index}
                                                 {...data}
