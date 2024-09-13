@@ -17,6 +17,7 @@ interface MessageModel {
     _id: string
     message: string
     sender: UserModel
+    isEdited: boolean
     seen: string[]
     replays: string[]
     replayedTo: { message: string, msgID: string, username: string } | null

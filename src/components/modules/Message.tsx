@@ -17,7 +17,7 @@ interface Props {
 
 const Message = (msgData: MessageModel & Props) => {
 
-    const { createdAt, message, seen, _id, sender, myId, roomID, replayedTo, addReplay, edit, isPv = false } = msgData
+    const { createdAt, message, seen, _id, sender, myId, roomID, replayedTo, isEdited, addReplay, edit, isPv = false } = msgData
 
     const messageRef = useRef(null)
     const modalMsgID = useGlobalVariablesStore(state => state.modalData.msgData?._id)
@@ -129,7 +129,7 @@ const Message = (msgData: MessageModel & Props) => {
                 </div>
 
                 <span className={`flex items-center justify-end gap-1 absolute bottom-px right-3 w-full text-[12px]  ${isFromMe ? 'text-[#B7D9F3]' : 'text-darkGray'} text-right`}>
-                    <p className='whitespace-nowrap'>{messageTime}</p>
+                    <p className='whitespace-nowrap'>{isEdited && 'edited '} {messageTime}</p>
                     {
                         (isFromMe && seen?.length) ?
                             <Image

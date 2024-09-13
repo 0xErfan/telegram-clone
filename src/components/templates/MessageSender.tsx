@@ -119,7 +119,7 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
 
             <div className={`${(replayData?._id || editData?._id) ? 'opacity-100 h-[50px] pb-1' : 'opacity-0 h-0'} flex flex-row-reverse justify-between duration-200 transition-all items-center gap-3 px-4 line-clamp-1 overflow-ellipsis absolute rounded-t-xl bg-white/[5.12%] inset-x-0 z-40 bottom-[53px] md:bottom-16`}>
 
-                <IoMdClose onClick={replayData ? closeReplay : closeEdit} className="size-7 transition-all cursor-pointer active:bg-inherit active:rounded-full p-1" />
+                <IoMdClose onClick={() => { closeReplay(), closeEdit() }} className="size-7 transition-all cursor-pointer active:bg-inherit active:rounded-full p-1" />
 
                 <div className="flex items-center gap-4">
 

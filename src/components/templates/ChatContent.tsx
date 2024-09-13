@@ -106,7 +106,10 @@ const ChatContent = () => {
         rooms?.on('editMessage', ({ msgID, roomID, editedMsg }) => {
 
             const updatedMsg = messages.map(data => {
-                if (data._id === msgID) data.message = editedMsg
+                if (data._id === msgID) {
+                    data.message = editedMsg
+                    data.isEdited = true
+                }
                 return data
             })
 

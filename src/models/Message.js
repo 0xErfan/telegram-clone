@@ -7,6 +7,7 @@ export const schema = new Schema({
     replays: [{ type: Schema.ObjectId, ref: 'Message', required: true, default: [] }],
     roomID: { type: Schema.ObjectId, ref: 'Room', required: true },
     replayedTo: { type: { message: String, msgID: String, username: String } || null, default: null },
+    isEdited: { type: Boolean, default: false },
     hideFor: [{ type: Schema.ObjectId, ref: 'User', default: [] }]
 }, { timestamps: true, strictPopulate: false })
 
