@@ -30,7 +30,6 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
     const userData = useUserStore(state => state)
 
     const _id = selectedRoom?._id;
-    (replayData?._id || editData?._id) && inputRef.current?.focus()
 
     useEffect(() => {
         setText(editData?.message || '')
@@ -49,6 +48,10 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
         }
 
     }, [_id])
+
+    useEffect(() => {
+        inputRef.current?.focus()
+    }, [replayData?._id, editData?._id])
 
     const cleanUpAfterSendingMsg = () => {
         closeReplay()

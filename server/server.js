@@ -119,6 +119,10 @@ io.on('connection', socket => {
         await MessageModel.deleteMany({ roomID })
     })
 
+    socket.on('updateLastMsgData', ({ msgData, roomID }) => {
+        io.to(roomID).emit('updateLastMsgData', { msgData, roomID })
+    })
+
     socket.on('deleteMsg', async ({ forAll, msgID, roomID }) => {
 
         if (forAll) {
@@ -152,7 +156,8 @@ io.on('connection', socket => {
 
     socket.on('editMessage', async ({ msgID, editedMsg, roomID }) => {
         io.to(roomID).emit('editMessage', { msgID, editedMsg, roomID })
-        await MessageModel.findOneAndUpdate({ _id: msgID }, { message: editedMsg, isEdited: true })
+        const updatedMsgData = await MessageModel.findOneAndUpdate({ _id: msgID }, { message: editedMsg, isEdited: true }).lean()
+        io.to(roomID).emit('updateLastMsgData', { roomID, msgData: {...updatedMsgData, message: editedMsg} })
     })
 
     socket.on('seenMsg', async (seenData) => {
