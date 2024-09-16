@@ -112,7 +112,7 @@ const Message = (msgData: MessageModel & Props) => {
                     <p dir='auto' className='w-full text-[14px] font-bold mt-px font-segoeBold text-[#C8504F]'>{sender.name}</p>
                 }
 
-                <div className='flex flex-col text-[16px] gap-1 p-[6px] mt-1 break-words mb-[13px]'>
+                <div className='flex flex-col text-[16px] gap-1 p-1 mt-1 break-words mb-[13px]'>
                     {
                         replayedTo
                         &&
