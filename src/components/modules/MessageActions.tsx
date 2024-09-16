@@ -5,16 +5,24 @@ import { MdContentCopy, MdOutlineModeEdit } from "react-icons/md";
 import { AiOutlineDelete } from "react-icons/ai";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import useSockets from "@/zustand/useSockets";
+import { useMemo } from "react";
+import useUserStore from "@/zustand/userStore";
 
 const MessageActions = () => {
 
     const { modalData, setter } = useGlobalVariablesStore(state => state)
     const roomSocket = useSockets(state => state.rooms)
     const { msgData } = modalData
+    const myID = useUserStore(state => state._id)
 
     const copy = () => copyText(msgData!.message)
     const reply = () => msgData?.addReplay(msgData._id)
     const edit = () => msgData?.edit(msgData._id)
+
+    const roomData = useMemo(() => {
+        const rooms = useUserStore.getState()?.rooms
+        return rooms.find(room => room._id === msgData?.roomID)
+    }, [msgData?.roomID])
 
     const deleteMessage = () => {
         setter(() => ({
@@ -49,10 +57,52 @@ const MessageActions = () => {
             <DropdownTrigger><span></span></DropdownTrigger>
 
             <DropdownMenu variant="faded" aria-label="Static Actions">
-                <DropdownItem className="p-3" onClick={reply} startContent={<GoReply className="size-5" />} key="new">Reply</DropdownItem>
-                <DropdownItem className="p-3" onClick={copy} startContent={<MdContentCopy className="size-5" />} key="edit">Copy</DropdownItem>
-                <DropdownItem className="p-3" onClick={edit} startContent={<MdOutlineModeEdit className="size-5" />} key="copy">Edit</DropdownItem>
-                <DropdownItem className="p-3" onClick={deleteMessage} startContent={<AiOutlineDelete className="size-5" />} key="delete">Delete</DropdownItem>
+
+                {
+                    (roomData?.type && roomData?.type !== 'chanel')
+                    &&
+                    <DropdownItem
+                        className="p-3"
+                        onClick={reply}
+                        startContent={<GoReply className="size-5" />}
+                        key="new"
+                    >
+                        Reply
+                    </DropdownItem>
+                }
+
+                <DropdownItem
+                    className="p-3"
+                    onClick={copy}
+                    startContent={<MdContentCopy className="size-5" />}
+                    key="edit"
+                >
+                    Copy
+                </DropdownItem>
+
+                {
+                    (roomData?.type == 'private' && msgData?.sender?._id == myID) || (roomData?.type !== 'private' && msgData?.sender._id === myID)
+                        ?
+                        <DropdownItem className="p-3" onClick={edit} startContent={<MdOutlineModeEdit className="size-5" />} key="copy">Edit</DropdownItem>
+                        : null
+                }
+
+                {
+                    (roomData?.type === 'private' || msgData?.sender._id === myID || roomData?.admins?.includes(myID))
+                        ?
+                        <DropdownItem
+                            className="p-3"
+                            onClick={deleteMessage}
+                            startContent={<AiOutlineDelete className="size-5" />}
+                            key="delete"
+                        >
+                            Delete
+                        </DropdownItem>
+                        : null
+                }
+
+
+
             </DropdownMenu>
 
         </Dropdown>
