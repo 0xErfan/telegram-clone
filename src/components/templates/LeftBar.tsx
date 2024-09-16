@@ -9,6 +9,7 @@ import useUserStore from "@/zustand/userStore"
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import useSockets from "@/zustand/useSockets"
 import RoomFolders from "./RoomFolders"
+import CreateRoomBtn from "./CreateRoomBtn"
 
 const SearchPage = lazy(() => import('@/components/templates/SearchPage'))
 const Modal = lazy(() => import('../modules/Modal'))
@@ -156,6 +157,8 @@ const LeftBar = () => {
             {
                 isPageLoaded && <Modal />
             }
+
+            <CreateRoomBtn />
 
         </div>
     )
