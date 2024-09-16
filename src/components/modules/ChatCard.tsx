@@ -46,14 +46,15 @@ export const ChatCard = ({
     useEffect(() => {
 
         if (lastMsgDataProp.roomID !== selectedRoom?._id) return
-        const lastMsg = selectedRoom?.messages.at(-1)
 
-        const lastMsgCreateTime = new Date(lastMsg?.createdAt!).getTime()
-        const lastMsgPropCreateTime = new Date(lastMsgDataProp.createdAt).getTime()
+        for (let i = -1; i <= selectedRoom.messages.length; i--) {
+            if (!selectedRoom.messages.at(i)?.hideFor?.includes(myID)) {
+                setLastMsgData(selectedRoom.messages.at(i)!)
+                break;
+            }
+        }
 
-        setLastMsgData(lastMsgPropCreateTime < lastMsgCreateTime ? lastMsg! : lastMsgDataProp)
-
-    }, [{}])
+    }, [selectedRoom?.messages?.length, lastMsgDataProp._id, myID])
 
     useEffect(() => {
         setDraftMessage(localStorage.getItem(_id) || '')
