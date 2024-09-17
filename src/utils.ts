@@ -2,6 +2,8 @@ import { Secret, sign, verify } from "jsonwebtoken"
 import toast from "react-hot-toast"
 import { UserModel } from "./@types/data.t";
 import axios from "axios";
+import { S3 } from "aws-sdk"
+import { PutObjectRequest } from "aws-sdk/clients/s3";
 
 
 const getTimer = (date?: string) => {
@@ -199,6 +201,43 @@ const copyText = async (text: string) => {
     await navigator?.clipboard?.writeText(text)
 }
 
+const uploadImage = async (file: File): Promise<string | Error> => {
+
+    const ACCESSKEY = "rfpsaen58kka9eso"
+    const SECRETKEY = "f8eea594-08f0-40de-bef2-6ef252a88cae"
+    const ENDPOINT = "storage.iran.liara.space"
+    const BUCKET = 'pc-kala'
+
+    let encodedFileName = file.name?.replace(/[\?\=\%\&\+\-\.\_\s]/g, '_')
+    encodedFileName = encodedFileName?.slice(encodedFileName.length - 30)
+
+    try {
+
+        const s3 = new S3({
+            accessKeyId: ACCESSKEY,
+            secretAccessKey: SECRETKEY,
+            endpoint: ENDPOINT,
+        });
+
+        const params = {
+            Bucket: BUCKET,
+            Key: encodeURIComponent(encodedFileName),
+            Body: file,
+        };
+
+        await s3.upload(params as PutObjectRequest).promise();
+
+        const permanentSignedUrl = s3.getSignedUrl('getObject', {
+            Bucket: BUCKET,
+            Key: encodeURIComponent(encodedFileName),
+            Expires: 3153600000
+        });
+
+        return permanentSignedUrl;
+
+    } catch (error) { throw new Error('failed to fech') }
+};
+
 export {
     getTimer,
     showToast,
@@ -216,5 +255,6 @@ export {
     getTimeFromDate,
     scrollIntoElem,
     scrollToMessage,
-    copyText
+    copyText,
+    uploadImage
 }

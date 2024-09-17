@@ -181,7 +181,7 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
                         ?
                         <>
                             <BsEmojiSmile
-                                onClick={() => setIsEmojiOpen(true)}
+                                onClick={() => setIsEmojiOpen(prev => !prev)}
                                 className="shrink-0 cursor-pointer basis-[5%]"
                             />
 
