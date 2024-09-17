@@ -44,6 +44,7 @@ io.on('connection', socket => {
 
             io.to(roomID).emit('lastMsgUpdate', newMsg)
             io.to(roomID).emit('newMessageIdUpdate', { tempID, _id: newMsg._id })
+            io.to(roomID).emit('updateLastMsgData', { msgData, roomID })
 
             tempID = null
 
@@ -122,12 +123,9 @@ io.on('connection', socket => {
 
     socket.on('deleteRoom', async roomID => {
         io.to(roomID).emit('deleteRoom', roomID)
+        io.to(roomID).emit('updateLastMsgData', { msgData: null, roomID })
         await RoomModel.findOneAndDelete({ _id: roomID })
         await MessageModel.deleteMany({ roomID })
-    })
-
-    socket.on('updateLastMsgData', ({ msgData, roomID }) => {
-        io.to(roomID).emit('updateLastMsgData', { msgData, roomID })
     })
 
     socket.on('deleteMsg', async ({ forAll, msgID, roomID }) => {
@@ -137,6 +135,7 @@ io.on('connection', socket => {
             io.to(roomID).emit('deleteMsg', msgID)
 
             await MessageModel.findOneAndDelete({ _id: msgID })
+            io.to(roomID).emit('updateLastMsgData', { msgData: null, roomID })
 
             await RoomModel.findOneAndUpdate(
                 { _id: roomID },

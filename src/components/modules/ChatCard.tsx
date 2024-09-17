@@ -60,6 +60,17 @@ export const ChatCard = ({
     }, [selectedRoom?.messages?.length, myID, selectedRoom?._id, lastMsgDataProp?.roomID])
 
     useEffect(() => {
+
+        rooms?.on('updateLastMsgData', ({ msgData, roomID }) => {
+            _id === roomID && setLastMsgData(msgData)
+        })
+
+        return () => {
+            rooms?.off('updateLastMsgData')
+        }
+    }, [_id])
+
+    useEffect(() => {
         setDraftMessage(localStorage.getItem(_id) || '')
     }, [localStorage.getItem(_id), _id])
 
@@ -74,9 +85,10 @@ export const ChatCard = ({
                 {
                     avatar ?
                         <Image
-                            className={`size-[50px] bg-center rounded-full`}
+                            className={`size-[50px] bg-center object-cover rounded-full`}
                             width={50}
                             height={50}
+                            quality={100}
                             src={avatar}
                             alt="avatar"
                         />
