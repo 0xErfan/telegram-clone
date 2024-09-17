@@ -23,11 +23,12 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
     const [text, setText] = useState('')
     const typingTimer = useRef<NodeJS.Timeout | null>(null)
     const inputRef = useRef<HTMLInputElement | null>(null)
+    const [isMuted, setIsMuted] = useState(false)
 
     const selectedRoom = useGlobalVariablesStore(state => state?.selectedRoom)
     const userRooms = useUserStore(state => state.rooms)
     const { rooms } = useSockets(state => state)
-    const userData = useUserStore(state => state)
+    const myData = useUserStore(state => state)
 
     const _id = selectedRoom?._id;
 
@@ -69,7 +70,7 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
             rooms?.emit('newMessage', {
                 roomID: _id,
                 message: text,
-                sender: userData,
+                sender: myData,
                 replayData: replayData ?
                     {
                         targetID: replayData?._id,
@@ -82,7 +83,7 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
                     : null
             })
         } else {
-            rooms?.emit('createRoom', { newRoomData: selectedRoom, message: { sender: userData, message: text } });
+            rooms?.emit('createRoom', { newRoomData: selectedRoom, message: { sender: myData, message: text } });
         }
 
         cleanUpAfterSendingMsg()
@@ -109,10 +110,10 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
 
         clearTimeout(typingTimer?.current!)
 
-        rooms?.emit('typing', ({ roomID: _id, sender: userData }))
+        rooms?.emit('typing', ({ roomID: _id, sender: myData }))
 
         typingTimer.current = setTimeout(() => {
-            rooms?.emit('stop-typing', ({ roomID: _id, sender: userData }))
+            rooms?.emit('stop-typing', ({ roomID: _id, sender: myData }))
         }, 2000);
     }
 
@@ -154,34 +155,45 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
 
             <div className='flex items-center relative w-full md:px-2 px-4 ch:w-full md:gap-1 gap-3 bg-white/[5.12%] h-[53px] rounded'>
 
-                <BsEmojiSmile className="shrink-0 basis-[5%]" />
-
-                <input
-                    dir="auto"
-                    value={text}
-                    onChange={msgTextUpdater}
-                    onKeyUp={e => (e.key == "Enter" && text.trim().length) && (editData ? editMessage() : sendMessage())}
-                    ref={inputRef}
-                    className="bg-transparent resize-none outline-none h-full flex-center"
-                    type="text"
-                    placeholder="Message"
-                />
-
-                {!editData && <MdAttachFile className="shrink-0 basis-[5%] size-5 cursor-pointer" />}
-
                 {
-                    editData?._id ?
-                        <MdOutlineDone onClick={editMessage} className="shrink-0 basis-[5%] size-6 cursor-pointer text-white bg-lightBlue rounded-full" />
-                        :
+                    (selectedRoom?.type == 'chanel' && selectedRoom.admins.includes(myData._id)) || selectedRoom?.type !== 'chanel'
+                        ?
                         <>
+                            <BsEmojiSmile className="shrink-0 basis-[5%]" />
+
+                            <input
+                                dir="auto"
+                                value={text}
+                                onChange={msgTextUpdater}
+                                onKeyUp={e => (e.key == "Enter" && text.trim().length) && (editData ? editMessage() : sendMessage())}
+                                ref={inputRef}
+                                className="bg-transparent resize-none outline-none h-full flex-center"
+                                type="text"
+                                placeholder="Message"
+                            />
+
+                            {!editData && <MdAttachFile className="shrink-0 basis-[5%] size-5 cursor-pointer" />}
+
                             {
-                                text.trim().length
-                                    ?
-                                    <IoIosSend onClick={sendMessage} className="shrink-0 basis-[5%] size-6 cursor-pointer text-lightBlue rotate-45" />
+                                editData?._id ?
+                                    <MdOutlineDone onClick={editMessage} className="shrink-0 basis-[5%] size-6 cursor-pointer text-white bg-lightBlue rounded-full" />
                                     :
-                                    <PiMicrophoneLight className="shrink-0 basis-[5%] size-6 cursor-pointer" />
+                                    <>
+                                        {
+                                            text.trim().length
+                                                ?
+                                                <IoIosSend onClick={sendMessage} className="shrink-0 basis-[5%] size-6 cursor-pointer text-lightBlue rotate-45" />
+                                                :
+                                                <PiMicrophoneLight className="shrink-0 basis-[5%] size-6 cursor-pointer" />
+                                        }
+                                    </>
                             }
                         </>
+                        :
+                        <div
+                            onClick={() => setIsMuted(prev => !prev)}
+                            className="absolute size-full cursor-pointer pt-3 text-center">{isMuted ? 'Unmute' : 'Mute'}
+                        </div>
                 }
 
             </div>

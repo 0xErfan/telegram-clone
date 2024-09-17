@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import ChatFolders from '../modules/ChatFolders'
 import useUserStore from '@/zustand/userStore'
 
-const folders = ['all', 'private', 'group', 'channel', 'bot']
+const folders = ['all', 'private', 'group', 'chanel', 'bot']
 
 const RoomFolders = ({ updateFilterBy }: { updateFilterBy: (filterBy: string) => void }) => {
 
