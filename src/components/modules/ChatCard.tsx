@@ -45,6 +45,8 @@ export const ChatCard = ({
 
     useEffect(() => {
 
+        if (!lastMsgDataProp) return
+        
         if (lastMsgDataProp.roomID !== selectedRoom?._id) return
 
         for (let i = -1; i <= selectedRoom.messages.length; i--) {
@@ -54,7 +56,7 @@ export const ChatCard = ({
             }
         }
 
-    }, [selectedRoom?.messages?.length, lastMsgDataProp._id, myID])
+    }, [selectedRoom?.messages?.length, lastMsgDataProp?._id, myID])
 
     useEffect(() => {
         setDraftMessage(localStorage.getItem(_id) || '')

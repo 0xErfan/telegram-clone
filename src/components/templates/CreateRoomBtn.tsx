@@ -1,11 +1,14 @@
 import { Button } from "@nextui-org/button";
-import { useState } from "react";
+import { Suspense, lazy, useState } from "react";
 import { MdModeEditOutline } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
+import { RoomModel } from "@/@types/data.t";
+const CreateRoom = lazy(() => import('@/components/modules/CreateRoom'))
 
 const CreateRoomBtn = () => {
 
     const [isOptionsOpen, setIsOptionsOpen] = useState(false)
+    const [roomType, setRoomType] = useState<RoomModel['type'] | null>()
 
     return (
         <>
@@ -25,11 +28,26 @@ const CreateRoomBtn = () => {
 
             </Button>
 
-            <div className="absolute flex flex-col right-4 bottom-24 rounded-md ch:w-full ch:p-3 hover:ch:bg-chatBg/50 cursor-pointer overflow-hidden transition-all duration-300 bg-[#272D3A] text-white z-[99999999]">
-                <div>New Chanel</div>
-                <div>New Group</div>
-                <div>New something else</div>
+            <div
+                data-aos='fade-left'
+                key={isOptionsOpen.toString()}
+                className={`absolute ${isOptionsOpen ? 'h-auto' : 'h-0'} flex flex-col right-4 bottom-24 rounded-md ch:w-full ch:p-3 hover:ch:bg-chatBg/50 cursor-pointer overflow-hidden transition-all bg-[#272D3A] text-white z-[99999999]`}
+            >
+                <div onClick={() => setRoomType('chanel')}>New Channel</div>
+                <div onClick={() => setRoomType('group')}>New Group</div>
             </div>
+
+            {
+                isOptionsOpen
+                &&
+                <Suspense>
+                    <CreateRoom
+                        close={() => { setIsOptionsOpen(false); setRoomType(null) }}
+                        roomType={roomType!}
+                    />
+                </Suspense>
+            }
+
         </>
     )
 }

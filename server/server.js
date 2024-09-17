@@ -68,12 +68,19 @@ io.on('connection', socket => {
 
         let isRoomExist = false
 
-        if (newRoomData.type === 'private') isRoomExist = await RoomModel.findOne({ name: newRoomData.name })
+        if (newRoomData.type === 'private') {
+            isRoomExist = await RoomModel.findOne({ name: newRoomData.name })
+        } else {
+            isRoomExist = await RoomModel.findOne({ _id: newRoomData._id })
+        }
 
         if (!isRoomExist) {
 
             let msgData = message
-            newRoomData.participants = newRoomData.participants.map(data => data._id)
+
+            if (newRoomData.type === 'private') {
+                newRoomData.participants = newRoomData.participants.map(data => data?._id)
+            }
 
             const newRoom = await RoomModel.create(newRoomData)
 
@@ -157,7 +164,7 @@ io.on('connection', socket => {
     socket.on('editMessage', async ({ msgID, editedMsg, roomID }) => {
         io.to(roomID).emit('editMessage', { msgID, editedMsg, roomID })
         const updatedMsgData = await MessageModel.findOneAndUpdate({ _id: msgID }, { message: editedMsg, isEdited: true }).lean()
-        io.to(roomID).emit('updateLastMsgData', { roomID, msgData: {...updatedMsgData, message: editedMsg} })
+        io.to(roomID).emit('updateLastMsgData', { roomID, msgData: { ...updatedMsgData, message: editedMsg } })
     })
 
     socket.on('seenMsg', async (seenData) => {

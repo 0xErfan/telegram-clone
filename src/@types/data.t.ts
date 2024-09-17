@@ -50,7 +50,7 @@ interface RoomModel {
     _id: string
     name: string
     avatar: string
-    participants: string[]
+    participants: string[] | UserModel[]
     admins: string[]
     type: 'group' | 'private' | 'chanel'
     creator: string

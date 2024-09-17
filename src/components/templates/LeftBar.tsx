@@ -1,4 +1,5 @@
 'use client'
+
 import Image from "next/image"
 import { BiSearch } from "react-icons/bi"
 import { ChatCard } from "../modules/ChatCard"
@@ -9,10 +10,10 @@ import useUserStore from "@/zustand/userStore"
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import useSockets from "@/zustand/useSockets"
 import RoomFolders from "./RoomFolders"
-import CreateRoomBtn from "./CreateRoomBtn"
 
 const SearchPage = lazy(() => import('@/components/templates/SearchPage'))
 const Modal = lazy(() => import('../modules/Modal'))
+const CreateRoomBtn = lazy(() => import('@/components/templates/CreateRoomBtn'))
 
 const roomSocket = io('http://localhost:3001')
 
@@ -155,10 +156,14 @@ const LeftBar = () => {
             {isSearchOpen && <SearchPage closeSearch={() => setIsSearchOpen(false)} />}
 
             {
-                isPageLoaded && <Modal />
+                isPageLoaded
+                    ?
+                    <>
+                        <Modal />
+                        <CreateRoomBtn />
+                    </>
+                    : null
             }
-
-            <CreateRoomBtn />
 
         </div>
     )
