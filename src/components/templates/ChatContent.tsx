@@ -308,7 +308,8 @@ const ChatContent = () => {
                     messages?.length
                         ?
                         messages.map((data, index) =>
-                            !data?.hideFor?.includes(myID) &&
+                            !data?.hideFor?.includes(myID)
+                            &&
                             <div
                                 className={data._id}
                                 key={data._id}
@@ -325,7 +326,7 @@ const ChatContent = () => {
                         )
                         :
                         <div data-aos="fade-left" className="flex-center size-full">
-                            <p className="rounded-full w-fit text-[14px] py-1 px-3 text-center bg-white/[18%]">Select chat to start messaging</p>
+                            <p className="rounded-full w-fit text-[14px] py-1 px-3 text-center bg-white/[18%]">Send a message to start the chat bud</p>
                         </div>
                 }
 
@@ -337,7 +338,7 @@ const ChatContent = () => {
             </div>
 
             {
-                (type === 'private' || participants?.includes(myID))
+                (type === 'private' || (participants as string[])?.includes(myID))
                     ?
                     <MessageSender
                         replayData={replayDataMsg}

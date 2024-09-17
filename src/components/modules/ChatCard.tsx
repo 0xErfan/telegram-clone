@@ -46,17 +46,18 @@ export const ChatCard = ({
     useEffect(() => {
 
         if (!lastMsgDataProp) return
-        
-        if (lastMsgDataProp.roomID !== selectedRoom?._id) return
+        if (lastMsgDataProp?.roomID && lastMsgDataProp?.roomID !== selectedRoom?._id) return
 
-        for (let i = -1; i <= selectedRoom.messages.length; i--) {
-            if (!selectedRoom.messages.at(i)?.hideFor?.includes(myID)) {
-                setLastMsgData(selectedRoom.messages.at(i)!)
-                break;
+        if (selectedRoom?.messages?.length) {
+            for (let i = -1; i <= selectedRoom.messages.length; i--) {
+                if (!selectedRoom.messages.at(i)?.hideFor?.includes(myID)) {
+                    setLastMsgData(selectedRoom.messages.at(i)!)
+                    break;
+                }
             }
         }
 
-    }, [selectedRoom?.messages?.length, lastMsgDataProp?._id, myID])
+    }, [selectedRoom?.messages?.length, myID, selectedRoom?._id, lastMsgDataProp?.roomID])
 
     useEffect(() => {
         setDraftMessage(localStorage.getItem(_id) || '')
@@ -82,6 +83,7 @@ export const ChatCard = ({
                         :
                         <div className="size-[50px] shrink-0 bg-darkBlue rounded-full flex-center text-bold text-center text-white text-2xl">{name?.length && name[0]}</div>
                 }
+
                 {
                     (type === 'private' && isOnline)
                         ?

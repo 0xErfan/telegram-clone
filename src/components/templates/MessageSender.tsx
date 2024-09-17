@@ -1,13 +1,14 @@
 import { BsEmojiSmile } from "react-icons/bs";
 import { PiMicrophoneLight } from "react-icons/pi";
 import { IoIosSend, IoMdClose } from "react-icons/io";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, lazy, useEffect, useRef, useState } from "react";
 import { MdAttachFile, MdModeEditOutline, MdOutlineDone } from "react-icons/md";
 import { BsFillReplyFill } from "react-icons/bs";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import useUserStore from "@/zustand/userStore";
 import useSockets from "@/zustand/useSockets";
 import { MessageModel } from "@/@types/data.t";
+const EmojiPicker = lazy(() => import('emoji-picker-react'))
 
 interface Props {
     replayData: Partial<MessageModel> | undefined
@@ -24,6 +25,7 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
     const typingTimer = useRef<NodeJS.Timeout | null>(null)
     const inputRef = useRef<HTMLInputElement | null>(null)
     const [isMuted, setIsMuted] = useState(false)
+    const [isEmojiOpen, setIsEmojiOpen] = useState(false)
 
     const selectedRoom = useGlobalVariablesStore(state => state?.selectedRoom)
     const userRooms = useUserStore(state => state.rooms)
@@ -117,6 +119,11 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
         }, 2000);
     }
 
+    const selectEmoji = (e: { emoji: string }) => {
+        setText(prev => prev.concat(e.emoji))
+        setIsEmojiOpen(false)
+    }
+
     return (
         <section className='sticky -mx-4 md:mx-0 bg-chatBg z-[999999] bottom-0 md:pb-3 inset-x-0'
         >
@@ -153,13 +160,30 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
 
             <span className={`${(replayData?._id || editData?._id) ? 'opacity-100 h-[50px] pb-1' : 'opacity-0 h-0'} duration-200 transition-all border-b border-white/5 z-30 absolute inset-x-0 bottom-[53px] md:bottom-16 bg-inherit`}></span>
 
+            <EmojiPicker
+                open={isEmojiOpen}
+                //@ts-expect-error
+                theme="dark"
+                className="absolute left-3 w-32 bottom-16"
+                style={{ position: 'absolute' }}
+                //@ts-expect-error
+                previewConfig={{ defaultCaption: false, defaultEmoji: false, showPreview: false }}
+                skinTonesDisabled={true}
+                searchDisabled={true}
+                lazyLoadEmojis={true}
+                onEmojiClick={selectEmoji}
+            />
+
             <div className='flex items-center relative w-full md:px-2 px-4 ch:w-full md:gap-1 gap-3 bg-white/[5.12%] h-[53px] rounded'>
 
                 {
                     (selectedRoom?.type == 'chanel' && selectedRoom.admins.includes(myData._id)) || selectedRoom?.type !== 'chanel'
                         ?
                         <>
-                            <BsEmojiSmile className="shrink-0 basis-[5%]" />
+                            <BsEmojiSmile
+                                onClick={() => setIsEmojiOpen(true)}
+                                className="shrink-0 cursor-pointer basis-[5%]"
+                            />
 
                             <input
                                 dir="auto"
