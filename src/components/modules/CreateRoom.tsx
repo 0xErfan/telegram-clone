@@ -27,11 +27,12 @@ const CreateRoom = ({ roomType, close }: Props) => {
     const onlineUsers = useGlobalVariablesStore(state => state.onlineUsers)
     const socket = useSockets(state => state.rooms)
 
-    const [selectedUsers, setSelectedUsers] = useState<string[]>([])
-    const [search, setSearch] = useState('')
-    const [roomName, setRoomName] = useState('')
     const [isRoomInfoPartShown, setIsRoomInfoPartShown] = useState(false)
+    const [selectedUsers, setSelectedUsers] = useState<string[]>([])
     const [roomImage, setRoomImage] = useState<string | null>(null)
+    const [isLoading, setIsLoading] = useState(false)
+    const [roomName, setRoomName] = useState('')
+    const [search, setSearch] = useState('')
 
     const filteredUserCards = useMemo(() => {
         return userContacts?.length
@@ -69,6 +70,8 @@ const CreateRoom = ({ roomType, close }: Props) => {
         const name = roomName.trim()
         if (!name?.length) return showToast(false, 'A room name please?')
 
+        setIsLoading(true)
+
         const roomData: Partial<RoomModel> = {
             name: roomName,
             admins: [myID],
@@ -85,12 +88,15 @@ const CreateRoom = ({ roomType, close }: Props) => {
         socket?.emit('createRoom', { newRoomData: roomData })
 
         socket?.on('createRoom', () => {
-            setSelectedUsers([])
-            setSearch('')
-            setRoomName('')
-            setIsRoomInfoPartShown(false)
-            setRoomImage(null)
-            close()
+            setTimeout(() => {
+                setIsLoading(false)
+                setSelectedUsers([])
+                setSearch('')
+                setRoomName('')
+                setIsRoomInfoPartShown(false)
+                setRoomImage(null)
+                close()
+            }, 700);
         })
     }
 
@@ -179,6 +185,8 @@ const CreateRoom = ({ roomType, close }: Props) => {
             }
 
             <Button
+                isLoading={isLoading}
+                disabled={isLoading}
                 style={{ height: '64px' }}
                 size="sm"
                 className='absolute right-4 bottom-4 text-white rounded-full bg-darkBlue flex-center z-[99999999]'
@@ -190,17 +198,20 @@ const CreateRoom = ({ roomType, close }: Props) => {
                 }}
             >
                 {
-                    isRoomInfoPartShown
-                        ?
-                        <MdDone
-                            data-aos='zoom-out'
-                            className="size-7"
-                        />
+                    isLoading
+                        ? null
                         :
-                        <FaArrowRight
-                            data-aos='zoom-out'
-                            className="size-[27px]"
-                        />
+                        isRoomInfoPartShown
+                            ?
+                            <MdDone
+                                data-aos='zoom-out'
+                                className="size-7"
+                            />
+                            :
+                            <FaArrowRight
+                                data-aos='zoom-out'
+                                className="size-[27px]"
+                            />
                 }
             </Button>
 
