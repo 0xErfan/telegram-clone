@@ -47,15 +47,18 @@ const Modal = () => {
 
                         {bodyText}
 
-                        <Checkbox
-                            hidden={Boolean(isCheckedText?.length)}
-                            isSelected={isChecked}
-                            onValueChange={toggleIsCheckedValue}
-                            className="ch:text-white"
-                            classNames={{ label: 'text-[15px]' }}
-                        >
-                            {isCheckedText}
-                        </Checkbox>
+                        {
+                            Boolean(isCheckedText?.length)
+                            &&
+                            <Checkbox
+                                isSelected={isChecked}
+                                onValueChange={toggleIsCheckedValue}
+                                className="ch:text-white"
+                                classNames={{ label: 'text-[15px]' }}
+                            >
+                                {isCheckedText}
+                            </Checkbox>
+                        }
 
                     </ModalBody>
 
