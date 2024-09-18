@@ -43,7 +43,7 @@ export const ChatCard = ({
     const latestMessageTime = getTimeFromDate(lastMsgData?.createdAt!)
     const isActive = selectedRoom?._id == _id
 
-    useEffect(() => {
+    useEffect(() => { // not useful for now
 
         if (!lastMsgDataProp) return
         if (lastMsgDataProp?.roomID && lastMsgDataProp?.roomID !== selectedRoom?._id) return

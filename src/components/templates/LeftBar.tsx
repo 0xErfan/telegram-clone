@@ -14,6 +14,7 @@ import RoomFolders from "./RoomFolders"
 const SearchPage = lazy(() => import('@/components/templates/SearchPage'))
 const Modal = lazy(() => import('../modules/Modal'))
 const CreateRoomBtn = lazy(() => import('@/components/templates/CreateRoomBtn'))
+const LeftBarMenu = lazy(() => import('@/components/templates/LeftBarMenu'))
 
 const roomSocket = io('http://localhost:3001')
 
@@ -24,6 +25,7 @@ const LeftBar = () => {
     const [isPageLoaded, setIsPageLoaded] = useState(false)
     const [forceRender, setForceRender] = useState(false)
     const [isSearchOpen, setIsSearchOpen] = useState(false)
+    const [isLeftBarMenuOpen, setIsLeftBarMenuOpen] = useState(false)
 
     const _id = useUserStore(state => state._id)
     const updater = useSockets(state => state.updater)
@@ -48,7 +50,6 @@ const LeftBar = () => {
 
         if (!_id) return
 
-        setIsPageLoaded(true)
         updater('rooms', roomSocket)
         userDataUpdater({ rooms })
 
@@ -59,6 +60,7 @@ const LeftBar = () => {
 
         roomSocket.on('getRooms', (rooms: RoomModel[]) => {
 
+            setIsPageLoaded(true)
             setRooms(rooms)
             userDataUpdater({ rooms })
 
@@ -103,11 +105,7 @@ const LeftBar = () => {
             roomSocket.off('deleteRoom')
         }
     }, [selectedRoom?._id])
-
-    const openModal = () => {
-        setter({ modalData: { ...modalData, isOpen: true, isCheckedText: 'Hi, do you like to be remembered?' } })
-    }
-
+    
     return (
         <div
             data-aos-duration="400"
@@ -119,7 +117,10 @@ const LeftBar = () => {
 
                 <div className="flex items-center justify-between gap-6">
 
-                    <div onClick={openModal} className="flex items-center flex-1 gap-5 mt-3 w-full text-white tex-[14px]">
+                    <div
+                        onClick={() => setIsLeftBarMenuOpen(true)}
+                        className="flex items-center flex-1 gap-5 mt-3 w-full text-white tex-[14px]"
+                    >
                         <Image
                             className="cursor-pointer"
                             src="/shapes/hamberger.svg"
@@ -161,6 +162,7 @@ const LeftBar = () => {
                     <>
                         <Modal />
                         <CreateRoomBtn />
+                        <LeftBarMenu isOpen={isLeftBarMenuOpen} closeMenu={() => setIsLeftBarMenuOpen(false)} />
                     </>
                     : null
             }
