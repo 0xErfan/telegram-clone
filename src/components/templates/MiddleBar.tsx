@@ -9,7 +9,7 @@ const MiddleBar = () => {
     const { selectedRoom, isRoomDetailsShown } = useGlobalVariablesStore(state => state)
 
     return (
-        <div className={`flex-[2.4] bg-chatBg relative ${!selectedRoom && 'hidden'} ${isRoomDetailsShown ? 'xl:rounded-2xl' : 'xl:rounded-l-2xl'}  md:block px-2 md:px-4 xl:px-8 text-white overflow-x-hidden noScrollWidth`}
+        <div className={`flex-[2.4] bg-chatBg relative ${!selectedRoom && 'hidden'} ${isRoomDetailsShown ? 'xl:rounded-2xl' : 'xl:rounded-l-2xl'}  md:block px-2 md:px-4 xl:px-8 text-white overflow-x-hidden noScrollWidth z-[9999999999]`}
         >
             {
                 selectedRoom !== null

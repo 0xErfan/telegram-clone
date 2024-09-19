@@ -198,7 +198,19 @@ const scrollToMessage = (id: string, behavior: 'smooth' | 'auto' = 'smooth') => 
 }
 
 const copyText = async (text: string) => {
-    await navigator?.clipboard?.writeText(text)
+    if ('clipboard' in navigator) {
+        await navigator.clipboard.writeText(text)
+    } else {
+        showToast(false, 'Copy not supported bud.')
+    }
+}
+
+const generateRandomHex = (length: number) => {
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += Math.floor(Math.random() * 16).toString(16);
+    }
+    return result;
 }
 
 const uploadImage = async (file: File): Promise<string | Error> => {
@@ -256,5 +268,6 @@ export {
     scrollIntoElem,
     scrollToMessage,
     copyText,
+    generateRandomHex,
     uploadImage
 }

@@ -10,7 +10,6 @@ import useUserStore from "@/zustand/userStore"
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import useSockets from "@/zustand/useSockets"
 import RoomFolders from "./RoomFolders"
-import { Skeleton } from '@nextui-org/skeleton'
 import RoomSkeleton from "../modules/RoomSkeleton"
 
 const SearchPage = lazy(() => import('@/components/templates/SearchPage'))
@@ -18,7 +17,7 @@ const Modal = lazy(() => import('../modules/Modal'))
 const CreateRoomBtn = lazy(() => import('@/components/templates/CreateRoomBtn'))
 const LeftBarMenu = lazy(() => import('@/components/templates/LeftBarMenu'))
 
-const roomSocket = io('http://localhost:3001')
+const roomSocket = io('http://192.168.79.128:3001')
 
 const LeftBar = () => {
 
@@ -109,67 +108,13 @@ const LeftBar = () => {
     }, [selectedRoom?._id])
 
     return (
-        <div
-            data-aos-duration="400"
-            data-aos='fade-right'
-            className={`flex-1 ${selectedRoom && 'hidden'} md:block bg-leftBarBg relative noScrollWidth px-4 overflow-y-auto`}
-        >
 
-            <div className="w-full sticky top-0 bg-leftBarBg space-y-1 pt-1 border-b border-white/5 z-30">
-
-                <div className="flex items-center justify-between gap-6">
-
-                    <div
-                        onClick={() => setIsLeftBarMenuOpen(true)}
-                        className="flex items-center flex-1 gap-5 mt-3 w-full text-white tex-[14px]"
-                    >
-                        <Image
-                            className="cursor-pointer"
-                            src="/shapes/hamberger.svg"
-                            width={18}
-                            height={15}
-                            alt="hambergerMenu"
-                        />
-                        <h1 className="font-bold font-segoeBold">Telegram</h1>
-                    </div>
-
-                    <BiSearch onClick={() => setIsSearchOpen(true)} className="cursor-pointer size-[23px] text-white/90 mt-3" />
-
-                </div>
-
-                <RoomFolders updateFilterBy={filterBy => setFilterBy(filterBy)} />
-
-            </div>
-
-            <div className="flex flex-col mt-2 overflow-auto">
-                {
-                    isPageLoaded
-                        ?
-                        sortedRooms?.length
-                            ?
-                            sortedRooms.map((data: any) =>
-                                <ChatCard
-                                    {...data}
-                                    key={data?._id}
-                                />
-                            )
-                            :
-                            <div className="text-xl text-white font-bold w-full text-center font-segoeBold pt-20">No chats found bud</div>
-                        :
-                        <RoomSkeleton />
-                }
-            </div>
-
-            {isSearchOpen && <SearchPage closeSearch={() => setIsSearchOpen(false)} />}
+        <>
 
             {
                 isPageLoaded
                     ?
                     <>
-                        <Modal />
-
-                        <CreateRoomBtn />
-
                         <LeftBarMenu
                             isOpen={isLeftBarMenuOpen}
                             closeMenu={() => setIsLeftBarMenuOpen(false)}
@@ -178,7 +123,74 @@ const LeftBar = () => {
                     : null
             }
 
-        </div>
+            <div
+                data-aos-duration="400"
+                data-aos='fade-right'
+                className={`flex-1 ${selectedRoom && 'hidden'} md:block bg-leftBarBg relative noScrollWidth px-4 overflow-y-auto`}
+            >
+                <CreateRoomBtn />
+
+                <div className="w-full sticky top-0 bg-leftBarBg space-y-1 pt-1 border-b border-white/5 z-30">
+
+                    <div className="flex items-center justify-between gap-6">
+
+                        <div className="flex items-center flex-1 gap-5 mt-3 w-full text-white tex-[14px]">
+                            <Image
+                                onClick={() => setIsLeftBarMenuOpen(true)}
+                                className="cursor-pointer"
+                                src="/shapes/hamberger.svg"
+                                width={18}
+                                height={15}
+                                alt="hambergerMenu"
+                            />
+                            <h1 className="font-bold font-segoeBold">Telegram</h1>
+                        </div>
+
+                        <BiSearch onClick={() => setIsSearchOpen(true)} className="cursor-pointer size-[23px] text-white/90 mt-3" />
+
+                    </div>
+
+                    <RoomFolders updateFilterBy={filterBy => setFilterBy(filterBy)} />
+
+                </div>
+
+                <div className="flex flex-col mt-2 overflow-auto customMessageHeight">
+                    {
+                        isPageLoaded
+                            ?
+                            sortedRooms?.length
+                                ?
+                                sortedRooms.map((data: any) =>
+                                    <ChatCard
+                                        {...data}
+                                        key={data?._id}
+                                    />
+                                )
+                                :
+                                <div className="text-xl text-white font-bold w-full text-center font-segoeBold pt-20">No chats found bud</div>
+                            :
+                            <RoomSkeleton />
+                    }
+                </div>
+
+                {isSearchOpen && <SearchPage closeSearch={() => setIsSearchOpen(false)} />}
+
+                {
+                    isPageLoaded
+                        ?
+                        <>
+                            <Modal />
+
+                            {/* <LeftBarMenu
+                                isOpen={isLeftBarMenuOpen}
+                                closeMenu={() => setIsLeftBarMenuOpen(false)}
+                            /> */}
+                        </>
+                        : null
+                }
+
+            </div>
+        </>
     )
 }
 

@@ -6,11 +6,11 @@ import { MdDone } from "react-icons/md";
 import { MdAddAPhoto } from "react-icons/md";
 import { FaArrowRight } from "react-icons/fa6";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
-import { ChangeEvent, useMemo, useRef, useState } from "react"
+import { ChangeEvent, useMemo, useState } from "react"
 import ContactCard from "./ContactCard";
 import { Button } from "@nextui-org/button"
 import Image from "next/image";
-import { showToast, uploadImage } from "@/utils";
+import { generateRandomHex, showToast, uploadImage } from "@/utils";
 import useSockets from "@/zustand/useSockets";
 
 type Props = {
@@ -114,7 +114,7 @@ const CreateRoom = ({ roomType, close }: Props) => {
             participants: [...selectedUsers, myID],
             type: roomType,
             creator: myID,
-            link: '@' + crypto.randomUUID().slice(0, 20),
+            link: '@' + generateRandomHex(20),
             locations: [],
             medias: [],
             messages: []

@@ -53,7 +53,7 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
     }, [_id])
 
     useEffect(() => {
-        inputRef.current?.focus()
+        if (replayData?._id || editData?._id) inputRef.current?.focus()
     }, [replayData?._id, editData?._id])
 
     const cleanUpAfterSendingMsg = () => {

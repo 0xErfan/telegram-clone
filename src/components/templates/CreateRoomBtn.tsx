@@ -12,10 +12,11 @@ const CreateRoomBtn = () => {
 
     return (
         <>
-            <Button
+            {/* <div className="z-[9999999999] mt-auto bg-red-500 rounded-full inset-x-0 bottom-0 size-full"></div> */}
+            {/* <Button
                 style={{ height: '64px' }}
                 size="sm"
-                className='absolute right-4 bottom-4 text-white rounded-full bg-darkBlue flex-center z-[99999999]'
+                className='fixed ml-auto bottom-4 text-white rounded-full bg-darkBlue flex-center z-[99999999]'
                 onClick={() => setIsOptionsOpen(prev => !prev)}
             >
                 {
@@ -46,7 +47,7 @@ const CreateRoomBtn = () => {
                         roomType={roomType!}
                     />
                 </Suspense>
-            }
+            } */}
 
         </>
     )

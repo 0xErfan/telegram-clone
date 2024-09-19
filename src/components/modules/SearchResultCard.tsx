@@ -75,7 +75,7 @@ const SearchResultCard = (roomData: Partial<RoomModel & { findBy?: keyof RoomMod
     return (
         <div
             onClick={openChat}
-            className="flex items-center gap-2 cursor-pointer"
+            className="flex items-center gap-2 cursor-pointer overflow-x-hidden"
         >
             {
                 avatar ?
@@ -91,7 +91,7 @@ const SearchResultCard = (roomData: Partial<RoomModel & { findBy?: keyof RoomMod
             }
             <div className="flex flex-col justify-between border-b border-black/40 w-full py-2">
 
-                <p className="text-[17px] font-segoeBold line-clamp-1 overflow-ellipsis">
+                <p className="text-[17px] font-segoeBold line-clamp-1 overflow-ellipsis break-words">
                     {
                         (findBy == 'participants' || findBy == 'name')
                             ?
@@ -101,7 +101,7 @@ const SearchResultCard = (roomData: Partial<RoomModel & { findBy?: keyof RoomMod
                     }
                 </p>
 
-                <p className="text-sm text-darkGray">
+                <p className="text-sm text-darkGray line-clamp-1 overflow-ellipsis break-words">
                     {
                         findBy == 'messages' && roomData.messages?.length
                             ?

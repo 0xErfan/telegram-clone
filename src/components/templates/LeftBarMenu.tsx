@@ -12,6 +12,7 @@ import LineSeparator from "../modules/LineSeparator";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import { copyText, showToast } from "@/utils";
 import useSockets from "@/zustand/useSockets";
+import { useEffect, useState } from "react";
 
 interface Props {
     isOpen: boolean
@@ -20,9 +21,22 @@ interface Props {
 
 const LeftBarMenu = ({ closeMenu, isOpen }: Props) => {
 
+    const [route, setRoute] = useState('/')
     const { name, avatar, username, lastName, rooms } = useUserStore(state => state)
     const setter = useGlobalVariablesStore(state => state.setter)
     const socket = useSockets(state => state.rooms)
+
+    const getBack = () => {
+        if (route.length === 1) return
+        const lastRoutePart = route.lastIndexOf('/')
+        setRoute(prev => prev.slice(0, lastRoutePart - 1))
+    }
+
+    const insert = () => {
+        setRoute(prev => prev.concat(`${Math.floor(Math.random() * 10)}/`))
+    }
+
+    console.log(route)
 
     const showTelegramFeatures = () => {
         setter((prev: any) => ({
@@ -54,19 +68,28 @@ const LeftBarMenu = ({ closeMenu, isOpen }: Props) => {
     }
 
     const openSavedMessages = () => {
+        return getBack()
         const savedMessageRoomID = rooms.find(room => room.type == 'private' && room.participants.length == 1)?._id
         socket?.emit('joining', savedMessageRoomID)
         closeMenu()
     }
 
+    const openProfile = () => {
+        insert()
+    }
+
+    const createNewGroup = () => {
+        alert(2)
+    }
+
     return (
         <>
-            <div
+            <span
                 onClick={closeMenu}
-                className={`absolute ${isOpen ? 'w-full' : 'w-0'} left-0 inset-y-0 z-[99999999999] backdrop-filter bg-black/50 h-screen`}
+                className={`fixed ${isOpen ? 'w-full' : 'w-0 hidden'} h-[100vw] left-0 inset-y-0 z-[999999999999] backdrop-filter bg-black/30`}
             />
 
-            <nav className={`absolute ${isOpen ? 'left-0' : '-left-[400px]'} duration-200 transition-all inset-y-0 z-[999999999999] bg-chatBg text-white h-screen w-[80%] max-w-[350px]`}>
+            <nav className={`fixed ${isOpen ? 'left-0' : '-left-[400px]'} max-h-screen h-full overflow-auto  duration-200 transition-all inset-y-0 z-[999999999999] bg-chatBg text-white w-[80%] max-w-[350px]`}>
 
                 <div className="flex flex-col pt-4 px-4 gap-3">
                     {
@@ -74,13 +97,14 @@ const LeftBarMenu = ({ closeMenu, isOpen }: Props) => {
                             <Image
                                 className={`size-[60px] bg-center object-cover rounded-full cursor-pointer`}
                                 width={60}
+                                onClick={openProfile}
                                 height={60}
                                 quality={100}
                                 src={avatar}
                                 alt="avatar"
                             />
                             :
-                            <div className="size-[60px] shrink-0 bg-darkBlue rounded-full flex-center text-bold text-center text-white cursor-pointer text-2xl">{name?.length && name[0]}</div>
+                            <div onClick={openProfile} className="size-[60px] shrink-0 bg-darkBlue rounded-full flex-center text-bold text-center text-white cursor-pointer text-2xl">{name?.length && name[0]}</div>
                     }
 
                     <div>
@@ -95,6 +119,7 @@ const LeftBarMenu = ({ closeMenu, isOpen }: Props) => {
                     <MenuItem
                         icon={<CgProfile />}
                         title='My Profile'
+                        onClick={openProfile}
                     />
 
                     <LineSeparator />
@@ -102,6 +127,7 @@ const LeftBarMenu = ({ closeMenu, isOpen }: Props) => {
                     <MenuItem
                         icon={<LuUsers />}
                         title='New Group'
+                        onClick={createNewGroup}
                     />
 
                     <MenuItem
@@ -112,6 +138,7 @@ const LeftBarMenu = ({ closeMenu, isOpen }: Props) => {
                     <MenuItem
                         icon={<IoCallOutline />}
                         title='Calls'
+                        onClick={() => showToast(true, 'Call feature will add soon...!')}
                     />
 
                     <MenuItem

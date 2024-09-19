@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="en">
-            <body className="font-segoeRegular">
+            <body className="font-segoeRegular overflow-hidden">
                 <NextUIProvider>
                     <AosAnimation />
                     <Toaster />

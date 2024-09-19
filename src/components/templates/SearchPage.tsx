@@ -58,7 +58,7 @@ const SearchPage = ({ closeSearch }: Props) => {
         <section
             data-aos='fade-up'
             onKeyUp={e => e.key == 'Escape' && closeSearch()}
-            className={` text-white absolute size-full h-screen inset-0 bg-leftBarBg z-[99999999] transition-all`}
+            className={` text-white absolute size-full inset-0 bg-leftBarBg z-[999999999999999999999] transition-all`}
         >
             <div className="flex gap-3 bg-inherit items-center justify-between w-full ch:w-full px-2 py-4">
 
@@ -78,7 +78,7 @@ const SearchPage = ({ closeSearch }: Props) => {
 
             </div>
 
-            <div className="px-3 mt-6">
+            <div className="px-3 mt-6 bg-inherit">
                 {
                     isLoading ?
                         <Button
