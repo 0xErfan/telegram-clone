@@ -51,6 +51,7 @@ const MessageActions = () => {
             isOpen={Boolean(msgData)}
             size="lg"
             className="bg-[#2E323F] text-white"
+            style={{ zIndex: '999999999999999' }}
             classNames={{ content: 'p-0 m-0' }}
             onClose={onClose}
         >
@@ -68,7 +69,7 @@ const MessageActions = () => {
                         key="new"
                     >
                         Reply
-                    </DropdownItem>
+                    </DropdownItem> as any
                 }
 
                 <DropdownItem
@@ -84,7 +85,7 @@ const MessageActions = () => {
                     (roomData?.type == 'private' && msgData?.sender?._id == myID) || (roomData?.type !== 'private' && msgData?.sender._id === myID)
                         ?
                         <DropdownItem className="p-3" onClick={edit} startContent={<MdOutlineModeEdit className="size-5" />} key="copy">Edit</DropdownItem>
-                        : null
+                        : null!
                 }
 
                 {
@@ -100,8 +101,6 @@ const MessageActions = () => {
                         </DropdownItem>
                         : null
                 }
-
-
 
             </DropdownMenu>
 
