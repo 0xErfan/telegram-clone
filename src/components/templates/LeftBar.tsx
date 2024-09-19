@@ -10,6 +10,8 @@ import useUserStore from "@/zustand/userStore"
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import useSockets from "@/zustand/useSockets"
 import RoomFolders from "./RoomFolders"
+import { Skeleton } from '@nextui-org/skeleton'
+import RoomSkeleton from "../modules/RoomSkeleton"
 
 const SearchPage = lazy(() => import('@/components/templates/SearchPage'))
 const Modal = lazy(() => import('../modules/Modal'))
@@ -30,7 +32,7 @@ const LeftBar = () => {
     const _id = useUserStore(state => state._id)
     const updater = useSockets(state => state.updater)
     const { setter: userDataUpdater, rooms: userRooms } = useUserStore(state => state)
-    const { selectedRoom, setter, modalData } = useGlobalVariablesStore(state => state)
+    const { selectedRoom, setter } = useGlobalVariablesStore(state => state)
 
     const sortedRooms = useMemo(() => {
 
@@ -105,7 +107,7 @@ const LeftBar = () => {
             roomSocket.off('deleteRoom')
         }
     }, [selectedRoom?._id])
-    
+
     return (
         <div
             data-aos-duration="400"
@@ -141,16 +143,20 @@ const LeftBar = () => {
 
             <div className="flex flex-col mt-2 overflow-auto">
                 {
-                    sortedRooms?.length
+                    isPageLoaded
                         ?
-                        sortedRooms.map((data: any) =>
-                            <ChatCard
-                                {...data}
-                                key={data?._id}
-                            />
-                        )
+                        sortedRooms?.length
+                            ?
+                            sortedRooms.map((data: any) =>
+                                <ChatCard
+                                    {...data}
+                                    key={data?._id}
+                                />
+                            )
+                            :
+                            <div className="text-xl text-white font-bold w-full text-center font-segoeBold pt-20">No chats found bud</div>
                         :
-                        <div className="text-xl text-white font-bold w-full text-center font-segoeBold pt-20">No chats found bud</div>
+                        <RoomSkeleton />
                 }
             </div>
 
@@ -161,8 +167,13 @@ const LeftBar = () => {
                     ?
                     <>
                         <Modal />
+
                         <CreateRoomBtn />
-                        <LeftBarMenu isOpen={isLeftBarMenuOpen} closeMenu={() => setIsLeftBarMenuOpen(false)} />
+
+                        <LeftBarMenu
+                            isOpen={isLeftBarMenuOpen}
+                            closeMenu={() => setIsLeftBarMenuOpen(false)}
+                        />
                     </>
                     : null
             }
