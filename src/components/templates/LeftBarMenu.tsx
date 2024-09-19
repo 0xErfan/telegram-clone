@@ -12,7 +12,7 @@ import LineSeparator from "../modules/LineSeparator";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import { copyText, showToast } from "@/utils";
 import useSockets from "@/zustand/useSockets";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface Props {
     isOpen: boolean

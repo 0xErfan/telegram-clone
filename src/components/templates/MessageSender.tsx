@@ -174,7 +174,7 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
                 onEmojiClick={selectEmoji}
             />
 
-            <div className='flex items-center relative w-full md:px-2 px-4 ch:w-full md:gap-1 gap-3 bg-white/[5.12%] h-[53px] rounded'>
+            <div className='flex items-center relative w-full md:px-2 px-6 ch:w-full md:gap-1 gap-3 bg-white/[5.12%] h-[53px] rounded'>
 
                 {
                     (selectedRoom?.type == 'chanel' && selectedRoom.admins.includes(myData._id)) || selectedRoom?.type !== 'chanel'
@@ -182,7 +182,7 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
                         <>
                             <BsEmojiSmile
                                 onClick={() => setIsEmojiOpen(prev => !prev)}
-                                className="shrink-0 cursor-pointer basis-[5%]"
+                                className="shrink-0 cursor-pointer basis-[5%] size-5"
                             />
 
                             <input
@@ -196,19 +196,19 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
                                 placeholder="Message"
                             />
 
-                            {!editData && <MdAttachFile className="shrink-0 basis-[5%] size-5 cursor-pointer" />}
+                            {!editData && <MdAttachFile className="shrink-0 basis-[5%] size-6 cursor-pointer" />}
 
                             {
                                 editData?._id ?
-                                    <MdOutlineDone onClick={editMessage} className="shrink-0 basis-[5%] size-6 cursor-pointer text-white bg-lightBlue rounded-full" />
+                                    <MdOutlineDone onClick={editMessage} className="shrink-0 basis-[7%] size-6 cursor-pointer text-white bg-lightBlue rounded-full" />
                                     :
                                     <>
                                         {
                                             text.trim().length
                                                 ?
-                                                <IoIosSend onClick={sendMessage} className="shrink-0 basis-[5%] size-6 cursor-pointer text-lightBlue rotate-45" />
+                                                <IoIosSend onClick={sendMessage} className="shrink-0 basis-[7%] size-6 cursor-pointer text-lightBlue rotate-45" />
                                                 :
-                                                <PiMicrophoneLight className="shrink-0 basis-[5%] size-6 cursor-pointer" />
+                                                <PiMicrophoneLight className="shrink-0 basis-[7%] size-6 cursor-pointer" />
                                         }
                                     </>
                             }

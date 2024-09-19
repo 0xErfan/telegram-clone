@@ -140,7 +140,7 @@ const RoomDetails = () => {
 
     return (
         <section
-            className={`flex-col ${isRoomDetailsShown ? 'xl:flex right-0 opacity-100' : 'xl:hidden -right-[670px] sm:-right-[800px] opacity-0'} duration-200 transition-all md:max-w-[400px] xl:static fixed xl:max-w-[400px] w-full bg-leftBarBg text-white md:inset-y-0 h-screen z-50`}
+            className={`flex-col ${isRoomDetailsShown ? 'xl:flex right-0 opacity-100' : 'xl:hidden -right-[670px] sm:-right-[800px] opacity-0'} duration-200 transition-all md:max-w-[400px] xl:static inset-y-0 fixed xl:max-w-[400px] w-full bg-leftBarBg text-white md:inset-y-0 h-full z-[9999999999999999999]`}
         >
 
             <div className="bg-[#2E323F] p-3 relative">
