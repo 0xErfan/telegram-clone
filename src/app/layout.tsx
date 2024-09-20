@@ -18,7 +18,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <body className="font-segoeRegular overflow-hidden">
                 <NextUIProvider>
                     <AosAnimation />
-                    <Toaster />
+                    <Toaster  containerStyle={{zIndex: '999999999999999'}}/>
                     {children}
                 </NextUIProvider>
             </body>

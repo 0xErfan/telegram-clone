@@ -11,12 +11,12 @@ const CreateRoomBtn = () => {
     const [roomType, setRoomType] = useState<RoomModel['type'] | null>()
 
     return (
-        <div className={`fixed md:max-w-[29%] -z-10 inset-y-0 left-0 size-full text-white`}>
+        <div className={`absolute md:max-w-[29.6%] inset-y-0 left-0 size-full text-white`}>
 
             <Button
-                style={{ height: '64px' }}
+                style={{ height: '64px' }} // full of shitty style bugs in md (you know, so fix it)
                 size="sm"
-                className='absolute bottom-4 right-4 md:right-0 text-white rounded-full bg-darkBlue flex-center z-[9999]'
+                className='fixed md:absolute bottom-4 right-4 md:right-0 xl:right-3 text-white rounded-full bg-darkBlue flex-center z-[9999]'
                 onClick={() => setIsOptionsOpen(prev => !prev)}
             >
                 {
@@ -31,7 +31,7 @@ const CreateRoomBtn = () => {
             <div
                 data-aos='fade-left'
                 key={isOptionsOpen.toString()}
-                className={`absolute ${isOptionsOpen ? 'h-auto' : 'h-0'} flex flex-col right-4 md:right-0 bottom-24 rounded-md ch:w-full ch:p-3 hover:ch:bg-chatBg/50 cursor-pointer overflow-hidden transition-all bg-[#272D3A] text-white z-[99999999]`}
+                className={`fixed md:absolute ${isOptionsOpen ? 'h-auto' : 'h-0'} flex flex-col right-4 md:right-0 xl:right-3 bottom-24 rounded-md ch:w-full ch:p-3 hover:ch:bg-chatBg/50 cursor-pointer overflow-hidden transition-all bg-[#272D3A] text-white z-[9999999]`}
             >
                 <div onClick={() => setRoomType('chanel')}>New Channel</div>
                 <div onClick={() => setRoomType('group')}>New Group</div>

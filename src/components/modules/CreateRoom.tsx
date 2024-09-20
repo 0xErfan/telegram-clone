@@ -136,7 +136,7 @@ const CreateRoom = ({ roomType, close }: Props) => {
     }
 
     return (
-        <section className="fixed inset-y-0 left-0 z-[9999999999999999] bg-leftBarBg size-full bg-inherit text-white">
+        <section className="fixed inset-y-0 max-w-full md:max-w-[29.6%] left-0 z-[9999999] bg-leftBarBg size-full bg-inherit text-white">
 
             <div className="flex gap-3 bg-inherit items-center justify-between w-full ch:w-full px-4 py-4">
 
@@ -163,6 +163,7 @@ const CreateRoom = ({ roomType, close }: Props) => {
                             roomImage ?
                                 <Image
                                     src={roomImage}
+                                    onClick={() => setRoomImage(null)}
                                     className="cursor-pointer z-20 object-cover size-[60px] rounded-full"
                                     width={60}
                                     height={60}
@@ -228,7 +229,7 @@ const CreateRoom = ({ roomType, close }: Props) => {
                 disabled={isLoading}
                 style={{ height: '64px' }}
                 size="sm"
-                className='absolute right-4 bottom-4 text-white rounded-full bg-darkBlue flex-center z-[99999999]'
+                className='absolute right-4 md:right-0 xl:right-3 bottom-4 text-white rounded-full bg-darkBlue flex-center z-[99999999]'
                 onClick={() => {
                     isRoomInfoPartShown ?
                         createRoom()
