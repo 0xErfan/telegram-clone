@@ -1,6 +1,8 @@
 'use client'
 import { MessageModel, RoomModel } from "@/@types/data.t"
 import { getTimeFromDate } from "@/utils"
+import { MdDone } from "react-icons/md";
+import { IoCheckmarkDone } from "react-icons/io5";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import useSockets from "@/zustand/useSockets"
 import useUserStore from "@/zustand/userStore"
@@ -108,7 +110,23 @@ export const ChatCard = ({
 
                 <div className="flex items-center justify-between">
                     <p className="text-white font-bold text-[16px] font-segoeBold line-clamp-1">{roomID == myID ? 'Saved messages' : name}</p>
-                    <p className="whitespace-nowrap">{latestMessageTime || null}</p>
+                    <div className="flex gap-1 items-center">
+                        {
+                            (lastMsgData?.sender as any) === myID || lastMsgData?.sender?._id === myID
+                                ?
+                                <>
+                                    {
+                                        (lastMsgData?.seen.length || lastMsgDataProp?.seen?.length)
+                                            ?
+                                            <IoCheckmarkDone className="size-5 text-darkBlue" />
+                                            :
+                                            <MdDone className="size-5 text-darkBlue" />
+                                    }
+                                </>
+                                : null
+                        }
+                        <p className="whitespace-nowrap">{latestMessageTime || null}</p>
+                    </div>
                 </div>
 
                 <div className="flex items-center justify-between">

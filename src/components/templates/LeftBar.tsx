@@ -12,12 +12,12 @@ import useSockets from "@/zustand/useSockets"
 import RoomFolders from "./RoomFolders"
 import RoomSkeleton from "../modules/RoomSkeleton"
 
-const SearchPage = lazy(() => import('@/components/templates/SearchPage'))
-const Modal = lazy(() => import('../modules/Modal'))
 const CreateRoomBtn = lazy(() => import('@/components/templates/CreateRoomBtn'))
 const LeftBarMenu = lazy(() => import('@/components/templates/LeftBarMenu'))
+const SearchPage = lazy(() => import('@/components/templates/SearchPage'))
+const Modal = lazy(() => import('../modules/Modal'))
 
-const roomSocket = io('http://192.168.79.128:3001')
+const roomSocket = io('http://localhost:3001')
 
 const LeftBar = () => {
 
@@ -97,13 +97,37 @@ const LeftBar = () => {
     }, [userRooms?.length, rooms?.length])
 
     useEffect(() => {
+
         roomSocket.on('deleteRoom', roomID => {
             roomSocket.emit('getRooms')
             roomID == selectedRoom?._id && setter({ selectedRoom: null })
         })
 
+        roomSocket.on('seenMsg', ({ roomID, seenBy }) => {
+
+            const updatedRoomLastMessageData = [...rooms];
+
+            updatedRoomLastMessageData
+                .some(room => {
+                    if (room._id === roomID) {
+                        //@ts-expect-error
+                        room.lastMsgData = {
+                            //@ts-expect-error
+                            ...room.lastMsgData,
+                            //@ts-expect-error
+                            seen: [...new Set([...room?.lastMsgData?.seen, seenBy])]
+                        }
+                        return true
+                    }
+                })
+
+            setRooms(updatedRoomLastMessageData)
+            setForceRender(prev => !prev)
+        })
+
         return () => {
             roomSocket.off('deleteRoom')
+            roomSocket.off('seenMsg')
         }
     }, [selectedRoom?._id])
 
@@ -115,20 +139,20 @@ const LeftBar = () => {
                 isPageLoaded
                     ?
                     <>
-                        <LeftBarMenu
-                            isOpen={isLeftBarMenuOpen}
-                            closeMenu={() => setIsLeftBarMenuOpen(false)}
-                        />
+                        <LeftBarMenu isOpen={isLeftBarMenuOpen} closeMenu={() => setIsLeftBarMenuOpen(false)} />
+                        <Modal />
+                        <CreateRoomBtn />
                     </>
                     : null
             }
+
+            {isSearchOpen && <SearchPage closeSearch={() => setIsSearchOpen(false)} />}
 
             <div
                 data-aos-duration="400"
                 data-aos='fade-right'
                 className={`flex-1 ${selectedRoom && 'hidden'} md:block bg-leftBarBg relative noScrollWidth px-4 overflow-y-auto`}
             >
-                <CreateRoomBtn />
 
                 <div className="w-full sticky top-0 bg-leftBarBg space-y-1 pt-1 border-b border-white/5 z-30">
 
@@ -154,7 +178,7 @@ const LeftBar = () => {
 
                 </div>
 
-                <div className="flex flex-col mt-2 overflow-auto customMessageHeight">
+                <div className="flex flex-col mt-2 pb-14 overflow-auto">
                     {
                         isPageLoaded
                             ?
@@ -172,22 +196,6 @@ const LeftBar = () => {
                             <RoomSkeleton />
                     }
                 </div>
-
-                {isSearchOpen && <SearchPage closeSearch={() => setIsSearchOpen(false)} />}
-
-                {
-                    isPageLoaded
-                        ?
-                        <>
-                            <Modal />
-
-                            {/* <LeftBarMenu
-                                isOpen={isLeftBarMenuOpen}
-                                closeMenu={() => setIsLeftBarMenuOpen(false)}
-                            /> */}
-                        </>
-                        : null
-                }
 
             </div>
         </>

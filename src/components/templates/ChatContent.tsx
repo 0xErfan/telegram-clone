@@ -143,7 +143,7 @@ const ChatContent = () => {
         })
 
         rooms?.on('seenMsg', ({ msgID, seenBy }) => {
-
+            
             const updatedSeenMessage = [...messages]
 
             updatedSeenMessage.some(msg => {

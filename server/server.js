@@ -8,7 +8,7 @@ import UserModel from "../src/models/User.js"
 
 const io = new Server(3001, {
     cors: {
-        origin: 'http://192.168.79.128:3000',
+        origin: 'http://localhost:3000',
         methods: ['PUT', 'POST']
     }
 })

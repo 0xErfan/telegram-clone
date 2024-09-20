@@ -11,12 +11,12 @@ const CreateRoomBtn = () => {
     const [roomType, setRoomType] = useState<RoomModel['type'] | null>()
 
     return (
-        <>
-            {/* <div className="z-[9999999999] mt-auto bg-red-500 rounded-full inset-x-0 bottom-0 size-full"></div> */}
-            {/* <Button
+        <div className={`fixed md:max-w-[29%] -z-10 inset-y-0 left-0 size-full text-white`}>
+
+            <Button
                 style={{ height: '64px' }}
                 size="sm"
-                className='fixed ml-auto bottom-4 text-white rounded-full bg-darkBlue flex-center z-[99999999]'
+                className='absolute bottom-4 right-4 md:right-0 text-white rounded-full bg-darkBlue flex-center z-[9999]'
                 onClick={() => setIsOptionsOpen(prev => !prev)}
             >
                 {
@@ -26,13 +26,12 @@ const CreateRoomBtn = () => {
                         :
                         <MdModeEditOutline data-aos='zoom-out' className="size-[27px]" />
                 }
-
             </Button>
 
             <div
                 data-aos='fade-left'
                 key={isOptionsOpen.toString()}
-                className={`absolute ${isOptionsOpen ? 'h-auto' : 'h-0'} flex flex-col right-4 bottom-24 rounded-md ch:w-full ch:p-3 hover:ch:bg-chatBg/50 cursor-pointer overflow-hidden transition-all bg-[#272D3A] text-white z-[99999999]`}
+                className={`absolute ${isOptionsOpen ? 'h-auto' : 'h-0'} flex flex-col right-4 md:right-0 bottom-24 rounded-md ch:w-full ch:p-3 hover:ch:bg-chatBg/50 cursor-pointer overflow-hidden transition-all bg-[#272D3A] text-white z-[99999999]`}
             >
                 <div onClick={() => setRoomType('chanel')}>New Channel</div>
                 <div onClick={() => setRoomType('group')}>New Group</div>
@@ -47,9 +46,9 @@ const CreateRoomBtn = () => {
                         roomType={roomType!}
                     />
                 </Suspense>
-            } */}
+            }
 
-        </>
+        </div>
     )
 }
 

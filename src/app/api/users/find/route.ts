@@ -25,7 +25,7 @@ export const POST = async (req: Request) => {
 
         }
 
-        const userRoomsData: (RoomModelType)[] = await RoomModel
+        const userRoomsData: RoomModelType[] = await RoomModel
             .find({ participants: { $in: userID } })
             .populate('messages', '', MessageModel)
             .populate('participants')
@@ -35,9 +35,17 @@ export const POST = async (req: Request) => {
 
         userRoomsData.forEach(roomData => {
 
-            if (roomData.type !== 'private' && roomData.name.toLowerCase().includes(payload)) searchResult.push({ ...roomData, findBy: 'name' })
+            if (roomData.type !== 'private' && roomData.name.toLowerCase().includes(payload)) {
+                searchResult.push({ ...roomData, findBy: 'name' })
+            }
 
-            if (roomData.type == 'private' && roomData.participants.some((data: any) => data._id !== userID && data.name.toLowerCase().includes(payload))) {
+            if (
+                roomData.type == 'private'
+                &&
+                roomData.participants.some((data: any) => data._id !== userID
+                    &&
+                    data.name.toLowerCase().includes(payload))
+            ) {
                 searchResult.push({
                     ...roomData,
                     findBy: 'participants',
@@ -47,7 +55,12 @@ export const POST = async (req: Request) => {
             }
 
             roomData.messages.forEach(msgData => {
-                if (msgData.message.toLowerCase().includes(payload)) {
+
+                const isMsgDeletedForUser = msgData.hideFor.some(id => {
+                    if (id.toString() === userID.toString()) return true
+                })
+
+                if (!isMsgDeletedForUser && msgData.message.toLowerCase().includes(payload)) {
                     searchResult.push({
                         ...roomData,
                         findBy: 'messages',

@@ -136,7 +136,7 @@ const CreateRoom = ({ roomType, close }: Props) => {
     }
 
     return (
-        <section className="absolute inset-0 z-[99999999] size-full bg-inherit text-white">
+        <section className="fixed inset-y-0 left-0 z-[9999999999999999] bg-leftBarBg size-full bg-inherit text-white">
 
             <div className="flex gap-3 bg-inherit items-center justify-between w-full ch:w-full px-4 py-4">
 
@@ -144,7 +144,6 @@ const CreateRoom = ({ roomType, close }: Props) => {
                     onClick={getBackBtn}
                     className="size-6 -mx-2 cursor-pointer basis-[10%]"
                 />
-
 
                 {
                     isRoomInfoPartShown

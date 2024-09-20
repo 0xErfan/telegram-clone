@@ -89,7 +89,7 @@ const LeftBarMenu = ({ closeMenu, isOpen }: Props) => {
                 className={`fixed ${isOpen ? 'w-full' : 'w-0 hidden'} h-[100vw] left-0 inset-y-0 z-[999999999999] backdrop-filter bg-black/30`}
             />
 
-            <nav className={`fixed ${isOpen ? 'left-0' : '-left-[400px]'} max-h-screen h-full overflow-auto  duration-200 transition-all inset-y-0 z-[999999999999] bg-chatBg text-white w-[80%] max-w-[350px]`}>
+            <nav className={`fixed ${isOpen ? 'left-0' : '-left-[400px]'} max-h-screen h-full overflow-auto duration-200 transition-all inset-y-0 z-[999999999999] bg-chatBg text-white w-[80%] max-w-[350px]`}>
 
                 <div className="flex flex-col pt-4 px-4 gap-3">
                     {

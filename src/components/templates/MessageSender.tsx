@@ -200,7 +200,12 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
 
                             {
                                 editData?._id ?
-                                    <MdOutlineDone onClick={editMessage} className="shrink-0 basis-[7%] size-6 cursor-pointer text-white bg-lightBlue rounded-full" />
+                                    <div
+                                        className="basis-[10%] xl:basis-[3%] md:basis-[5%] size-8 ch:size-full p-1 cursor-pointer text-white bg-lightBlue rounded-full flex-center"
+                                        onClick={editMessage}
+                                    >
+                                        <MdOutlineDone className="shrink-0" />
+                                    </div>
                                     :
                                     <>
                                         {
