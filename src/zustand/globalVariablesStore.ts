@@ -10,6 +10,7 @@ export interface Props {
     isRoomDetailsShown: boolean
     shouldCloseAll: boolean
     isChatPageLoaded: boolean
+    createRoom: (type: 'chanel' | 'group') => void
 
     modalData: {
         isOpen: boolean
@@ -52,6 +53,7 @@ const useGlobalVariablesStore = create<Props & Updater>(set => ({
     shouldCloseAll: false,
     isRoomDetailsShown: false,
     isChatPageLoaded: false,
+    createRoom: () => { },
 
     modalData: {
         ...defaultModalData,

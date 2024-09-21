@@ -5,7 +5,6 @@ import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import useSockets from "@/zustand/useSockets"
 import useUserStore from "@/zustand/userStore"
 import Image from "next/image"
-import { ReactNode } from "react"
 import { CgProfile } from "react-icons/cg"
 import { CiBookmark } from "react-icons/ci"
 import { FiUserPlus } from "react-icons/fi"
@@ -49,10 +48,12 @@ const Main = ({ closeMenu, updateRoute, isOpen }: Props) => {
         closeMenu()
     }
 
-    const openProfile = () => {
-    }
+    const openProfile = () => updateRoute('settings')
 
     const createNewGroup = () => {
+        const createRoom = useGlobalVariablesStore.getState().createRoom
+        createRoom('group')
+        closeMenu()
     }
 
     const openSavedMessages = () => {

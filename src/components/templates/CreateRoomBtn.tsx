@@ -1,14 +1,25 @@
 import { Button } from "@nextui-org/button";
-import { Suspense, lazy, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { MdModeEditOutline } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
 import { RoomModel } from "@/@types/data.t";
+import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 const CreateRoom = lazy(() => import('@/components/modules/CreateRoom'))
 
 const CreateRoomBtn = () => {
 
     const [isOptionsOpen, setIsOptionsOpen] = useState(false)
     const [roomType, setRoomType] = useState<RoomModel['type'] | null>()
+    const setter = useGlobalVariablesStore(state => state.setter)
+
+    useEffect(() => { // better than 4 prop drilling i think
+        setter({
+            createRoom: () => {
+                setIsOptionsOpen(true)
+                setRoomType('group')
+            }
+        })
+    }, [])
 
     return (
         <div className={`absolute md:max-w-[29.6%] inset-y-0 left-0 size-full text-white`}>
