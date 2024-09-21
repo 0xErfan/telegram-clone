@@ -7,6 +7,7 @@ interface UserModel {
     phone: number
     rooms: RoomModel[]
     avatar: string
+    biography: string
     status: 'online' | 'offline'
     isLogin: boolean
     createdAt: string

@@ -1,4 +1,5 @@
 import LineSeparator from "@/components/modules/LineSeparator"
+import MenuItem from "@/components/modules/MenuItem"
 import { copyText, showToast } from "@/utils"
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import useSockets from "@/zustand/useSockets"
@@ -86,7 +87,7 @@ const Main = ({ closeMenu, updateRoute, isOpen }: Props) => {
 
             </div>
 
-            <div className="mt-2">
+            <div className="mt-2 px-4">
 
                 <MenuItem
                     icon={<CgProfile />}
@@ -142,25 +143,6 @@ const Main = ({ closeMenu, updateRoute, isOpen }: Props) => {
             </div>
 
         </nav>
-    )
-}
-
-
-type ItemProps = {
-    title: string
-    icon: JSX.Element
-    onClick?: () => void
-}
-
-const MenuItem = ({ title, icon, onClick }: ItemProps) => {
-    return (
-        <div
-            onClick={onClick}
-            className="py-3 px-4 flex items-center gap-6 w-full cursor-pointer"
-        >
-            <div className="ch:size-[26] ch:text-white/40">{icon}</div>
-            <p className="font-bold font-segoeBold">{title}</p>
-        </div>
     )
 }
 

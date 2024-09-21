@@ -1,8 +1,4 @@
-import useUserStore from "@/zustand/userStore"
-import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
-import { copyText, showToast } from "@/utils";
-import useSockets from "@/zustand/useSockets";
-import { ReactNode, useCallback, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import Main from "./LeftBarMenuPaes/Main";
 import Settings from "./LeftBarMenuPaes/Settings";
 
