@@ -4,7 +4,7 @@ interface UserModel {
     lastName: string
     username: string
     password: string
-    phone: number
+    phone: string
     rooms: RoomModel[]
     avatar: string
     biography: string

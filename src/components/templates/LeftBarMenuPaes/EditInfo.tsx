@@ -2,25 +2,81 @@ import LineSeparator from '@/components/modules/LineSeparator';
 import LeftBarContainer from './LeftBarContainer'
 import useUserStore from '@/zustand/userStore';
 import { MdDone } from "react-icons/md";
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import useSockets from '@/zustand/useSockets';
+import { Button } from '@nextui-org/button';
 
 const EditInfo = ({ getBack }: { getBack: () => void }) => {
 
-    const { name, lastName, biography } = useUserStore(state => state)
+    const { name = '', lastName = '', biography = '', _id } = useUserStore(state => state)
 
     const [updatedName, setUpdatedName] = useState(name)
     const [updatedLastName, setUpdatedLastName] = useState(lastName)
     const [updatedBiography, setUpdatedBiography] = useState(biography)
+    const [isLoading, setIsLoading] = useState(false)
+    const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
+
+    useEffect(() => {
+        if (textAreaRef.current) {
+            textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
+        }
+    }, [updatedBiography?.length]);
 
     const submitChanges = () => {
-        alert('done')
+
+        const socket = useSockets.getState().rooms
+
+        setIsLoading(true)
+
+        socket?.emit('updateUserData', {
+            userID: _id,
+            name: updatedName,
+            lastName: updatedLastName,
+            biography: updatedBiography
+        })
+
+        socket?.on('updateUserData', () => {
+
+            const setter = useUserStore.getState().setter
+
+            setTimeout(() => {
+                setIsLoading(false)
+                setter({ name: updatedName, lastName: updatedLastName, biography: updatedBiography })
+            }, 500);
+
+        })
+
     }
 
     return (
         <LeftBarContainer
             getBack={getBack}
             title='Edit Info'
-            leftHeaderChild={<MdDone onClick={submitChanges} className='size-8 pl-2 cursor-pointer' />}
+            leftHeaderChild={
+                (
+                    updatedBiography?.trim() !== biography?.trim()
+                    ||
+                    updatedLastName?.trim() !== lastName?.trim()
+                    ||
+                    updatedName?.trim() !== name?.trim()
+                )
+                &&
+                (
+                    isLoading
+                        ?
+                        <Button
+                            isLoading={true}
+                            data-aos='zoom-right'
+                            style={{ backgroundColor: 'inherit', position: 'absolute', right: 0, color: 'white', }}
+                        />
+                        :
+                        <MdDone
+                            data-aos='zoom-right'
+                            onClick={submitChanges}
+                            className='size-6 mx-2 cursor-pointer'
+                        />
+                )
+            }
         >
 
             <div className="flex flex-col gap-2 pt-4">
@@ -57,21 +113,21 @@ const EditInfo = ({ getBack }: { getBack: () => void }) => {
 
                 <div className='flex items-center w-full justify-between pt-4'>
                     <p className="text-darkBlue font-segoeRegular font-bold text-[16px]">Your bio</p>
-                    <p className='text-darkGray'>{70 - (updatedBiography == 'Your biography' ? 0 : updatedBiography?.length ?? 0)}</p>
+                    <p className='text-darkGray'>{70 - (updatedBiography?.length ?? 0)}</p>
                 </div>
 
-                <div
-                    contentEditable
-                    className="outline-none bg-inherit min-h-7 max-h-52 text-white whitespace-pre-wrap h-auto overflow-hidden resize-none w-full pt-2"
-                    onFocus={() => { if (updatedBiography === 'Your biography') setUpdatedBiography('') }}
-                    onBlur={() => { if (updatedBiography === '') setUpdatedBiography('Your biography') }}
-                    onInput={(e: any) => {
-                        if (updatedBiography.length === 70) return
-                        setUpdatedBiography(e.target?.innerText!)
+                <textarea
+                    ref={textAreaRef}
+                    value={updatedBiography}
+                    onChange={e => {
+                        setUpdatedBiography(prev => {
+                            const updatedBio = e.target.value
+                            return updatedBio.length > 70 ? prev : updatedBio
+                        })
                     }}
-                >
-                    {updatedBiography ?? 'Your biography'}
-                </div>
+                    className='resize-none w-full h-3 text-white bg-inherit outline-none'
+                    placeholder='Your biography'
+                />
 
             </div>
 

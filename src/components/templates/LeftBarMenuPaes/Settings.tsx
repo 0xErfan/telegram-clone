@@ -36,7 +36,7 @@ export const logout = async () => {
 
 const Settings = ({ getBack, updateRoute }: Props) => {
 
-    const { avatar, name, lastName, username, biography } = useUserStore(state => state)
+    const { avatar, name, lastName, username, biography, phone } = useUserStore(state => state)
     const [isDropDownOpen, setIsDropDownOpen] = useState(false)
 
     const openLogOutModal = () => {
@@ -133,25 +133,33 @@ const Settings = ({ getBack, updateRoute }: Props) => {
 
                         <p className="text-darkBlue font-segoeRegular pt-1 font-bold text-[16px]">Account</p>
 
-                        {/* static */}
-                        <div>
-                            <p className="text-[17px]">+98 903 635 4362</p>
+                        <div className="cursor-pointer">
+                            <p className="text-[16px]">
+                                +98 {phone.toString().split('').map((str, index) => (
+                                    str + (((index + 1) % 3 === 0) ? ' ' : '')
+                                ))}
+                            </p>
                             <p className="text-darkGray text-[13px]">Tap to change phone number</p>
                         </div>
 
                         <LineSeparator />
 
-                        <div>
-                            <p className="text-[17px]">{username}</p>
+                        <div className="cursor-pointer">
+                            <p className="text-[16px]">{username}</p>
                             <p className="text-darkGray text-[13px]">Username</p>
                         </div>
 
                         {
                             biography &&
-                            <div>
-                                <p className="text-[17px]">{biography}</p>
-                                <p className="text-darkGray text-[13px]">Bio</p>
-                            </div>
+                            <>
+
+                                <LineSeparator />
+
+                                <div className="cursor-pointer">
+                                    <p className="text-[16px]">{biography}</p>
+                                    <p className="text-darkGray text-[13px]">Bio</p>
+                                </div>
+                            </>
                         }
 
                     </div>

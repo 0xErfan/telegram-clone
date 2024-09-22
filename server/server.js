@@ -257,6 +257,11 @@ io.on('connection', socket => {
         io.to(data.roomID).emit('stop-typing', data)
     })
 
+    socket.on('updateUserData', async (updatedFields) => {
+        await UserModel.findOneAndUpdate({ _id: updatedFields.userID }, updatedFields)
+        socket.emit('updateUserData')
+    })
+
     socket.on('disconnect', () => {
         onlineUsers = onlineUsers.filter(data => data.socketID !== socket.id)
         io.to([...socket.rooms]).emit('updateOnlineUsers', onlineUsers)
