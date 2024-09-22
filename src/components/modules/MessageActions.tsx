@@ -65,6 +65,7 @@ const MessageActions = () => {
                     <DropdownItem
                         className="p-3"
                         onClick={reply}
+                        style={{ backgroundColor: 'transparent', border: 'none', color: 'inherit' }}
                         startContent={<GoReply className="size-5" />}
                         key="new"
                     >
@@ -75,6 +76,7 @@ const MessageActions = () => {
                 <DropdownItem
                     className="p-3"
                     onClick={copy}
+                    style={{ backgroundColor: 'transparent', border: 'none', color: 'inherit' }}
                     startContent={<MdContentCopy className="size-5" />}
                     key="edit"
                 >
@@ -84,7 +86,7 @@ const MessageActions = () => {
                 {
                     (roomData?.type == 'private' && msgData?.sender?._id == myID) || (roomData?.type !== 'private' && msgData?.sender._id === myID)
                         ?
-                        <DropdownItem className="p-3" onClick={edit} startContent={<MdOutlineModeEdit className="size-5" />} key="copy">Edit</DropdownItem>
+                        <DropdownItem className="p-3" onClick={edit} style={{ backgroundColor: 'transparent', border: 'none', color: 'inherit' }} startContent={<MdOutlineModeEdit className="size-5" />} key="copy">Edit</DropdownItem>
                         : null!
                 }
 
@@ -94,6 +96,7 @@ const MessageActions = () => {
                         <DropdownItem
                             className="p-3"
                             onClick={deleteMessage}
+                            style={{ backgroundColor: 'transparent', border: 'none', color: 'inherit' }}
                             startContent={<AiOutlineDelete className="size-5" />}
                             key="delete"
                         >

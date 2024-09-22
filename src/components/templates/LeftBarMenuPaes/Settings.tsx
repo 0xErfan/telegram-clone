@@ -2,8 +2,11 @@ import { MdAddAPhoto } from "react-icons/md";
 import LeftBarContainer from "./LeftBarContainer";
 import { BsChat } from "react-icons/bs";
 import { CiLock } from "react-icons/ci";
+import { BsThreeDotsVertical } from "react-icons/bs";
 import { GoBell } from "react-icons/go";
 import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
+import { TbLogout } from "react-icons/tb";
+import { MdOutlineModeEdit } from "react-icons/md";
 import { GoShieldCheck } from "react-icons/go";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { CiBatteryCharging } from "react-icons/ci";
@@ -12,19 +15,87 @@ import Image from "next/image";
 import useUserStore from "@/zustand/userStore";
 import LineSeparator from "@/components/modules/LineSeparator";
 import MenuItem from "@/components/modules/MenuItem";
+import { useState } from "react";
+import DropDown from "@/components/modules/DropDown";
+import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
+import axios from "axios";
+import { showToast } from "@/utils";
 
 interface Props {
     getBack: () => void
+    updateRoute: (route: string) => void
 }
 
-const Settings = ({ getBack }: Props) => {
+export const logout = async () => {
+    try {
+        await axios.get('/api/auth/logout', { method: 'get' })
+        const setter = useUserStore.getState().setter
+        setter({ isLogin: false })
+    } catch (error) { showToast(false, 'Network issues bud!') }
+}
+
+const Settings = ({ getBack, updateRoute }: Props) => {
 
     const { avatar, name, lastName, username, biography } = useUserStore(state => state)
+    const [isDropDownOpen, setIsDropDownOpen] = useState(false)
+
+    const openLogOutModal = () => {
+
+        const setter = useGlobalVariablesStore.getState().setter
+
+        setter((prev: any) => ({
+            modalData: {
+                ...prev.modalData,
+                isOpen: true,
+                title: 'Log out',
+                bodyText: 'Do you really want to log out?',
+                okText: 'yup',
+                onSubmit: logout
+            }
+        }))
+        
+    }
+
+    const dropDownItems = [
+        {
+            title: 'Edit info',
+            onClick: () => updateRoute('edit-info'),
+            icon: <MdOutlineModeEdit className="size-6 mr-2" />
+        },
+        {
+            title: 'Set Profile Photo',
+            onClick: () => updateRoute('profile-photo'),
+            icon: <MdAddAPhoto className="size-6 mr-2" />
+        },
+        {
+            title: 'Log out',
+            onClick: openLogOutModal,
+            icon: <TbLogout className="size-6 mr-2" />
+        }
+    ]
 
     return (
-        <LeftBarContainer getBack={getBack}>
-            <>
-                <div className="absolute px-4 inset-x-0 w-full bg-white/5">
+        <LeftBarContainer
+            getBack={getBack}
+            leftHeaderChild={
+                <>
+                    <BsThreeDotsVertical
+                        onClick={() => setIsDropDownOpen(true)}
+                        className="size-8 cursor-pointer ml-auto pr-2"
+                    />
+
+                    <DropDown
+                        isOpen={isDropDownOpen}
+                        onClose={() => setIsDropDownOpen(false)}
+                        dropDownItems={dropDownItems}
+                    />
+                </>
+            }
+        >
+
+            <div className="relative -mx-4">
+
+                <div className="absolute px-4 inset-x-0 w-full">
 
                     <div className="flex items-center gap-3 my-3">
                         {
@@ -49,7 +120,7 @@ const Settings = ({ getBack }: Props) => {
                         </div>
                     </div>
 
-                    <span className="absolute right-3 top-12 size-14 rounded-full cursor-pointer bg-darkBlue flex-center">
+                    <span className="absolute right-5 top-12 size-14 rounded-full cursor-pointer bg-darkBlue flex-center">
                         <MdAddAPhoto className="size-6" />
                     </span>
 
@@ -57,119 +128,122 @@ const Settings = ({ getBack }: Props) => {
 
                 <div className="h-[79px]"></div>
 
-                <div className="flex flex-col gap-2 pt-4">
+                <div className="px-4">
+                    <div className="flex flex-col gap-2 pt-4">
 
-                    <p className="text-darkBlue font-segoeRegular pt-1 font-bold text-[16px]">Account</p>
+                        <p className="text-darkBlue font-segoeRegular pt-1 font-bold text-[16px]">Account</p>
 
-                    {/* static */}
-                    <div>
-                        <p className="text-[17px]">+98 903 635 4362</p>
-                        <p className="text-darkGray text-[13px]">Tap to change phone number</p>
-                    </div>
-
-                    <LineSeparator />
-
-                    <div>
-                        <p className="text-[17px]">{username}</p>
-                        <p className="text-darkGray text-[13px]">Username</p>
-                    </div>
-
-                    {
-                        biography &&
+                        {/* static */}
                         <div>
-                            <p className="text-[17px]">{biography}</p>
-                            <p className="text-darkGray text-[13px]">Bio</p>
+                            <p className="text-[17px]">+98 903 635 4362</p>
+                            <p className="text-darkGray text-[13px]">Tap to change phone number</p>
                         </div>
-                    }
 
-                </div>
+                        <LineSeparator />
 
-                <p className="h-3 w-full bg-black/70 inset-x-0 my-3 absolute"></p>
+                        <div>
+                            <p className="text-[17px]">{username}</p>
+                            <p className="text-darkGray text-[13px]">Username</p>
+                        </div>
 
-                <div className="flex flex-col gap-2 pt-4">
+                        {
+                            biography &&
+                            <div>
+                                <p className="text-[17px]">{biography}</p>
+                                <p className="text-darkGray text-[13px]">Bio</p>
+                            </div>
+                        }
 
-                    <p className="text-darkBlue font-segoeRegular pt-4 font-bold text-[16px]">Settings</p>
+                    </div>
 
-                    <MenuItem
-                        spaceY="py-1"
-                        icon={<BsChat />}
-                        title="Chat Settings"
-                        onClick={() => { }}
-                    />
+                    <p className="h-3 w-full bg-black/70 inset-x-0 my-3 absolute"></p>
 
-                    <LineSeparator />
+                    <div className="flex flex-col gap-2 pt-4">
 
-                    <MenuItem
-                        spaceY="py-1"
-                        icon={<CiLock />}
-                        title="Privacy and Security"
-                        onClick={() => { }}
-                    />
+                        <p className="text-darkBlue font-segoeRegular pt-4 font-bold text-[16px]">Settings</p>
 
-                    <LineSeparator />
+                        <MenuItem
+                            spaceY="py-1"
+                            icon={<BsChat />}
+                            title="Chat Settings"
+                            onClick={() => { }}
+                        />
 
-                    <MenuItem
-                        spaceY="py-1"
-                        icon={<GoBell />}
-                        title="Notifications and Sounds"
-                        onClick={() => { }}
-                    />
+                        <LineSeparator />
 
-                    <LineSeparator />
+                        <MenuItem
+                            spaceY="py-1"
+                            icon={<CiLock />}
+                            title="Privacy and Security"
+                            onClick={() => { }}
+                        />
 
-                    <MenuItem
-                        spaceY="py-1"
-                        icon={<CiBatteryCharging />}
-                        title="Power Saving"
-                        onClick={() => { }}
-                    />
+                        <LineSeparator />
 
-                    <LineSeparator />
+                        <MenuItem
+                            spaceY="py-1"
+                            icon={<GoBell />}
+                            title="Notifications and Sounds"
+                            onClick={() => { }}
+                        />
 
-                    <MenuItem
-                        spaceY="py-1"
-                        icon={<MdLanguage />}
-                        title="Languages"
-                        onClick={() => { }}
-                    />
+                        <LineSeparator />
 
-                </div>
+                        <MenuItem
+                            spaceY="py-1"
+                            icon={<CiBatteryCharging />}
+                            title="Power Saving"
+                            onClick={() => { }}
+                        />
 
-                <p className="h-3 w-full bg-black/70 inset-x-0 my-3 absolute"></p>
+                        <LineSeparator />
 
-                <div className="flex flex-col gap-2 pt-4">
+                        <MenuItem
+                            spaceY="py-1"
+                            icon={<MdLanguage />}
+                            title="Languages"
+                            onClick={() => { }}
+                        />
 
-                    <p className="text-darkBlue font-segoeRegular pt-4 font-bold text-[16px]">Help</p>
+                    </div>
 
-                    <MenuItem
-                        spaceY="py-1"
-                        icon={<IoChatbubbleEllipsesOutline />}
-                        title="Ask a Question"
-                        onClick={() => { }}
-                    />
+                    <p className="h-3 w-full bg-black/70 inset-x-0 my-3 absolute"></p>
 
-                    <LineSeparator />
+                    <div className="flex flex-col gap-2 pt-4">
 
-                    <MenuItem
-                        spaceY="py-1"
-                        icon={<AiOutlineQuestionCircle />}
-                        title="Telegram FAQ"
-                        onClick={() => { }}
-                    />
+                        <p className="text-darkBlue font-segoeRegular pt-4 font-bold text-[16px]">Help</p>
 
-                    <LineSeparator />
+                        <MenuItem
+                            spaceY="py-1"
+                            icon={<IoChatbubbleEllipsesOutline />}
+                            title="Ask a Question"
+                            onClick={() => { }}
+                        />
 
-                    <MenuItem
-                        spaceY="py-1"
-                        icon={<GoShieldCheck />}
-                        title="Privacy Policy"
-                        onClick={() => { }}
-                    />
+                        <LineSeparator />
 
+                        <MenuItem
+                            spaceY="py-1"
+                            icon={<AiOutlineQuestionCircle />}
+                            title="Telegram FAQ"
+                            onClick={() => { }}
+                        />
+
+                        <LineSeparator />
+
+                        <MenuItem
+                            spaceY="py-1"
+                            icon={<GoShieldCheck />}
+                            title="Privacy Policy"
+                            onClick={() => { }}
+                        />
+
+                    </div>
                 </div>
 
                 <div className="w-full inset-x-0 mt-3 px-4 py-2 absolute bg-black/70">Created with lots of effort & ❤️ by <a target="_blank" href="https://github.com/0xErfan" className="underline text-darkBlue">0xErfan</a> </div>
-            </>
+
+            </div>
         </LeftBarContainer>
     )
 }

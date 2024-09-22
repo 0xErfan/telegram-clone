@@ -48,7 +48,7 @@ const LeftBarMenu = ({ closeMenu, isOpen }: Props) => {
                 break;
             }
             case '/settings': {
-                setActiveRoute(<Settings getBack={getBack} />)
+                setActiveRoute(<Settings updateRoute={updateRoute} getBack={getBack} />)
                 break;
             }
         }

@@ -17,7 +17,7 @@ const LeftBarContainer = ({ children, leftHeaderChild, title, getBack }: Props) 
         >
             <div className=" w-full h-full max-w-full md:max-w-[30%]">
 
-                <div className="flex items-center p-4 sticky top-0 bg-white/5 z-50 justify-between w-full text-white backdrop-filter-none">
+                <div className="flex items-center p-4 sticky top-0 bg-leftBarBg z-50 justify-between w-full text-white">
 
                     <div className="flex items-center gap-4">
                         <IoArrowBackOutline onClick={getBack} className="size-6 cursor-pointer" />
