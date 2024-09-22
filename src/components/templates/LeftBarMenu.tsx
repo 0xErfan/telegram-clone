@@ -10,7 +10,7 @@ interface Props {
 
 const LeftBarMenu = ({ closeMenu, isOpen }: Props) => {
 
-    const [route, setRoute] = useState('/')
+    const [route, setRoute] = useState('/settings/edit-info')
     const [activeRoute, setActiveRoute] = useState<ReactNode>(<div></div>)
 
     const getBack = () => {
