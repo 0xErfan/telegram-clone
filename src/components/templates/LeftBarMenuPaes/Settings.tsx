@@ -144,7 +144,9 @@ const Settings = ({ getBack, updateRoute }: Props) => {
 
                         <LineSeparator />
 
-                        <div className="cursor-pointer">
+                        <div
+                            onClick={() => updateRoute('edit-username')}
+                            className="cursor-pointer">
                             <p className="text-[16px]">{username}</p>
                             <p className="text-darkGray text-[13px]">Username</p>
                         </div>
@@ -155,7 +157,10 @@ const Settings = ({ getBack, updateRoute }: Props) => {
 
                                 <LineSeparator />
 
-                                <div className="cursor-pointer">
+                                <div
+                                    onClick={() => updateRoute('edit-info')}
+                                    className="cursor-pointer"
+                                >
                                     <p className="text-[16px]">{biography}</p>
                                     <p className="text-darkGray text-[13px]">Bio</p>
                                 </div>

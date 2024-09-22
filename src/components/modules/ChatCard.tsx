@@ -143,14 +143,15 @@ export const ChatCard = ({
 
                     <div className="flex items-center justify-between gap-2">
                         <div className="flex-center text-center w-min px-2 bg-darkBlue text-white rounded-full">{notSeenMessages}</div>
-                        <Image
+                        {/* pin */}
+                        {/* <Image
                             priority
                             src='/shapes/pin.svg'
                             width={17}
                             height={17}
                             className="size-4 bg-center"
                             alt="pin shape"
-                        />
+                        /> */}
                     </div>
 
                 </div>

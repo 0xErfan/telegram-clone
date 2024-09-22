@@ -16,8 +16,8 @@ export const POST = async (req: Request) => {
         const password = await hash(purePass, 12)
 
         const userData = await UserModel.create({
-            name: Date.now(),
-            lastName: Date.now(),
+            name: username?.replace('@', ''),
+            lastName: '',
             username,
             password,
             phone,
