@@ -1,6 +1,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import Main from "./LeftBarMenuPaes/Main";
 import Settings from "./LeftBarMenuPaes/Settings";
+import EditInfo from "./LeftBarMenuPaes/EditInfo";
 
 interface Props {
     isOpen: boolean
@@ -29,7 +30,7 @@ const LeftBarMenu = ({ closeMenu, isOpen }: Props) => {
                 ?
                 prev
                 :
-                prev.concat(`${prev.length == 0 ? '/' : ''} ${path}`).replaceAll(' ', '')
+                prev.concat(`${prev.length !== 1 ? '/' : ''} ${path}`).replaceAll(' ', '')
         })
 
     }
@@ -49,6 +50,10 @@ const LeftBarMenu = ({ closeMenu, isOpen }: Props) => {
             }
             case '/settings': {
                 setActiveRoute(<Settings updateRoute={updateRoute} getBack={getBack} />)
+                break;
+            }
+            case '/settings/edit-info': {
+                setActiveRoute(<EditInfo getBack={getBack} />)
                 break;
             }
         }

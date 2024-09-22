@@ -53,7 +53,7 @@ const Settings = ({ getBack, updateRoute }: Props) => {
                 onSubmit: logout
             }
         }))
-        
+
     }
 
     const dropDownItems = [
@@ -64,7 +64,7 @@ const Settings = ({ getBack, updateRoute }: Props) => {
         },
         {
             title: 'Set Profile Photo',
-            onClick: () => updateRoute('profile-photo'),
+            onClick: () => updateRoute('edit-info'),
             icon: <MdAddAPhoto className="size-6 mr-2" />
         },
         {
