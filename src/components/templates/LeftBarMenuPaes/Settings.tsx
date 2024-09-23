@@ -9,6 +9,7 @@ import { TbLogout } from "react-icons/tb";
 import { MdOutlineModeEdit } from "react-icons/md";
 import { GoShieldCheck } from "react-icons/go";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
+import { MdOutlineDeleteOutline } from "react-icons/md";
 import { CiBatteryCharging } from "react-icons/ci";
 import { MdLanguage } from "react-icons/md";
 import Image from "next/image";
@@ -18,8 +19,6 @@ import MenuItem from "@/components/modules/MenuItem";
 import { ChangeEvent, useEffect, useState } from "react";
 import { Button } from '@nextui-org/button'
 import DropDown from "@/components/modules/DropDown";
-import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
-import axios from "axios";
 import { logout, openModal, showToast, uploadImage } from "@/utils";
 import useSockets from "@/zustand/useSockets";
 
@@ -82,7 +81,7 @@ const Settings = ({ getBack, updateRoute }: Props) => {
             icon: <MdOutlineModeEdit className="size-6 mr-2" />
         },
         {
-            title: 'Edit Profile Photo',
+            title: 'Update Profile Photo',
             onClick: () => {
 
                 const inputElem = document.createElement('input')
@@ -111,6 +110,32 @@ const Settings = ({ getBack, updateRoute }: Props) => {
             },
             icon: <MdAddAPhoto className="size-6 mr-2" />
         },
+        avatar
+            ?
+            {
+                title: 'Remove Profile Photo',
+                onClick: () => {
+                    openModal({
+                        title: 'Delete Photo',
+                        bodyText: 'Are you sure you want to delete your profile photo?',
+                        okText: 'Delete',
+                        onSubmit: () => {
+
+                            const socket = useSockets.getState().rooms
+
+                            socket?.emit('updateUserData', { userID: _id, avatar: '' })
+
+                            socket?.on('updateUserData', () => {
+                                userStateUpdater((prev: any) => ({
+                                    ...prev,
+                                    avatar: ''
+                                }))
+                            })
+                        }
+                    })
+                },
+                icon: <MdOutlineDeleteOutline className="size-6 mr-2" />
+            } : {},
         {
             title: 'Log out',
             onClick: () => openModal({
@@ -148,7 +173,7 @@ const Settings = ({ getBack, updateRoute }: Props) => {
 
                     <div className="flex items-center gap-3 my-3">
                         {
-                            <div className={'flex-center relative size-[55px] rounded-full'}>
+                            <div className={`flex-center relative size-[55px] ${(!avatar || !uploadedImageUrl) && 'bg-darkBlue'} overflow-hidden rounded-full`}>
                                 {
                                     (avatar || uploadedImageUrl)
                                         ?

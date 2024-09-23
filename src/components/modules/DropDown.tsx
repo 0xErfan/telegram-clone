@@ -1,11 +1,15 @@
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown"
 import { ReactNode } from "react"
 
-type DropDownItem = {
+type ValidObj = {
     onClick: () => void
     title: string
     icon?: ReactNode
 }
+
+type EmptyObj = {}
+
+type DropDownItem = ValidObj | EmptyObj
 
 interface Props {
     isOpen: boolean
@@ -30,16 +34,17 @@ const DropDown = ({ isOpen, dropDownItems, onClose }: Props) => {
             <DropdownMenu variant="faded" aria-label="Static Actions">
 
                 {
-                    dropDownItems.map(({ onClick, title, icon }) =>
+                    dropDownItems.map(({ onClick, title, icon }: any) =>
                         <DropdownItem
-                            className="p-3 font-segoeLight"
+                            className={`p-3 font-segoeLight ${!title?.length && 'hidden'}`}
                             onClick={onClick}
                             startContent={icon}
-                            style={{ backgroundColor: 'transparent', border: 'none', color: 'inherit', fontWeight: 'bold'}}
+                            style={{ backgroundColor: 'transparent', border: 'none', color: 'inherit', fontWeight: 'bold' }}
                             key={title}
                         >
                             {title}
-                        </DropdownItem>)
+                        </DropdownItem>
+                    )
                 }
 
             </DropdownMenu>
