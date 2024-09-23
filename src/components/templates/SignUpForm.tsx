@@ -21,7 +21,10 @@ const SignUpForm = () => {
     const submitForm: SubmitHandler<Inputs> = async (data) => {
 
         try {
-            const response = await axios.post('/api/auth/register', data)
+            const response = await axios.post('/api/auth/register', {
+                ...data,
+                phone: data.phone?.startsWith('0') ? data.phone.slice(1) : data.phone
+            })
 
             if (response.status == 201) {
                 setter({
