@@ -20,20 +20,12 @@ import { Button } from '@nextui-org/button'
 import DropDown from "@/components/modules/DropDown";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import axios from "axios";
-import { openModal, showToast, uploadImage } from "@/utils";
+import { logout, openModal, showToast, uploadImage } from "@/utils";
 import useSockets from "@/zustand/useSockets";
 
 interface Props {
     getBack: () => void
     updateRoute: (route: string) => void
-}
-
-export const logout = async () => {
-    try {
-        await axios.get('/api/auth/logout')
-        const setter = useUserStore.getState().setter
-        setter({ isLogin: false })
-    } catch (error) { showToast(false, 'Network issues bud!') }
 }
 
 const Settings = ({ getBack, updateRoute }: Props) => {
@@ -83,23 +75,6 @@ const Settings = ({ getBack, updateRoute }: Props) => {
 
     }, [uploadedImageFile, uploadedImageUrl])
 
-    const openLogOutModal = () => {
-
-        const setter = useGlobalVariablesStore.getState().setter
-
-        setter((prev: any) => ({
-            modalData: {
-                ...prev.modalData,
-                isOpen: true,
-                title: 'Log out',
-                bodyText: 'Do you really want to log out?',
-                okText: 'yup',
-                onSubmit: logout
-            }
-        }))
-
-    }
-
     const dropDownItems = [
         {
             title: 'Edit info',
@@ -117,8 +92,7 @@ const Settings = ({ getBack, updateRoute }: Props) => {
                 inputElem.accept = ".jpg, .jpeg, .png, .gif"
 
                 //@ts-expect-error
-                inputElem.onchange = (e: ChangeEvent<HTMLInputElement>): any => {
-
+                inputElem.onchange = (e: ChangeEvent<HTMLInputElement>) => {
                     if (e.target?.files?.length && e.target?.files![0]) {
 
                         const imageFile = e.target.files[0]
@@ -129,7 +103,7 @@ const Settings = ({ getBack, updateRoute }: Props) => {
                         fileReader.readAsDataURL(imageFile)
                         fileReader.onload = readerEv => setUploadedImageUrl(readerEv?.target!.result as string)
                     }
-
+                    inputElem.remove()
                 }
 
                 document.body.append(inputElem!)
@@ -139,7 +113,12 @@ const Settings = ({ getBack, updateRoute }: Props) => {
         },
         {
             title: 'Log out',
-            onClick: openLogOutModal,
+            onClick: () => openModal({
+                title: 'Log out',
+                bodyText: 'Do you really want to log out?',
+                okText: 'yup',
+                onSubmit: logout
+            }),
             icon: <TbLogout className="size-6 mr-2" />
         }
     ]
@@ -175,7 +154,7 @@ const Settings = ({ getBack, updateRoute }: Props) => {
                                         ?
                                         <Image
                                             src={avatar || uploadedImageUrl!}
-                                            className="cursor-pointer object-cover"
+                                            className="cursor-pointer object-cover size-full rounded-full"
                                             width={55}
                                             height={55}
                                             alt="avatar"

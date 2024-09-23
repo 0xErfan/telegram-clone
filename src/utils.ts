@@ -5,7 +5,7 @@ import axios from "axios";
 import { S3 } from "aws-sdk"
 import { PutObjectRequest } from "aws-sdk/clients/s3";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
-import {logout} from "@/components/templates/LeftBarMenuPaes/Settings";
+import useUserStore from "./zustand/userStore";
 
 
 const getTimer = (date?: string) => {
@@ -266,6 +266,14 @@ const openModal = (props: {title?: string, bodyText?: string, okText?: string, o
 
 }
 
+const logout = async () => {
+    try {
+        await axios.get('/api/auth/logout')
+        const setter = useUserStore.getState().setter
+        setter({ isLogin: false })
+    } catch (error) { showToast(false, 'Network issues bud!') }
+}
+
 export {
     getTimer,
     showToast,
@@ -286,5 +294,6 @@ export {
     copyText,
     generateRandomHex,
     uploadImage,
-    openModal
+    openModal,
+    logout
 }
