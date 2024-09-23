@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useState } from "react";
 import Main from "./LeftBarMenuPaes/Main";
 import Settings from "./LeftBarMenuPaes/Settings";
 import EditInfo from "./LeftBarMenuPaes/EditInfo";
-import EditProfile from "@/components/templates/LeftBarMenuPaes/EditProfile";
+import EditUsername from "./LeftBarMenuPaes/EditUsername";
 
 interface Props {
     isOpen: boolean
@@ -55,6 +55,10 @@ const LeftBarMenu = ({ closeMenu, isOpen }: Props) => {
             }
             case '/settings/edit-info': {
                 setActiveRoute(<EditInfo getBack={getBack} />)
+                break;
+            }
+            case '/settings/edit-username': {
+                setActiveRoute(<EditUsername getBack={getBack} />)
                 break;
             }
         }
