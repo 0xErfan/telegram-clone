@@ -20,7 +20,7 @@ export const POST = async (req: Request) => {
             lastName: '',
             username,
             password,
-            phone,
+            phone: phone.toString(),
         })
 
         await RoomModel.create({

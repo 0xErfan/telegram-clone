@@ -11,7 +11,7 @@ export const POST = async (req: Request) => {
 
         const { payload, password } = await req.json()
 
-        const userData = await UserModel.findOne({ $or: [{ username: payload }, { phone: isNaN(payload) ? 0 : payload }] })
+        const userData = await UserModel.findOne({ $or: [{ username: payload }, { phone: payload.toString() }] })
         if (!userData) return Response.json({ message: 'No user exist with this username or password.' }, { status: 401 })
 
         if (! await compare(password, userData.password)) return Response.json({ message: 'Incorrect username/phone or password' }, { status: 401 })

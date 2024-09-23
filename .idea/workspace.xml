@@ -5,7 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="feb97921-83dc-4b8f-9720-f472f4c4fd74" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/templates/LeftBarMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/templates/LeftBarMenu.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/templates/LeftBarMenuPaes/Settings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/templates/LeftBarMenuPaes/Settings.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,12 +18,19 @@
   <component name="ComposerSettings">
     <execution />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TypeScript File" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 8
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="2kTpirfjCnDGaUG2XB9nXl9X9fd" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -30,12 +40,14 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "C:/Users/RCC/OneDrive/Desktop/telegram-clone",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "editor.preferences.completion",
     "ts.external.directory.path": "C:\\Users\\RCC\\OneDrive\\Desktop\\telegram-clone\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
@@ -62,6 +74,7 @@
       <option name="presentableId" value="Default" />
       <updated>1723317550685</updated>
       <workItem from="1723317551792" duration="856000" />
+      <workItem from="1727082616562" duration="4532000" />
     </task>
     <servers />
   </component>

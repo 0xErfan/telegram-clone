@@ -4,6 +4,8 @@ import { UserModel } from "./@types/data.t";
 import axios from "axios";
 import { S3 } from "aws-sdk"
 import { PutObjectRequest } from "aws-sdk/clients/s3";
+import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
+import {logout} from "@/components/templates/LeftBarMenuPaes/Settings";
 
 
 const getTimer = (date?: string) => {
@@ -250,6 +252,20 @@ const uploadImage = async (file: File): Promise<string | Error> => {
     } catch (error) { throw new Error('failed to fech') }
 };
 
+const openModal = (props: {title?: string, bodyText?: string, okText?: string, onSubmit?: () => void, onClose?: () => void }) => {
+
+    const setter = useGlobalVariablesStore.getState().setter
+
+    setter((prev: any) => ({
+        modalData: {
+            ...prev.modalData,
+            isOpen: true,
+            ...props
+        }
+    }))
+
+}
+
 export {
     getTimer,
     showToast,
@@ -269,5 +285,6 @@ export {
     scrollToMessage,
     copyText,
     generateRandomHex,
-    uploadImage
+    uploadImage,
+    openModal
 }

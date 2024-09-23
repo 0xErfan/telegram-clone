@@ -1,5 +1,4 @@
 import connectToDB from "@/db/db";
-import RoomModel from "@/models/Room";
 import UserModel from "@/models/User";
 import { tokenDecoder } from "@/utils";
 import { cookies } from "next/headers";

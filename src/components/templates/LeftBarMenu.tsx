@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useState } from "react";
 import Main from "./LeftBarMenuPaes/Main";
 import Settings from "./LeftBarMenuPaes/Settings";
 import EditInfo from "./LeftBarMenuPaes/EditInfo";
+import EditProfile from "@/components/templates/LeftBarMenuPaes/EditProfile";
 
 interface Props {
     isOpen: boolean

@@ -15,11 +15,13 @@ import Image from "next/image";
 import useUserStore from "@/zustand/userStore";
 import LineSeparator from "@/components/modules/LineSeparator";
 import MenuItem from "@/components/modules/MenuItem";
-import { useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
+import { Button } from '@nextui-org/button'
 import DropDown from "@/components/modules/DropDown";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import axios from "axios";
-import { showToast } from "@/utils";
+import { openModal, showToast, uploadImage } from "@/utils";
+import useSockets from "@/zustand/useSockets";
 
 interface Props {
     getBack: () => void
@@ -28,7 +30,7 @@ interface Props {
 
 export const logout = async () => {
     try {
-        await axios.get('/api/auth/logout', { method: 'get' })
+        await axios.get('/api/auth/logout')
         const setter = useUserStore.getState().setter
         setter({ isLogin: false })
     } catch (error) { showToast(false, 'Network issues bud!') }
@@ -36,8 +38,50 @@ export const logout = async () => {
 
 const Settings = ({ getBack, updateRoute }: Props) => {
 
-    const { avatar, name, lastName, username, biography, phone } = useUserStore(state => state)
+    const { _id, avatar, name, lastName, username, biography, phone, setter: userStateUpdater } = useUserStore(state => state)
     const [isDropDownOpen, setIsDropDownOpen] = useState(false)
+
+    const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null)
+    const [uploadedImageFile, setUploadedImageFile] = useState<File | null>(null)
+    const [isLoading, setIsLoading] = useState(false)
+
+    useEffect(() => {
+
+        if (!uploadedImageUrl) return
+
+        openModal({
+            title: 'Update Profile',
+            bodyText: 'Do you want to upload your new profile pic bud?',
+            onSubmit: async () => {
+                try {
+
+                    setIsLoading(true)
+
+                    const socket = useSockets.getState().rooms
+                    const uploadedImageUrl = await uploadImage(uploadedImageFile as File)
+
+                    socket?.emit('updateUserData', { userID: _id, avatar: uploadedImageUrl })
+
+                    socket?.on('updateUserData', () => {
+                        userStateUpdater((prev: any) => ({
+                            ...prev,
+                            avatar: uploadedImageUrl
+                        }))
+                        setIsLoading(false)
+                        setUploadedImageFile(null)
+                        setUploadedImageUrl(null)
+                    })
+
+                } catch (error) {
+                    setIsLoading(false)
+                    showToast(false, 'Failed to upload, check your network btw.')
+                }
+            },
+            onClose: () => setUploadedImageUrl(null)
+        }
+        )
+
+    }, [uploadedImageFile, uploadedImageUrl])
 
     const openLogOutModal = () => {
 
@@ -63,8 +107,34 @@ const Settings = ({ getBack, updateRoute }: Props) => {
             icon: <MdOutlineModeEdit className="size-6 mr-2" />
         },
         {
-            title: 'Set Profile Photo',
-            onClick: () => updateRoute('edit-info'),
+            title: 'Edit Profile Photo',
+            onClick: () => {
+
+                const inputElem = document.createElement('input')
+
+                inputElem.type = 'file'
+                inputElem.className = 'hidden'
+                inputElem.accept = ".jpg, .jpeg, .png, .gif"
+
+                //@ts-expect-error
+                inputElem.onchange = (e: ChangeEvent<HTMLInputElement>): any => {
+
+                    if (e.target?.files?.length && e.target?.files![0]) {
+
+                        const imageFile = e.target.files[0]
+                        const fileReader = new FileReader()
+
+                        setUploadedImageFile(imageFile)
+
+                        fileReader.readAsDataURL(imageFile)
+                        fileReader.onload = readerEv => setUploadedImageUrl(readerEv?.target!.result as string)
+                    }
+
+                }
+
+                document.body.append(inputElem!)
+                inputElem.click()
+            },
             icon: <MdAddAPhoto className="size-6 mr-2" />
         },
         {
@@ -99,16 +169,32 @@ const Settings = ({ getBack, updateRoute }: Props) => {
 
                     <div className="flex items-center gap-3 my-3">
                         {
-                            avatar ?
-                                <Image
-                                    src={avatar}
-                                    className="cursor-pointer object-cover size-[55px] rounded-full"
-                                    width={55}
-                                    height={55}
-                                    alt="avatar"
-                                />
-                                :
-                                <div className='flex-center bg-darkBlue rounded-full size-[55px] shrink-0 text-center font-bold text-2xl'>{name?.length && name![0]}</div>
+                            <div className={'flex-center relative size-[55px] rounded-full'}>
+                                {
+                                    (avatar || uploadedImageUrl)
+                                        ?
+                                        <Image
+                                            src={avatar || uploadedImageUrl!}
+                                            className="cursor-pointer object-cover"
+                                            width={55}
+                                            height={55}
+                                            alt="avatar"
+                                        />
+                                        :
+                                        <div className='flex-center bg-darkBlue shrink-0 text-center font-bold text-2xl'>{name?.length && name![0]}</div>
+                                }
+
+                                {
+                                    isLoading
+                                    &&
+                                    <Button
+                                        isLoading={true}
+                                        size='lg'
+                                        className={'absolute bg-inherit text-white'}
+                                        style={{ borderRadius: '100%', width: '24px', top: '5%' }}
+                                    />
+                                }
+                            </div>
                         }
 
                         <div className="flex justify-center flex-col gap-1">
