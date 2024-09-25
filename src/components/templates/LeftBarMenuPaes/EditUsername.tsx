@@ -48,10 +48,8 @@ const EditUsername = ({ getBack }: { getBack: () => void }) => {
             setIsValidationLoading(true)
 
             try {
-
                 const { data } = await axios.post('/api/users/updateUsername', { query: updatedUsername })
                 setIsUsernameValid(data?.isValid)
-
             } catch (error) { setIsUsernameValid(false) }
             finally { setIsValidationLoading(false) }
 
