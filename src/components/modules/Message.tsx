@@ -1,6 +1,7 @@
 import { useOnScreen } from '@/hook/useOnScreen'
-import { getTimeFromDate, scrollToMessage } from '@/utils'
+import { getTimeFromDate, scrollToMessage, secondsToFormattedTimeString } from '@/utils'
 import { FaPlay } from "react-icons/fa";
+import { FaPause } from "react-icons/fa6";
 import useSockets from '@/zustand/useSockets'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
@@ -8,6 +9,7 @@ import type { MessageModel, VoiceModel } from '@/@types/data.t';
 import useGlobalVariablesStore from '@/zustand/globalVariablesStore';
 import type { Props as globalVariablesStoreType } from '@/zustand/globalVariablesStore';
 import MessageActions from './MessageActions';
+import useAudio from '@/zustand/audioStore';
 
 interface Props {
     myId: string,
@@ -32,7 +34,7 @@ const Message = (msgData: MessageModel & Props) => {
         addReplay,
         edit,
         isPv = false,
-        voiceData
+        voiceData: voiceDataProp = { duration: 2000, isPlaying: false, playedBy: [], src: 'https://pc-kala.storage.iran.liara.space/Ellie%20and%20Joels%20Song.mp3' }
     } = msgData
 
     const messageRef = useRef(null)
@@ -43,6 +45,7 @@ const Message = (msgData: MessageModel & Props) => {
     const [isMounted, setIsMounted] = useState(false)
     const { rooms } = useSockets(state => state)
     const setter = useGlobalVariablesStore(state => state.setter)
+    const { isPlaying, voiceData } = useAudio(state => state)
 
     useEffect(() => {
 
@@ -142,11 +145,17 @@ const Message = (msgData: MessageModel & Props) => {
                         </div>
                     }
                     {
-                        !voiceData &&
+                        voiceDataProp &&
                         <div onClick={e => e.stopPropagation()} className='flex items-center gap-3 bg-inherit w-full'>
 
                             <button className='rounded-full size-10 flex-center bg-white'>
-                                <FaPlay className='text-darkBlue ml-1' />
+                                {
+                                    ''
+                                        ?
+                                        <FaPause data-aos='zoom-in' className='text-darkBlue size-5' />
+                                        :
+                                        <FaPlay data-aos='zoom-in' className='text-darkBlue ml-1' />
+                                }
                             </button>
 
                             <div className='flex flex-col gap-1 justify-center'>
@@ -167,9 +176,9 @@ const Message = (msgData: MessageModel & Props) => {
                                 </div>
 
                                 <div className='flex items-center gap-px text-[12px] mr-auto text-darkGray'>
-                                    00:12
+                                    {secondsToFormattedTimeString(voiceDataProp.duration)}
                                     {
-                                        voiceData?.playedBy?.length
+                                        voiceDataProp?.playedBy?.length
                                         &&
                                         <div data-aos='fade-in' className='size-2 mt-1 rounded-full bg-white' />
                                     }

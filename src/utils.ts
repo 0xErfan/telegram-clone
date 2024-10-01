@@ -285,7 +285,7 @@ const secondsToFormattedTimeString = (seconds: number): string => {
     const paddedSeconds = secs.toString().padStart(2, '0');
 
     return paddedHours + paddedMinutes + paddedSeconds;
-};  
+};  // check 2000, bug
 
 export {
     getTimer,
