@@ -215,7 +215,7 @@ const generateRandomHex = (length: number) => {
     return result;
 }
 
-const uploadImage = async (file: File): Promise<string | Error> => {
+const uploadFile = async (file: File): Promise<string | Error> => {
 
     const ACCESSKEY = "rfpsaen58kka9eso"
     const SECRETKEY = "f8eea594-08f0-40de-bef2-6ef252a88cae"
@@ -306,7 +306,7 @@ export {
     scrollToMessage,
     copyText,
     generateRandomHex,
-    uploadImage,
+    uploadFile,
     openModal,
     logout,
     secondsToFormattedTimeString

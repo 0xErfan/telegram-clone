@@ -19,7 +19,7 @@ import MenuItem from "@/components/modules/MenuItem";
 import { ChangeEvent, useEffect, useState } from "react";
 import { Button } from '@nextui-org/button'
 import DropDown from "@/components/modules/DropDown";
-import { logout, openModal, showToast, uploadImage } from "@/utils";
+import { logout, openModal, showToast, uploadFile } from "@/utils";
 import useSockets from "@/zustand/useSockets";
 
 interface Props {
@@ -49,7 +49,7 @@ const Settings = ({ getBack, updateRoute }: Props) => {
                     setIsLoading(true)
 
                     const socket = useSockets.getState().rooms
-                    const uploadedImageUrl = await uploadImage(uploadedImageFile as File)
+                    const uploadedImageUrl = await uploadFile(uploadedImageFile as File)
 
                     socket?.emit('updateUserData', { userID: _id, avatar: uploadedImageUrl })
 

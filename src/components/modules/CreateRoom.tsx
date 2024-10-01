@@ -10,7 +10,7 @@ import { ChangeEvent, useMemo, useState } from "react"
 import ContactCard from "./ContactCard";
 import { Button } from "@nextui-org/button"
 import Image from "next/image";
-import { generateRandomHex, showToast, uploadImage } from "@/utils";
+import { generateRandomHex, showToast, uploadFile } from "@/utils";
 import useSockets from "@/zustand/useSockets";
 
 type Props = {
@@ -95,7 +95,7 @@ const CreateRoom = ({ roomType, close }: Props) => {
 
         if (roomImage) {
             try {
-                const uploadedImageUrl = await uploadImage(imageFile as File)
+                const uploadedImageUrl = await uploadFile(imageFile as File)
                 imageUrl = uploadedImageUrl
             } catch (error) {
                 showToast(false, 'Failed to upload image, you can try again bud')
