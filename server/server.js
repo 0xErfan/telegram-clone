@@ -10,7 +10,8 @@ const io = new Server(3001, {
     cors: {
         origin: 'http://localhost:3000',
         methods: ['PUT', 'POST']
-    }
+    },
+    pingTimeout: 60000
 })
 
 let typings = []

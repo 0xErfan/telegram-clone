@@ -1,5 +1,4 @@
 import { BsEmojiSmile } from "react-icons/bs";
-import { PiMicrophoneLight } from "react-icons/pi";
 import { IoIosSend, IoMdClose } from "react-icons/io";
 import { ChangeEvent, lazy, useEffect, useRef, useState } from "react";
 import { MdAttachFile, MdModeEditOutline, MdOutlineDone } from "react-icons/md";
@@ -8,6 +7,7 @@ import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import useUserStore from "@/zustand/userStore";
 import useSockets from "@/zustand/useSockets";
 import { MessageModel } from "@/@types/data.t";
+import VoiceMessageRecorder from "./VoiceMessageRecorder";
 const EmojiPicker = lazy(() => import('emoji-picker-react'))
 
 interface Props {
@@ -213,7 +213,8 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
                                                 ?
                                                 <IoIosSend onClick={sendMessage} className="shrink-0 basis-[7%] size-6 cursor-pointer text-lightBlue rotate-45" />
                                                 :
-                                                <PiMicrophoneLight className="shrink-0 basis-[7%] size-6 cursor-pointer" />
+                                                <VoiceMessageRecorder />
+                                                // <PiMicrophoneLight className="shrink-0 basis-[7%] size-6 cursor-pointer" />
                                         }
                                     </>
                             }
