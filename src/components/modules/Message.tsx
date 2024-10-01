@@ -34,7 +34,7 @@ const Message = (msgData: MessageModel & Props) => {
         addReplay,
         edit,
         isPv = false,
-        voiceData: voiceDataProp = { duration: 2000, isPlaying: false, playedBy: [], src: 'https://pc-kala.storage.iran.liara.space/Ellie%20and%20Joels%20Song.mp3' }
+        voiceData: voiceDataProp = { duration: 2000, playedBy: [], src: 'https://pc-kala.storage.iran.liara.space/Ellie%20and%20Joels%20Song.mp3' }
     } = msgData
 
     const messageRef = useRef(null)
@@ -45,7 +45,7 @@ const Message = (msgData: MessageModel & Props) => {
     const [isMounted, setIsMounted] = useState(false)
     const { rooms } = useSockets(state => state)
     const setter = useGlobalVariablesStore(state => state.setter)
-    const { isPlaying, voiceData } = useAudio(state => state)
+    const { isPlaying, voiceData, setter: audioUpdater } = useAudio(state => state)
 
     useEffect(() => {
 
@@ -66,6 +66,13 @@ const Message = (msgData: MessageModel & Props) => {
     }, [isInViewport, isFromMe]);
 
     useEffect(() => { setIsMounted(true) }, [])
+
+    const togglePlayVoice = () => {
+        audioUpdater({
+            isPlaying: voiceData._id == _id ? !isPlaying : true,
+            voiceData: { ...msgData } // here the voiceDataProp data get send too
+        })
+    }
 
     const openProfile = () => {
         setter({
@@ -148,14 +155,9 @@ const Message = (msgData: MessageModel & Props) => {
                         voiceDataProp &&
                         <div onClick={e => e.stopPropagation()} className='flex items-center gap-3 bg-inherit w-full'>
 
-                            <button className='rounded-full size-10 flex-center bg-white'>
-                                {
-                                    ''
-                                        ?
-                                        <FaPause data-aos='zoom-in' className='text-darkBlue size-5' />
-                                        :
-                                        <FaPlay data-aos='zoom-in' className='text-darkBlue ml-1' />
-                                }
+                            <button onClick={togglePlayVoice} className='rounded-full size-10 flex-center bg-white text-darkBlue'>
+                                {(voiceData._id === _id && isPlaying) && <FaPause data-aos='zoom-in' className='size-5' />}
+                                {(voiceData._id !== _id || !isPlaying) && <FaPlay data-aos='zoom-in' className='ml-1' />}
                             </button>
 
                             <div className='flex flex-col gap-1 justify-center'>

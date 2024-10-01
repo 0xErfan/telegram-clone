@@ -6,6 +6,7 @@ import 'aos/dist/aos.css'
 import AosAnimation from "@/components/modules/AosAnimation";
 import { Toaster } from "react-hot-toast";
 import { NextUIProvider } from "@nextui-org/system";
+import AudioManager from "@/components/templates/AudioManager";
 
 export const metadata: Metadata = {
     title: "Telegram-clone",
@@ -18,8 +19,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <body className="font-segoeRegular overflow-hidden">
                 <NextUIProvider>
                     <AosAnimation />
-                    <Toaster  containerStyle={{zIndex: '999999999999999'}}/>
                     {children}
+                    <Toaster containerStyle={{ zIndex: '999999999999999' }} />
+                    <AudioManager />
                 </NextUIProvider>
             </body>
         </html>

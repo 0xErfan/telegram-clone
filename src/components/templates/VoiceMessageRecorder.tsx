@@ -1,5 +1,5 @@
 import { secondsToFormattedTimeString } from '@/utils';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, ElementRef } from 'react';
 import { PiMicrophoneLight } from 'react-icons/pi';
 
 const VoiceMessageRecorder = () => {
@@ -15,7 +15,8 @@ const VoiceMessageRecorder = () => {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorderRef.current = new MediaRecorder(stream);
 
-        mediaRecorderRef.current.ondataavailable = (event) => {
+        mediaRecorderRef.current.ondataavailable = (event: ElementRef<'audio'>) => {
+            //@ts-expect-error
             audioChunksRef.current.push(event.data);
         };
 
@@ -69,14 +70,14 @@ const VoiceMessageRecorder = () => {
                     className='flex items-center justify-between px-4 md:px-3 absolute rounded-sm inset-0 z-20 size-full bg-black/50 backdrop-blur-xl'
                 >
 
-                        <div className='flex items-center gap-2 w-18'>
+                    <div className='flex items-center gap-2 w-18'>
                         <div className='size-3 rounded-full bg-red-400 animate-pulse'></div>
                         <p>{secondsToFormattedTimeString(timer)}</p>
                     </div>
 
                     <button onClick={stopRecording} className='text-lightBlue absolute mr-9 inset-x-0 font-bold font-segoeBold'>CANCEL</button>
 
-                        <button onClick={sendMessage} className='w-[100px] h-3/4 rounded-sm animate-pulse flex-center bg-lightBlue'>Send</button>
+                    <button onClick={sendMessage} className='w-[100px] h-3/4 rounded-sm animate-pulse flex-center bg-lightBlue'>Send</button>
 
                 </div>
             }

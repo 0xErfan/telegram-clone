@@ -73,7 +73,6 @@ interface NameSpaceModel {
 
 interface VoiceModel {
     duration: number
-    isPlaying: boolean
     playedBy: string[]
     src: string
 }
