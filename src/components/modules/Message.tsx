@@ -1,9 +1,10 @@
 import { useOnScreen } from '@/hook/useOnScreen'
 import { getTimeFromDate, scrollToMessage } from '@/utils'
+import { FaPlay } from "react-icons/fa";
 import useSockets from '@/zustand/useSockets'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
-import { MessageModel } from '@/@types/data.t';
+import type { MessageModel, VoiceModel } from '@/@types/data.t';
 import useGlobalVariablesStore from '@/zustand/globalVariablesStore';
 import type { Props as globalVariablesStoreType } from '@/zustand/globalVariablesStore';
 import MessageActions from './MessageActions';
@@ -13,11 +14,26 @@ interface Props {
     addReplay: (_id: string) => void
     edit: (data: MessageModel) => void
     isPv?: boolean
+    voiceData?: VoiceModel
 }
 
 const Message = (msgData: MessageModel & Props) => {
 
-    const { createdAt, message, seen, _id, sender, myId, roomID, replayedTo, isEdited, addReplay, edit, isPv = false } = msgData
+    const {
+        createdAt,
+        message,
+        seen,
+        _id,
+        sender,
+        myId,
+        roomID,
+        replayedTo,
+        isEdited,
+        addReplay,
+        edit,
+        isPv = false,
+        voiceData
+    } = msgData
 
     const messageRef = useRef(null)
     const modalMsgID = useGlobalVariablesStore(state => state.modalData.msgData?._id)
@@ -123,6 +139,44 @@ const Message = (msgData: MessageModel & Props) => {
                             <span className={`absolute ${isFromMe ? 'bg-white' : 'bg-green-500'} left-0  inset-y-0 w-[3px] h-full `}></span>
                             <p className='font-extrabold font-segoeBold break-words line-clamp-1 overflow-ellipsis'>{replayedTo.username}</p>
                             <p className='font-thin break-words line-clamp-1 overflow-ellipsis'>{replayedTo.message}</p>
+                        </div>
+                    }
+                    {
+                        !voiceData &&
+                        <div onClick={e => e.stopPropagation()} className='flex items-center gap-3 bg-inherit w-full'>
+
+                            <button className='rounded-full size-10 flex-center bg-white'>
+                                <FaPlay className='text-darkBlue ml-1' />
+                            </button>
+
+                            <div className='flex flex-col gap-1 justify-center'>
+
+                                <div className='*:text-darkGray line-clamp-1 overflow-hidden text-nowrap flex items-center gap-px'>
+                                    {
+                                        Array(20).fill(0).map((_, index) => {
+                                            const randomHeight = Math.trunc(Math.random() * 12) + 5; // Calculate height  
+                                            return (
+                                                <div
+                                                    key={index}
+                                                    className={`w-[3px] rounded-full bg-darkGray`}
+                                                    style={{ height: `${randomHeight}px` }} // Use inline styles for dynamic height  
+                                                />
+                                            );
+                                        })
+                                    }
+                                </div>
+
+                                <div className='flex items-center gap-px text-[12px] mr-auto text-darkGray'>
+                                    00:12
+                                    {
+                                        voiceData?.playedBy?.length
+                                        &&
+                                        <div data-aos='fade-in' className='size-2 mt-1 rounded-full bg-white' />
+                                    }
+                                </div>
+
+                            </div>
+
                         </div>
                     }
                     <p dir='auto'>{message}</p>

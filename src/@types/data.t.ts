@@ -71,11 +71,19 @@ interface NameSpaceModel {
     updatedAt: string
 }
 
+interface VoiceModel {
+    duration: number
+    isPlaying: boolean
+    playedBy: string[]
+    src: string
+}
+
 export type {
     UserModel,
     MessageModel,
     LocationModel,
     MediaModel,
     RoomModel,
-    NameSpaceModel
+    NameSpaceModel,
+    VoiceModel
 }

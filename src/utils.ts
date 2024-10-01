@@ -274,6 +274,19 @@ const logout = async () => {
     } catch (error) { showToast(false, 'Network issues bud!') }
 }
 
+const secondsToFormattedTimeString = (seconds: number): string => {
+
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+
+    const paddedHours = hours > 0 ? hours.toString().padStart(2, '0') + ':' : '';
+    const paddedMinutes = minutes.toString().padStart(2, '0') + ':';
+    const paddedSeconds = secs.toString().padStart(2, '0');
+
+    return paddedHours + paddedMinutes + paddedSeconds;
+};  
+
 export {
     getTimer,
     showToast,
@@ -295,5 +308,6 @@ export {
     generateRandomHex,
     uploadImage,
     openModal,
-    logout
+    logout,
+    secondsToFormattedTimeString
 }
