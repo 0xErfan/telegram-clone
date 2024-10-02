@@ -10,16 +10,23 @@ const AudioManager = () => {
     useEffect(() => {
         if (voiceData._id && voiceData.src) {
             setter({ audioElem: audioRef.current })
+            audioRef.current?.play()
         }
     }, [voiceData._id, voiceData.src])
 
     useEffect(() => {
-        if (voiceData.src && audioRef?.current) {
-            audioRef?.current[isPlaying ? 'pause' : 'play']()
-        }
-    }, [isPlaying, voiceData.src])
+        voiceData?.src
+            &&
+            audioRef?.current
+            &&
+            audioRef.current[isPlaying ? 'play' : 'pause']()
+    }, [isPlaying])
 
-    console.log(isPlaying, audioRef.current, voiceData)
+    useEffect(() => {
+        if (audioRef?.current) {
+            audioRef.current.onended = () => setter({ isPlaying: false });
+        }
+    }, [voiceData?._id])
 
     return (
         voiceData

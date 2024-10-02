@@ -5,11 +5,12 @@ const nextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'pc-kala.storage.iran.liara.space',
-                pathname: '**',
+                hostname: 'storage.iran.liara.space',
+                port: '',
+                pathname: '/pc-kala/**',
             },
         ],
-    }
+    },
 };
 
 export default nextConfig;

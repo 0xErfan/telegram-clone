@@ -215,22 +215,22 @@ const generateRandomHex = (length: number) => {
     return result;
 }
 
-const uploadFile = async (file: File): Promise<string | Error> => {
+const uploadFile = async (file: File): Promise<string | undefined> => {
 
-    const ACCESSKEY = "rfpsaen58kka9eso"
-    const SECRETKEY = "f8eea594-08f0-40de-bef2-6ef252a88cae"
-    const ENDPOINT = "storage.iran.liara.space"
-    const BUCKET = 'pc-kala'
+    const ACCESSKEY = "rfpsaen58kka9eso";
+    const SECRETKEY = "f8eea594-08f0-40de-bef2-6ef252a88cae";
+    const ENDPOINT = "storage.iran.liara.space";
+    const BUCKET = 'pc-kala';
 
-    let encodedFileName = file.name?.replace(/[\?\=\%\&\+\-\.\_\s]/g, '_')
-    encodedFileName = encodedFileName?.slice(encodedFileName.length - 30)
+    let encodedFileName = file.name.replace(/[\?\=\%\&\+\-\.\_\s]/g, '_');
+    encodedFileName = encodedFileName.slice(Math.max(encodedFileName.length - 30, 0));
 
     try {
-
         const s3 = new S3({
             accessKeyId: ACCESSKEY,
             secretAccessKey: SECRETKEY,
             endpoint: ENDPOINT,
+            s3ForcePathStyle: true
         });
 
         const params = {
@@ -239,7 +239,7 @@ const uploadFile = async (file: File): Promise<string | Error> => {
             Body: file,
         };
 
-        await s3.upload(params as PutObjectRequest).promise();
+        await s3.upload(params).promise();
 
         const permanentSignedUrl = s3.getSignedUrl('getObject', {
             Bucket: BUCKET,
@@ -249,10 +249,12 @@ const uploadFile = async (file: File): Promise<string | Error> => {
 
         return permanentSignedUrl;
 
-    } catch (error) { throw new Error('failed to fech') }
+    } catch (error) {
+        console.error("Upload failed:", error);
+    }
 };
 
-const openModal = (props: {title?: string, bodyText?: string, okText?: string, onSubmit?: () => void, onClose?: () => void }) => {
+const openModal = (props: { title?: string, bodyText?: string, okText?: string, onSubmit?: () => void, onClose?: () => void }) => {
 
     const setter = useGlobalVariablesStore.getState().setter
 
@@ -285,7 +287,7 @@ const secondsToFormattedTimeString = (seconds: number): string => {
     const paddedSeconds = secs.toString().padStart(2, '0');
 
     return paddedHours + paddedMinutes + paddedSeconds;
-};  // check 2000, bug
+};
 
 export {
     getTimer,

@@ -213,8 +213,11 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
                                                 ?
                                                 <IoIosSend onClick={sendMessage} className="shrink-0 basis-[7%] size-6 cursor-pointer text-lightBlue rotate-45" />
                                                 :
-                                                <VoiceMessageRecorder />
-                                                // <PiMicrophoneLight className="shrink-0 basis-[7%] size-6 cursor-pointer" />
+                                                <VoiceMessageRecorder
+                                                    replayData={replayData as any}
+                                                    closeEdit={closeEdit}
+                                                    closeReplay={closeReplay}
+                                                />
                                         }
                                     </>
                             }

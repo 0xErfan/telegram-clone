@@ -1,9 +1,19 @@
+import { MessageModel } from '@/@types/data.t';
 import { secondsToFormattedTimeString, showToast, uploadFile } from '@/utils';
+import useGlobalVariablesStore from '@/zustand/globalVariablesStore';
+import useSockets from '@/zustand/useSockets';
+import useUserStore from '@/zustand/userStore';
 import { Button } from '@nextui-org/button';
 import { useState, useRef, useEffect } from 'react';
 import { PiMicrophoneLight } from 'react-icons/pi';
 
-const VoiceMessageRecorder = () => {
+interface Props {
+    replayData: MessageModel
+    closeEdit: () => void
+    closeReplay: () => void
+}
+
+const VoiceMessageRecorder = ({ replayData, closeEdit, closeReplay }: Props) => {
 
     const [recording, setRecording] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -15,21 +25,21 @@ const VoiceMessageRecorder = () => {
 
     const startRecording = async () => {
 
+        if (!('mediaDevices' in navigator)) return showToast(false, 'your shitty browser is not supporting voice recording!')
+
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorderRef.current = new MediaRecorder(stream);
 
-        mediaRecorderRef.current.ondataavailable = (event: BlobEvent) => {
-            //@ts-expect-error
-            audioChunksRef.current.push(event.data);
-        };
+        //@ts-expect-error
+        mediaRecorderRef.current.ondataavailable = (event: BlobEvent) => audioChunksRef.current.push(event.data)
 
         mediaRecorderRef.current.onstop = () => {
 
-            const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+            const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/ogg' });
             const url = URL.createObjectURL(audioBlob);
-            setAudioURL(url);
+            const file = new File([audioBlob], `voice-message-${Date.now()}.ogg`, { type: 'audio/ogg' });
 
-            const file = new File([audioBlob], `voice-message-${Date.now()}.wav`, { type: 'audio/wav' });
+            setAudioURL(url);
             setVoiceFile(file);
 
             audioChunksRef.current = [];
@@ -56,23 +66,74 @@ const VoiceMessageRecorder = () => {
 
     }, [recording]);
 
-    const uploadVoice = async () => {
+    const sendVoiceMessage = (voiceSrc: string, voiceDuration: number) => {
 
-        if (!voiceFile) return
+        const socket = useSockets.getState().rooms
+        const myData = useUserStore.getState()
+        const selectedRoom = useGlobalVariablesStore.getState().selectedRoom
+
+        const roomHistory = myData.rooms.some(room => { if (room._id === selectedRoom?._id) return true })
+
+        const voiceData = {
+            src: voiceSrc,
+            duration: voiceDuration,
+            playedBy: []
+        }
+
+        if (roomHistory) {
+            socket?.emit('newMessage', {
+                roomID: selectedRoom?._id,
+                message: '',
+                sender: myData,
+                replayData: replayData ?
+                    {
+                        targetID: replayData?._id,
+                        replayedTo: {
+                            message: replayData?.message,
+                            msgID: replayData?._id,
+                            username: replayData.sender?.name
+                        }
+                    }
+                    : null,
+                voiceData
+            })
+        } else {
+            socket?.emit('createRoom', {
+                newRoomData: selectedRoom, message: {
+                    sender: myData, message: '', voiceData, replayData: replayData ?
+                        {
+                            targetID: replayData?._id,
+                            replayedTo: {
+                                message: replayData?.message,
+                                msgID: replayData?._id,
+                                username: replayData.sender?.name
+                            }
+                        }
+                        : null
+                }
+            });
+        }
+
+        closeEdit()
+        closeReplay()
+    }
+
+    const uploadVoice = async (voiceFile: File) => {
+
+        stopRecording()
+        if (!voiceFile) return console.log('ntg happened here')
+        setIsLoading(true);
 
         try {
-            setIsLoading(true);
+
             const uploadedVoiceUrl = await uploadFile(voiceFile);
-            console.log(uploadedVoiceUrl)
-        } catch (error) {
-            showToast(false, 'Upload failed btw.!')
-        } finally { setIsLoading(false); }
 
-    };
+            sendVoiceMessage(uploadedVoiceUrl as string, timer)
+            setVoiceFile(null)
+            
+        } catch (error) { showToast(false, 'Upload failed btw.!') }
+        finally { setIsLoading(false); }
 
-    const sendMessage = () => {
-        uploadVoice();
-        setRecording(false);
     };
 
     return (
@@ -98,7 +159,7 @@ const VoiceMessageRecorder = () => {
 
                     <button onClick={stopRecording} className='text-lightBlue absolute mr-9 inset-x-0 font-bold font-segoeBold'>CANCEL</button>
 
-                    <button onClick={sendMessage} className='w-[100px] h-3/4 rounded-sm animate-pulse flex-center bg-lightBlue'>
+                    <button onClick={() => uploadVoice(voiceFile!)} className='w-[100px] h-3/4 rounded-sm animate-pulse flex-center z-[2000] bg-lightBlue'>
                         {
                             isLoading
                                 ?

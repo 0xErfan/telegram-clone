@@ -16,7 +16,7 @@ interface Props {
     addReplay: (_id: string) => void
     edit: (data: MessageModel) => void
     isPv?: boolean
-    voiceData?: VoiceModel
+    voiceData?: VoiceModel | null
 }
 
 const Message = (msgData: MessageModel & Props) => {
@@ -34,7 +34,7 @@ const Message = (msgData: MessageModel & Props) => {
         addReplay,
         edit,
         isPv = false,
-        voiceData: voiceDataProp = { duration: 2000, playedBy: [], src: 'https://pc-kala.storage.iran.liara.space/Ellie%20and%20Joels%20Song.mp3' }
+        voiceData: voiceDataProp = null
     } = msgData
 
     const messageRef = useRef(null)
@@ -70,7 +70,7 @@ const Message = (msgData: MessageModel & Props) => {
     const togglePlayVoice = () => {
         audioUpdater({
             isPlaying: voiceData._id == _id ? !isPlaying : true,
-            voiceData: { ...msgData } // here the voiceDataProp data get send too
+            voiceData: { ...msgData, ...voiceDataProp } // here the voiceDataProp data get send too
         })
     }
 
@@ -147,7 +147,7 @@ const Message = (msgData: MessageModel & Props) => {
                             className={`${isFromMe ? 'bg-lightBlue/25 rounded-l-md' : 'bg-green-500/15 rounded-r-md'} cursor-pointer rounded-md rounded-t-md text-sm relative w-full py-1 px-3 overflow-hidden`}
                         >
                             <span className={`absolute ${isFromMe ? 'bg-white' : 'bg-green-500'} left-0  inset-y-0 w-[3px] h-full `}></span>
-                            <p className='font-extrabold font-segoeBold break-words line-clamp-1 overflow-ellipsis'>{replayedTo.username}</p>
+                            <p className='font-extrabold font-segoeBold break-words text-start line-clamp-1 overflow-ellipsis'>{replayedTo.username}</p>
                             <p className='font-thin break-words line-clamp-1 overflow-ellipsis'>{replayedTo.message}</p>
                         </div>
                     }
@@ -163,9 +163,10 @@ const Message = (msgData: MessageModel & Props) => {
                             <div className='flex flex-col gap-1 justify-center'>
 
                                 <div className='*:text-darkGray line-clamp-1 overflow-hidden text-nowrap flex items-center gap-px'>
-                                    {
+                                    -- - - - --- -- 
+                                    {/* {
                                         Array(20).fill(0).map((_, index) => {
-                                            const randomHeight = Math.trunc(Math.random() * 12) + 5; // Calculate height  
+                                            const randomHeight = Math.trunc(Math.random() * 12) + 5;
                                             return (
                                                 <div
                                                     key={index}
@@ -174,15 +175,16 @@ const Message = (msgData: MessageModel & Props) => {
                                                 />
                                             );
                                         })
-                                    }
+                                    } */}
                                 </div>
 
                                 <div className='flex items-center gap-px text-[12px] mr-auto text-darkGray'>
                                     {secondsToFormattedTimeString(voiceDataProp.duration)}
                                     {
-                                        voiceDataProp?.playedBy?.length
-                                        &&
-                                        <div data-aos='fade-in' className='size-2 mt-1 rounded-full bg-white' />
+                                        !voiceDataProp?.playedBy?.length
+                                            ?
+                                            <div data-aos='fade-in' className='size-2 ml-2 rounded-full bg-white' />
+                                            : null
                                     }
                                 </div>
 

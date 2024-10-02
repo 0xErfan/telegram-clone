@@ -21,6 +21,7 @@ interface MessageModel {
     isEdited: boolean
     seen: string[]
     replays: string[]
+    voiceData: { src: string, duration: number, playedBy: string[] } | null
     replayedTo: { message: string, msgID: string, username: string } | null
     roomID: string
     hideFor: string[]

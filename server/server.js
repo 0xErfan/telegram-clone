@@ -21,7 +21,7 @@ await connectToDB()
 
 io.on('connection', socket => {
 
-    socket.on('newMessage', async ({ roomID, sender, message, replayData }) => {
+    socket.on('newMessage', async ({ roomID, sender, message, replayData, voiceData = null }) => {
 
         let tempID = Date.now()
 
@@ -30,6 +30,7 @@ io.on('connection', socket => {
             message,
             roomID,
             seen: [],
+            voiceData,
             createdAt: Date.now()
         }
 
