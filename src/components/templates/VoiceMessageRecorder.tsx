@@ -19,9 +19,9 @@ const VoiceMessageRecorder = ({ replayData, closeEdit, closeReplay }: Props) => 
     const [isLoading, setIsLoading] = useState(false);
     const [audioURL, setAudioURL] = useState('');
     const [timer, setTimer] = useState(0);
-    const [voiceFile, setVoiceFile] = useState<File | null>(null);
     const mediaRecorderRef = useRef<any>(null);
     const audioChunksRef = useRef([]);
+    const timerRef = useRef(timer)
 
     const startRecording = async () => {
 
@@ -40,7 +40,7 @@ const VoiceMessageRecorder = ({ replayData, closeEdit, closeReplay }: Props) => 
             const file = new File([audioBlob], `voice-message-${Date.now()}.ogg`, { type: 'audio/ogg' });
 
             setAudioURL(url);
-            setVoiceFile(file);
+            uploadVoice(file)
 
             audioChunksRef.current = [];
         };
@@ -52,19 +52,37 @@ const VoiceMessageRecorder = ({ replayData, closeEdit, closeReplay }: Props) => 
     const stopRecording = () => {
         mediaRecorderRef.current.stop();
         mediaRecorderRef.current = null;
+        mediaRecorderRef.current?.getTracks().forEach((track: any) => track?.stop());
+
+        timerRef.current = 0
+
+        setAudioURL('')
         setRecording(false);
+        setIsLoading(false)
     };
+
+    const cancelRecording = () => {
+        mediaRecorderRef.current = null
+        setRecording(false);
+        setIsLoading(false)
+    }
 
     useEffect(() => {
 
+        if (isLoading) return
         if (!recording) return setTimer(0);
 
-        const updateTimer = () => setTimer((prev) => prev + 1);
+        const updateTimer = () => {
+            setTimer(prev => {
+                timerRef.current = prev + 1
+                return prev + 1
+            })
+        };
 
         const timerInterval = setInterval(updateTimer, 1000);
         return () => clearInterval(timerInterval);
 
-    }, [recording]);
+    }, [recording, isLoading]);
 
     const sendVoiceMessage = (voiceSrc: string, voiceDuration: number) => {
 
@@ -114,25 +132,26 @@ const VoiceMessageRecorder = ({ replayData, closeEdit, closeReplay }: Props) => 
             });
         }
 
+        socket?.on('newMessage', stopRecording)
+
         closeEdit()
         closeReplay()
     }
 
     const uploadVoice = async (voiceFile: File) => {
 
-        stopRecording()
-        if (!voiceFile) return console.log('ntg happened here')
-        setIsLoading(true);
+        setIsLoading(true)
+        if (!uploadFile) return showToast(false, 'did not get the file bud')
 
         try {
 
             const uploadedVoiceUrl = await uploadFile(voiceFile);
+            sendVoiceMessage(uploadedVoiceUrl as string, timerRef.current)
 
-            sendVoiceMessage(uploadedVoiceUrl as string, timer)
-            setVoiceFile(null)
-            
-        } catch (error) { showToast(false, 'Upload failed btw.!') }
-        finally { setIsLoading(false); }
+        } catch (error) {
+            showToast(false, 'Upload failed btw.!')
+            stopRecording()
+        }
 
     };
 
@@ -147,19 +166,16 @@ const VoiceMessageRecorder = ({ replayData, closeEdit, closeReplay }: Props) => 
             {
                 recording
                 &&
-                <div
-                    // data-aos='fade-left'
-                    className='flex items-center justify-between px-4 md:px-3 absolute rounded-sm inset-0 z-20 size-full bg-black/50 backdrop-blur-xl'
-                >
+                <div className='flex items-center justify-between px-4 md:px-3 absolute rounded-sm inset-0 z-20 size-full bg-black/50 backdrop-blur-xl'>
 
                     <div className='flex items-center gap-2 w-18'>
                         <div className='size-3 rounded-full bg-red-400 animate-pulse'></div>
                         <p>{secondsToFormattedTimeString(timer)}</p>
                     </div>
 
-                    <button onClick={stopRecording} className='text-lightBlue absolute mr-9 inset-x-0 font-bold font-segoeBold'>CANCEL</button>
+                    <button onClick={cancelRecording} className='text-lightBlue absolute mr-9 inset-x-0 font-bold font-segoeBold'>CANCEL</button>
 
-                    <button onClick={() => uploadVoice(voiceFile!)} className='w-[100px] h-3/4 rounded-sm animate-pulse flex-center z-[2000] bg-lightBlue'>
+                    <button onClick={() => mediaRecorderRef.current.stop()} className='w-[100px] h-3/4 rounded-sm animate-pulse flex-center z-[2000] bg-lightBlue'>
                         {
                             isLoading
                                 ?
