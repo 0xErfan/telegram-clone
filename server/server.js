@@ -181,6 +181,20 @@ io.on('connection', socket => {
 
     })
 
+    socket.on('listenToVoice', async ({ userID, voiceID, roomID }) => {
+
+        io.to(roomID).emit('listenToVoice', { userID, voiceID, roomID })
+
+        const targetMessage = await MessageModel.findOne({ _id: voiceID }).exec()
+        const voiceMessagePlayedByList = targetMessage?.voiceData?.playedBy
+
+        if (!voiceMessagePlayedByList?.includes(userID)) {
+            targetMessage.voiceData.playedBy = [...voiceMessagePlayedByList, userID]
+            targetMessage.save()
+        }
+
+    })
+
     socket.on('getRooms', async userID => {
 
         const userRooms = await RoomModel.find({ participants: { $in: userID } }).lean()

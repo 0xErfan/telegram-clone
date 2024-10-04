@@ -143,7 +143,7 @@ const ChatContent = () => {
         })
 
         rooms?.on('seenMsg', ({ msgID, seenBy }) => {
-            
+
             const updatedSeenMessage = [...messages]
 
             updatedSeenMessage.some(msg => {
@@ -195,12 +195,34 @@ const ChatContent = () => {
             })
         })
 
+        rooms?.on('listenToVoice', ({ userID, voiceID, roomID }) => {
+
+            if (selectedRoom?._id !== roomID) return
+
+            messages.some(msg => {
+                if (
+                    msg._id === voiceID
+                    &&
+                    msg?.voiceData
+                    &&
+                    typeof msg.voiceData.playedBy == 'object'
+                    &&
+                    !msg.voiceData?.playedBy.includes(userID)
+                ) {
+                    msg.voiceData.playedBy = [...msg.voiceData.playedBy, userID]
+                    setter({ messages: [...messages, msg] })
+                    return true
+                }
+            })
+        })
+
         return () => {
-            rooms?.off('newMessage')
-            rooms?.off('seenMsg')
-            rooms?.off('newMessageIdUpdate')
             rooms?.off('typing')
+            rooms?.off('seenMsg')
+            rooms?.off('newMessage')
             rooms?.off('stop-typing')
+            rooms?.off('listenToVoice')
+            rooms?.off('newMessageIdUpdate')
         }
     }, [messages?.length, participants?.length])
 

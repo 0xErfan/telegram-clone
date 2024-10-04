@@ -37,8 +37,6 @@ const Message = (msgData: MessageModel & Props) => {
         voiceData: voiceDataProp
     } = msgData
 
-    console.log(voiceDataProp?.playedBy)
-
     const messageRef = useRef(null)
     const modalMsgID = useGlobalVariablesStore(state => state.modalData.msgData?._id)
     const isFromMe = sender?._id === myId
@@ -70,10 +68,18 @@ const Message = (msgData: MessageModel & Props) => {
     useEffect(() => { setIsMounted(true) }, [])
 
     const togglePlayVoice = () => {
+
         audioUpdater({
             isPlaying: voiceData._id == _id ? !isPlaying : true,
-            voiceData: { ...voiceDataProp, ...msgData } // here the voiceDataProp data get send too
+            voiceData: { ...voiceDataProp, ...msgData }
         })
+
+        // send listenToVoice socket event
+        if (!isFromMe && !voiceDataProp?.playedBy?.includes(myId)) {
+            const socket = useSockets.getState().rooms
+            socket?.emit('listenToVoice', { userID: myId, voiceID: _id, roomID })
+        }
+
     }
 
     const openProfile = () => {
@@ -157,7 +163,10 @@ const Message = (msgData: MessageModel & Props) => {
                         voiceDataProp &&
                         <div onClick={e => e.stopPropagation()} className='flex items-center gap-3 bg-inherit w-full'>
 
-                            <button onClick={togglePlayVoice} className='rounded-full size-10 flex-center bg-white text-darkBlue'>
+                            <button
+                                onClick={togglePlayVoice}
+                                className={`rounded-full size-10 flex-center ${isFromMe ? 'bg-white text-darkBlue' : 'bg-darkBlue text-white'}`}
+                            >
                                 {(voiceData._id === _id && isPlaying) && <FaPause data-aos='zoom-in' className='size-5' />}
                                 {(voiceData._id !== _id || !isPlaying) && <FaPlay data-aos='zoom-in' className='ml-1' />}
                             </button>
