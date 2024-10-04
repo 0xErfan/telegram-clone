@@ -34,8 +34,10 @@ const Message = (msgData: MessageModel & Props) => {
         addReplay,
         edit,
         isPv = false,
-        voiceData: voiceDataProp = null
+        voiceData: voiceDataProp
     } = msgData
+
+    console.log(voiceDataProp?.playedBy)
 
     const messageRef = useRef(null)
     const modalMsgID = useGlobalVariablesStore(state => state.modalData.msgData?._id)
@@ -70,7 +72,7 @@ const Message = (msgData: MessageModel & Props) => {
     const togglePlayVoice = () => {
         audioUpdater({
             isPlaying: voiceData._id == _id ? !isPlaying : true,
-            voiceData: { ...msgData, ...voiceDataProp } // here the voiceDataProp data get send too
+            voiceData: { ...voiceDataProp, ...msgData } // here the voiceDataProp data get send too
         })
     }
 
@@ -163,7 +165,7 @@ const Message = (msgData: MessageModel & Props) => {
                             <div className='flex flex-col gap-1 justify-center'>
 
                                 <div className='*:text-darkGray line-clamp-1 overflow-hidden text-nowrap flex items-center gap-px'>
-                                    -- - - - --- -- 
+                                    -- - - - --- --
                                     {/* {
                                         Array(20).fill(0).map((_, index) => {
                                             const randomHeight = Math.trunc(Math.random() * 12) + 5;
@@ -179,13 +181,17 @@ const Message = (msgData: MessageModel & Props) => {
                                 </div>
 
                                 <div className='flex items-center gap-px text-[12px] mr-auto text-darkGray'>
+
                                     {secondsToFormattedTimeString(voiceDataProp.duration)}
+
                                     {
+                                        voiceDataProp?.playedBy
+                                        &&
                                         !voiceDataProp?.playedBy?.length
-                                            ?
-                                            <div data-aos='fade-in' className='size-2 ml-2 rounded-full bg-white' />
-                                            : null
+                                        &&
+                                        <div className='size-2 ml-2 rounded-full bg-white' />
                                     }
+
                                 </div>
 
                             </div>
