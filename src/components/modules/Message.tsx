@@ -1,7 +1,8 @@
 import { useOnScreen } from '@/hook/useOnScreen'
 import { getTimeFromDate, scrollToMessage, secondsToFormattedTimeString } from '@/utils'
 import { FaPlay } from "react-icons/fa";
-import { FaPause } from "react-icons/fa6";
+import { FaPause, FaArrowDown } from "react-icons/fa6";
+import { IoClose } from "react-icons/io5";
 import useSockets from '@/zustand/useSockets'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
@@ -43,9 +44,10 @@ const Message = (msgData: MessageModel & Props) => {
     const isInViewport = useOnScreen(messageRef)
     const messageTime = getTimeFromDate(createdAt)
     const [isMounted, setIsMounted] = useState(false)
+    const [isDownloading, setIsDownloading] = useState(false)
     const { rooms } = useSockets(state => state)
     const setter = useGlobalVariablesStore(state => state.setter)
-    const { isPlaying, voiceData, setter: audioUpdater } = useAudio(state => state)
+    const { isPlaying, voiceData, setter: audioUpdater, isVoiceDownloaded } = useAudio(state => state)
 
     useEffect(() => {
 
@@ -100,6 +102,10 @@ const Message = (msgData: MessageModel & Props) => {
             }
         }))
     }
+
+    useEffect(() => {
+        setIsDownloading(!isVoiceDownloaded)
+    }, [isVoiceDownloaded])
 
     return (
         <div
@@ -165,10 +171,31 @@ const Message = (msgData: MessageModel & Props) => {
 
                             <button
                                 onClick={togglePlayVoice}
-                                className={`rounded-full size-10 flex-center ${isFromMe ? 'bg-white text-darkBlue' : 'bg-darkBlue text-white'}`}
+                                className={`rounded-full size-10 relative flex-center overflow-hidden ${isFromMe ? 'bg-white text-darkBlue' : 'bg-darkBlue text-white'}`}
                             >
-                                {(voiceData._id === _id && isPlaying) && <FaPause data-aos='zoom-in' className='size-5' />}
-                                {(voiceData._id !== _id || !isPlaying) && <FaPlay data-aos='zoom-in' className='ml-1' />}
+                                {
+                                    <>
+
+                                        {
+                                            !isDownloading
+                                                ?
+                                                <span className='absolute inset-0 flex-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] bg-inherit border-2 border-darkBlue rounded-full h-[90%]'>
+                                                    <span className='w-full mb-2 bg-white absolute inset-0 h-full block animate-spin-slow z-20 scale-150'></span>
+                                                    <IoClose className='size-6 z-30' />
+                                                </span>
+                                                :
+                                                (!isVoiceDownloaded || (!isVoiceDownloaded && voiceData._id === _id))
+                                                    ?
+                                                    <FaArrowDown onClick={() => setIsDownloading(true)} data-aos='zoom-in' className='size-5' />
+                                                    :
+                                                    <>
+                                                        {(voiceData._id === _id && isPlaying) && <FaPause data-aos='zoom-in' className='size-5' />}
+                                                        {(voiceData._id !== _id || !isPlaying) && <FaPlay data-aos='zoom-in' className='ml-1' />}
+                                                    </>
+                                        }
+
+                                    </>
+                                }
                             </button>
 
                             <div className='flex flex-col gap-1 justify-center'>

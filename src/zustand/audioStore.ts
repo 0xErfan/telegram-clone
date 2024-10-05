@@ -7,6 +7,7 @@ interface Updater {
     isPlaying: boolean,
     audioElem: ElementRef<'audio'> | null
     currentTime: number
+    isVoiceDownloaded: boolean
     voiceData: VoiceModel & MessageModel
     setter: any
 }
@@ -16,6 +17,7 @@ const useAudio = create<Updater>(set => ({
     isPlaying: false,
     audioElem: null,
     currentTime: 0,
+    isVoiceDownloaded: false,
     voiceData: {} as VoiceModel & MessageModel,
 
     updater(key: keyof UserModel, value: UserModel[keyof UserModel]) {

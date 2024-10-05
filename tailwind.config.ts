@@ -12,6 +12,13 @@ const config: Config = {
   theme: {
     extend: {
       backgroundImage: {},
+      animation: {'spin-slow': 'spin 3s linear infinite'},
+      keyframes: {
+        spin: {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+      },  
       colors: {
         'chatBg': '#232735',
         'leftBarBg': '#19202E',
