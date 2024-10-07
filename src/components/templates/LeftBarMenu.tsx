@@ -3,6 +3,7 @@ import Main from "./LeftBarMenuPaes/Main";
 import Settings from "./LeftBarMenuPaes/Settings";
 import EditInfo from "./LeftBarMenuPaes/EditInfo";
 import EditUsername from "./LeftBarMenuPaes/EditUsername";
+import VideoChat from "./LeftBarMenuPaes/VideoChat";
 
 interface Props {
     isOpen: boolean
@@ -11,7 +12,7 @@ interface Props {
 
 const LeftBarMenu = ({ closeMenu, isOpen }: Props) => {
 
-    const [route, setRoute] = useState('/')
+    const [route, setRoute] = useState('/video-chat')
     const [activeRoute, setActiveRoute] = useState<ReactNode>(<div></div>)
 
     const getBack = () => {
@@ -59,6 +60,10 @@ const LeftBarMenu = ({ closeMenu, isOpen }: Props) => {
             }
             case '/settings/edit-username': {
                 setActiveRoute(<EditUsername getBack={getBack} />)
+                break;
+            }
+            case '/video-chat': {
+                setActiveRoute(<VideoChat getBack={getBack} />)
                 break;
             }
         }
