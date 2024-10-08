@@ -47,7 +47,11 @@ const Message = (msgData: MessageModel & Props) => {
     const [isDownloading, setIsDownloading] = useState(false)
     const { rooms } = useSockets(state => state)
     const setter = useGlobalVariablesStore(state => state.setter)
-    const { isPlaying, voiceData, setter: audioUpdater, isVoiceDownloaded } = useAudio(state => state)
+    const { isPlaying, voiceData, setter: audioUpdater, isVoiceDownloaded, downloadedAudios } = useAudio(state => state)
+
+    const stopDownloading = () => {
+        audioUpdater({ voiceData: null, isPlaying: false })
+    }
 
     useEffect(() => {
 
@@ -104,7 +108,7 @@ const Message = (msgData: MessageModel & Props) => {
     }
 
     useEffect(() => {
-        setIsDownloading(!isVoiceDownloaded)
+        setIsDownloading(isVoiceDownloaded)
     }, [isVoiceDownloaded])
 
     return (
@@ -175,25 +179,36 @@ const Message = (msgData: MessageModel & Props) => {
                             >
                                 {
                                     <>
-
                                         {
-                                            !isDownloading
+                                            voiceData?._id == _id
                                                 ?
-                                                <span className='absolute inset-0 flex-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] bg-inherit border-2 border-darkBlue rounded-full h-[90%]'>
-                                                    <span className='w-full mb-2 bg-white absolute inset-0 h-full block animate-spin-slow z-20 scale-150'></span>
-                                                    <IoClose className='size-6 z-30' />
-                                                </span>
+                                                (
+                                                    !isDownloading
+                                                        ?
+                                                        <span
+                                                            onClick={stopDownloading}
+                                                            className='absolute inset-0 flex-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] bg-inherit border-2 border-darkBlue rounded-full h-[90%]'
+                                                        >
+                                                            <span className='origin-left size-4 loader mb-2 bg-white absolute left-0 top-0 block rounded-full z-20'></span>
+                                                            <IoClose className='size-6 z-30' />
+                                                        </span>
+                                                        :
+                                                        (!isVoiceDownloaded)
+                                                            ?
+                                                            <FaArrowDown onClick={() => setIsDownloading(true)} data-aos='zoom-in' className='size-5' />
+                                                            :
+                                                            <>
+                                                                {(voiceData._id === _id && isPlaying) && <FaPause data-aos='zoom-in' className='size-5' />}
+                                                                {(voiceData._id !== _id || !isPlaying) && <FaPlay data-aos='zoom-in' className='ml-1' />}
+                                                            </>
+                                                )
                                                 :
-                                                (!isVoiceDownloaded || (!isVoiceDownloaded && voiceData._id === _id))
+                                                downloadedAudios?.includes(_id)
                                                     ?
-                                                    <FaArrowDown onClick={() => setIsDownloading(true)} data-aos='zoom-in' className='size-5' />
+                                                    <FaPlay data-aos='zoom-in' className='ml-1' />
                                                     :
-                                                    <>
-                                                        {(voiceData._id === _id && isPlaying) && <FaPause data-aos='zoom-in' className='size-5' />}
-                                                        {(voiceData._id !== _id || !isPlaying) && <FaPlay data-aos='zoom-in' className='ml-1' />}
-                                                    </>
+                                                    <FaArrowDown onClick={() => setIsDownloading(true)} data-aos='zoom-in' className='size-5' />
                                         }
-
                                     </>
                                 }
                             </button>

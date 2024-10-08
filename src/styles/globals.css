@@ -70,7 +70,25 @@ body {
   @apply bg-lightBlue/15 p-1 rounded-md transition-all duration-200 absolute inset-0 w-full z-[9999999999999]
 }
 
-.customMessageHeight {
+.loader {
+  border: 4px solid transparent;
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s infinite;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+@keyframes spin {
+  
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
   
 }
 

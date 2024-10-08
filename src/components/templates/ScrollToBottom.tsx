@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { FaAngleDown } from "react-icons/fa6";
 
 interface Props {
@@ -6,9 +7,14 @@ interface Props {
 }
 
 const ScrollToBottom = ({ scrollToBottom, count }: Props) => {
+
+    const [notSeenCount, setNotSeenCount] = useState(count)
+
+    useEffect(() => { setNotSeenCount(count) }, [count])
+
     return (
         <section
-            onClick={scrollToBottom}
+            onClick={() => { setNotSeenCount(0); scrollToBottom() }}
             className={`fixed ${count ? 'right-0 opacity-100' : '-right-12 opacity-0'} bottom-20 transition-all cursor-pointer bg-[#2E323F] flex-center z-[99999] rounded-full size-12 pt-1`}
         >
             <FaAngleDown className="size-5" />

@@ -9,6 +9,7 @@ interface Updater {
     currentTime: number
     isVoiceDownloaded: boolean
     voiceData: VoiceModel & MessageModel
+    downloadedAudios: string[]
     setter: any
 }
 
@@ -19,6 +20,7 @@ const useAudio = create<Updater>(set => ({
     currentTime: 0,
     isVoiceDownloaded: false,
     voiceData: {} as VoiceModel & MessageModel,
+    downloadedAudios: [],
 
     updater(key: keyof UserModel, value: UserModel[keyof UserModel]) {
         set({ [key]: value })

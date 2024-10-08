@@ -4,16 +4,20 @@ import { ElementRef, useEffect, useRef } from "react"
 
 const AudioManager = () => {
 
-    const { isPlaying, setter, voiceData } = useAudio(state => state)
+    const { isPlaying, setter, voiceData, downloadedAudios } = useAudio(state => state)
 
     const audioRef = useRef<ElementRef<'audio'> | null>(null)
 
     useEffect(() => {
+
+        !downloadedAudios.includes(voiceData._id) && audioRef?.current?.pause()
+
         if (voiceData._id && voiceData.src) {
-            setter({ audioElem: audioRef.current })
+            setter({ audioElem: audioRef.current, isPlaying: true })
             audioRef.current?.play()
         }
-    }, [voiceData._id, voiceData.src])
+
+    }, [voiceData._id, voiceData.src, downloadedAudios])
 
     useEffect(() => {
         voiceData?.src
@@ -29,8 +33,10 @@ const AudioManager = () => {
             audioRef.current.onended = () => setter({ isPlaying: false });
 
             audioRef.current.oncanplaythrough = () => {
-                setter({ isVoiceDownloaded: true, isPlaying: false })
-                audioRef.current?.pause()
+                setter({
+                    isVoiceDownloaded: true,
+                    downloadedAudios: downloadedAudios.includes(voiceData._id) ? downloadedAudios : [...downloadedAudios, voiceData._id]
+                })
             }
 
         }
@@ -40,6 +46,7 @@ const AudioManager = () => {
         voiceData
             ?
             <audio
+                autoSave="true"
                 key={voiceData._id}
                 ref={audioRef}
                 className="hidden"
