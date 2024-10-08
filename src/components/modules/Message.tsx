@@ -5,7 +5,7 @@ import { FaPause, FaArrowDown } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
 import useSockets from '@/zustand/useSockets'
 import Image from 'next/image'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { MessageModel, VoiceModel } from '@/@types/data.t';
 import useGlobalVariablesStore from '@/zustand/globalVariablesStore';
 import type { Props as globalVariablesStoreType } from '@/zustand/globalVariablesStore';
@@ -47,31 +47,30 @@ const Message = (msgData: MessageModel & Props) => {
     const [isDownloading, setIsDownloading] = useState(false)
     const { rooms } = useSockets(state => state)
     const setter = useGlobalVariablesStore(state => state.setter)
-    const { isPlaying, voiceData, setter: audioUpdater, isVoiceDownloaded, downloadedAudios } = useAudio(state => state)
+    const { isPlaying, voiceData, setter: audioUpdater, isVoiceDownloaded, downloadedAudios, audioElem } = useAudio(state => state)
+
+    const songWaves = useMemo(() => {
+
+        const waves = Array(20).fill(0).map((_, index) => {
+
+            const randomHeight = Math.trunc(Math.random() * 12) + 5;
+
+            return (
+                <div
+                    key={index}
+                    className={`w-[3px] rounded-full bg-darkGray z-40`}
+                    style={{ height: `${randomHeight}px` }}
+                />
+            );
+        })
+
+        return waves;
+
+    }, [])
 
     const stopDownloading = () => {
         audioUpdater({ voiceData: null, isPlaying: false })
     }
-
-    useEffect(() => {
-
-        if (sender?._id) {
-
-            const isAlreadySeenByThisUser = isFromMe ? true : seen?.includes(myId);
-
-            if (!isAlreadySeenByThisUser && isInViewport) {
-                rooms?.emit('seenMsg', {
-                    seenBy: myId,
-                    sender,
-                    msgID: _id,
-                    roomID
-                });
-            }
-        }
-
-    }, [isInViewport, isFromMe]);
-
-    useEffect(() => { setIsMounted(true) }, [])
 
     const togglePlayVoice = () => {
 
@@ -106,6 +105,42 @@ const Message = (msgData: MessageModel & Props) => {
             }
         }))
     }
+
+    useEffect(() => {
+
+        const updateVoiceWave = () => {
+            const totalTime = audioElem?.duration
+            const currentTime = audioElem?.currentTime
+            const currentTimeInPercentage = Math.trunc((currentTime! * 100) / totalTime!)
+        }
+
+        const interval: NodeJS.Timeout = setInterval(() => {
+            if (!isPlaying) return clearInterval(interval)
+            updateVoiceWave()
+        }, 300)
+
+        return () => clearInterval(interval)
+    }, [audioElem?.currentTime, isPlaying])
+
+    useEffect(() => { setIsMounted(true) }, [])
+
+    useEffect(() => {
+
+        if (sender?._id) {
+
+            const isAlreadySeenByThisUser = isFromMe ? true : seen?.includes(myId);
+
+            if (!isAlreadySeenByThisUser && isInViewport) {
+                rooms?.emit('seenMsg', {
+                    seenBy: myId,
+                    sender,
+                    msgID: _id,
+                    roomID
+                });
+            }
+        }
+
+    }, [isInViewport, isFromMe]);
 
     useEffect(() => {
         setIsDownloading(isVoiceDownloaded)
@@ -171,7 +206,10 @@ const Message = (msgData: MessageModel & Props) => {
                     }
                     {
                         voiceDataProp &&
-                        <div onClick={e => e.stopPropagation()} className='flex items-center gap-3 bg-inherit w-full'>
+                        <div
+                            onClick={e => e.stopPropagation()}
+                            className='flex items-center gap-3 bg-inherit w-full mt-2'
+                        >
 
                             <button
                                 onClick={togglePlayVoice}
@@ -215,20 +253,8 @@ const Message = (msgData: MessageModel & Props) => {
 
                             <div className='flex flex-col gap-1 justify-center'>
 
-                                <div className='*:text-darkGray line-clamp-1 overflow-hidden text-nowrap flex items-center gap-px'>
-                                    -- - - - --- --
-                                    {/* {
-                                        Array(20).fill(0).map((_, index) => {
-                                            const randomHeight = Math.trunc(Math.random() * 12) + 5;
-                                            return (
-                                                <div
-                                                    key={index}
-                                                    className={`w-[3px] rounded-full bg-darkGray`}
-                                                    style={{ height: `${randomHeight}px` }} // Use inline styles for dynamic height  
-                                                />
-                                            );
-                                        })
-                                    } */}
+                                <div className='*:text-darkGray line-clamp-1 overflow-hidden text-nowrap flex items-center gap-[2px] relative'>
+                                    {songWaves}
                                 </div>
 
                                 <div className='flex items-center gap-px text-[12px] mr-auto text-darkGray'>
