@@ -10,14 +10,14 @@ const AudioManager = () => {
 
     useEffect(() => {
 
-        !downloadedAudios.includes(voiceData._id) && audioRef?.current?.pause()
+        !downloadedAudios.includes(voiceData?._id) && audioRef?.current?.pause()
 
-        if (voiceData._id && voiceData.src) {
+        if (voiceData?._id && voiceData?.src) {
             setter({ audioElem: audioRef.current, isPlaying: true })
             audioRef.current?.play()
         }
 
-    }, [voiceData._id, voiceData.src, downloadedAudios])
+    }, [voiceData?._id, voiceData?.src, downloadedAudios?.length])
 
     useEffect(() => {
         voiceData?.src
