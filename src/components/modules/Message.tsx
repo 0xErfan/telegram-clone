@@ -74,8 +74,10 @@ const Message = (msgData: MessageModel & Props) => {
 
     const togglePlayVoice = () => {
 
+        if (isDownloading) return audioUpdater({ isPlaying: false, voiceData: null })
+        console.log({ ...voiceDataProp, ...msgData })
         audioUpdater({
-            isPlaying: voiceData._id == _id ? !isPlaying : true,
+            isPlaying: voiceData?._id == _id ? !isPlaying : true,
             voiceData: { ...voiceDataProp, ...msgData }
         })
 
@@ -143,8 +145,8 @@ const Message = (msgData: MessageModel & Props) => {
     }, [isInViewport, isFromMe]);
 
     useEffect(() => {
-        setIsDownloading(isVoiceDownloaded)
-    }, [isVoiceDownloaded])
+        if (voiceData?._id === _id) setIsDownloading(!isVoiceDownloaded)
+    }, [isVoiceDownloaded, voiceData?._id, _id])
 
     return (
         <div
@@ -221,7 +223,7 @@ const Message = (msgData: MessageModel & Props) => {
                                             voiceData?._id == _id
                                                 ?
                                                 (
-                                                    !isDownloading
+                                                    isDownloading
                                                         ?
                                                         <span
                                                             onClick={stopDownloading}
