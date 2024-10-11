@@ -72,13 +72,22 @@ const Message = (msgData: MessageModel & Props) => {
 
     const togglePlayVoice = () => {
 
-        const isVoiceExist = downloadedAudios.find(voice => voice._id === _id)
+        const savedVoiceData = downloadedAudios.find(voice => voice._id === _id)
 
-        if (!isVoiceExist) {
+        if (!savedVoiceData) {
             audioUpdater({
                 isPlaying: false,
                 voiceData: { ...voiceDataProp, ...msgData },
                 downloadedAudios: [...downloadedAudios, { _id, isDownloading: true, downloaded: false }]
+            })
+            return
+        }
+
+        if (savedVoiceData.isDownloading) {
+            audioUpdater({
+                isPlaying: false,
+                voiceData: null,
+                downloadedAudios: downloadedAudios.filter(audio => audio._id !== _id)
             })
             return
         }
@@ -92,6 +101,16 @@ const Message = (msgData: MessageModel & Props) => {
         if (!isFromMe && !voiceDataProp?.playedBy?.includes(myId)) {
             const socket = useSockets.getState().rooms
             socket?.emit('listenToVoice', { userID: myId, voiceID: _id, roomID })
+        }
+
+        // Reset current time for new audio element
+        if (audioElem) {
+            audioElem.currentTime = 0;
+            if (voiceData?._id === _id) {
+                audioElem.pause();
+            } else {
+                audioElem.play();
+            }
         }
 
     }
@@ -132,7 +151,8 @@ const Message = (msgData: MessageModel & Props) => {
         }, 300)
 
         return () => clearInterval(interval)
-    }, [audioElem?.currentTime, isPlaying])
+
+    }, [audioElem?.currentTime])
 
     useEffect(() => {
 
@@ -190,7 +210,7 @@ const Message = (msgData: MessageModel & Props) => {
             <div
                 onClick={updateModalMsgData}
                 onContextMenu={e => { e.preventDefault(), updateModalMsgData() }}
-                className={`${isFromMe ? 'bg-darkBlue rounded-l-md rounded-tr-xl text-right pl-1 pr-3' : 'bg-white/10 rounded-r-md rounded-tl-xl text-left pr-1 pl-3'} relative w-fit max-w-[80%] min-w-24 xl:max-w-[60%]`}
+                className={`${isFromMe ? 'bg-darkBlue rounded-l-md rounded-tr-xl text-right pl-1 pr-3' : `bg-white/10 rounded-r-md rounded-tl-xl text-left pr-1 ${isPv ? 'pl-1' : 'pl-3'}`} relative w-fit max-w-[80%] min-w-24 xl:max-w-[60%]`}
             >
 
                 {

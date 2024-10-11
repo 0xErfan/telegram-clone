@@ -58,7 +58,13 @@ const AudioManager = () => {
 
                 const addNewVoiceToDownloadedList = () => {
 
-                    audio.pause()
+                    const downloadedAudios = useAudio.getState().downloadedAudios;
+
+                    const shouldVoicePlay = downloadedAudios.some(audio => {
+                        if (audio._id === voiceData._id && audio.downloaded) return true;
+                    })
+
+                    audio[shouldVoicePlay ? 'play' : 'pause']()
 
                     setter({
                         downloadedAudios: downloadedAudios.map(audio => {
@@ -68,7 +74,7 @@ const AudioManager = () => {
                             }
                             return audio;
                         }),
-                        isPlaying: false
+                        isPlaying: shouldVoicePlay
                     })
                 }
 
