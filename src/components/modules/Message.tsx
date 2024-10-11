@@ -103,16 +103,6 @@ const Message = (msgData: MessageModel & Props) => {
             socket?.emit('listenToVoice', { userID: myId, voiceID: _id, roomID })
         }
 
-        // Reset current time for new audio element
-        if (audioElem) {
-            audioElem.currentTime = 0;
-            if (voiceData?._id === _id) {
-                audioElem.pause();
-            } else {
-                audioElem.play();
-            }
-        }
-
     }
 
     const openProfile = () => {
