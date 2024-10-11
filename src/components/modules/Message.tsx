@@ -84,7 +84,7 @@ const Message = (msgData: MessageModel & Props) => {
         }
 
         audioUpdater({
-            isPlaying: voiceData._id == _id ? !isPlaying : true,
+            isPlaying: voiceData?._id == _id ? !isPlaying : true,
             voiceData: { ...voiceDataProp, ...msgData }
         })
 

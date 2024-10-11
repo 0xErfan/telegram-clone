@@ -27,26 +27,31 @@ const VoiceMessageRecorder = ({ replayData, closeEdit, closeReplay }: Props) => 
 
         if (!('mediaDevices' in navigator)) return showToast(false, 'your shitty browser is not supporting voice recording!')
 
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorderRef.current = new MediaRecorder(stream);
+        try {
 
-        //@ts-expect-error
-        mediaRecorderRef.current.ondataavailable = (event: BlobEvent) => audioChunksRef.current.push(event.data)
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorderRef.current = new MediaRecorder(stream);
 
-        mediaRecorderRef.current.onstop = () => {
+            //@ts-expect-error
+            mediaRecorderRef.current.ondataavailable = (event: BlobEvent) => audioChunksRef.current.push(event.data)
 
-            const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/ogg' });
-            const url = URL.createObjectURL(audioBlob);
-            const file = new File([audioBlob], `voice-message-${Date.now()}.ogg`, { type: 'audio/ogg' });
+            mediaRecorderRef.current.onstop = () => {
 
-            setAudioURL(url);
-            uploadVoice(file)
+                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/ogg' });
+                const url = URL.createObjectURL(audioBlob);
+                const file = new File([audioBlob], `voice-message-${Date.now()}.ogg`, { type: 'audio/ogg' });
 
-            audioChunksRef.current = [];
-        };
+                setAudioURL(url);
+                uploadVoice(file)
 
-        mediaRecorderRef.current.start();
-        setRecording(true);
+                audioChunksRef.current = [];
+            };
+
+            mediaRecorderRef.current.start();
+            setRecording(true);
+
+        } catch (error) { showToast(false, 'Failed to find your device voice btw!') }
+
     };
 
     const stopRecording = () => {
