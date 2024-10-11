@@ -44,10 +44,12 @@ const Message = (msgData: MessageModel & Props) => {
     const isInViewport = useOnScreen(messageRef)
     const messageTime = getTimeFromDate(createdAt)
     const [isMounted, setIsMounted] = useState(false)
-    const [isDownloading, setIsDownloading] = useState(false)
     const { rooms } = useSockets(state => state)
     const setter = useGlobalVariablesStore(state => state.setter)
-    const { isPlaying, voiceData, setter: audioUpdater, isVoiceDownloaded, downloadedAudios, audioElem } = useAudio(state => state)
+
+    // voice state variables
+    const { isPlaying, voiceData, setter: audioUpdater, downloadedAudios, audioElem } = useAudio(state => state)
+    const [voiceCurrentTime, setVoiceCurrentTime] = useState(0)
 
     const songWaves = useMemo(() => {
 
@@ -68,11 +70,18 @@ const Message = (msgData: MessageModel & Props) => {
 
     }, [])
 
-    const stopDownloading = () => {
-        audioUpdater({ voiceData: null, isPlaying: false })
-    }
-
     const togglePlayVoice = () => {
+
+        const isVoiceExist = downloadedAudios.find(voice => voice._id === _id)
+
+        if (!isVoiceExist) {
+            audioUpdater({
+                isPlaying: false,
+                voiceData: { ...voiceDataProp, ...msgData },
+                downloadedAudios: [...downloadedAudios, { _id, isDownloading: true, downloaded: false }]
+            })
+            return
+        }
 
         audioUpdater({
             isPlaying: voiceData._id == _id ? !isPlaying : true,
@@ -109,9 +118,12 @@ const Message = (msgData: MessageModel & Props) => {
     useEffect(() => {
 
         const updateVoiceWave = () => {
+
             const totalTime = audioElem?.duration
             const currentTime = audioElem?.currentTime
             const currentTimeInPercentage = Math.trunc((currentTime! * 100) / totalTime!)
+
+            setVoiceCurrentTime(Math.trunc(currentTime!))
         }
 
         const interval: NodeJS.Timeout = setInterval(() => {
@@ -121,8 +133,6 @@ const Message = (msgData: MessageModel & Props) => {
 
         return () => clearInterval(interval)
     }, [audioElem?.currentTime, isPlaying])
-
-    useEffect(() => { setIsMounted(true) }, [])
 
     useEffect(() => {
 
@@ -142,9 +152,7 @@ const Message = (msgData: MessageModel & Props) => {
 
     }, [isInViewport, isFromMe]);
 
-    useEffect(() => {
-        setIsDownloading(isVoiceDownloaded)
-    }, [isVoiceDownloaded])
+    useEffect(() => { setIsMounted(true) }, [])
 
     return (
         <div
@@ -216,36 +224,36 @@ const Message = (msgData: MessageModel & Props) => {
                                 className={`rounded-full size-10 relative flex-center overflow-hidden ${isFromMe ? 'bg-white text-darkBlue' : 'bg-darkBlue text-white'}`}
                             >
                                 {
+                                    downloadedAudios &&
                                     <>
                                         {
                                             voiceData?._id == _id
                                                 ?
                                                 (
-                                                    !isDownloading
+                                                    downloadedAudios?.some(audio => audio._id === _id && audio.isDownloading)
                                                         ?
-                                                        <span
-                                                            onClick={stopDownloading}
-                                                            className='absolute inset-0 flex-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] bg-inherit border-2 border-darkBlue rounded-full h-[90%]'
-                                                        >
+                                                        <span className='absolute inset-0 flex-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] bg-inherit border-2 border-darkBlue rounded-full h-[90%]'>
                                                             <span className='origin-left size-4 loader mb-2 bg-white absolute left-0 top-0 block rounded-full z-20'></span>
                                                             <IoClose className='size-6 z-30' />
                                                         </span>
                                                         :
-                                                        (!isVoiceDownloaded)
+                                                        downloadedAudios?.some(audio => audio._id === _id && audio.downloaded)
+
                                                             ?
-                                                            <FaArrowDown onClick={() => setIsDownloading(true)} data-aos='zoom-in' className='size-5' />
-                                                            :
                                                             <>
                                                                 {(voiceData._id === _id && isPlaying) && <FaPause data-aos='zoom-in' className='size-5' />}
                                                                 {(voiceData._id !== _id || !isPlaying) && <FaPlay data-aos='zoom-in' className='ml-1' />}
                                                             </>
+                                                            :
+                                                            <FaArrowDown data-aos='zoom-in' className='size-5' />
                                                 )
                                                 :
-                                                downloadedAudios?.includes(_id)
+                                                downloadedAudios?.some(audio => audio._id === _id && audio.downloaded)
+
                                                     ?
                                                     <FaPlay data-aos='zoom-in' className='ml-1' />
                                                     :
-                                                    <FaArrowDown onClick={() => setIsDownloading(true)} data-aos='zoom-in' className='size-5' />
+                                                    <FaArrowDown data-aos='zoom-in' className='size-5' />
                                         }
                                     </>
                                 }
@@ -259,7 +267,13 @@ const Message = (msgData: MessageModel & Props) => {
 
                                 <div className='flex items-center gap-px text-[12px] mr-auto text-darkGray'>
 
-                                    {secondsToFormattedTimeString(voiceDataProp.duration)}
+                                    {
+                                        (voiceData?._id === _id && isPlaying)
+                                            ?
+                                            secondsToFormattedTimeString(voiceCurrentTime)
+                                            :
+                                            secondsToFormattedTimeString(voiceDataProp.duration)
+                                    }
 
                                     {
                                         voiceDataProp?.playedBy

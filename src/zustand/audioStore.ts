@@ -7,9 +7,8 @@ interface Updater {
     isPlaying: boolean,
     audioElem: ElementRef<'audio'> | null
     currentTime: number
-    isVoiceDownloaded: boolean
     voiceData: VoiceModel & MessageModel
-    downloadedAudios: string[]
+    downloadedAudios: { _id: string, downloaded: boolean, isDownloading: boolean }[]
     setter: any
 }
 

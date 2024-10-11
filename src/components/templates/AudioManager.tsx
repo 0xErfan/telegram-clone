@@ -1,45 +1,84 @@
 'use client'
+import { showToast } from "@/utils"
 import useAudio from "@/zustand/audioStore"
 import { ElementRef, useEffect, useRef } from "react"
 
 const AudioManager = () => {
 
     const { isPlaying, setter, voiceData, downloadedAudios } = useAudio(state => state)
-
     const audioRef = useRef<ElementRef<'audio'> | null>(null)
 
+    const isVoiceFileReadyToPlay = (audioList: typeof downloadedAudios) => {
+        return audioList.some(audio => {
+            return (audio._id == voiceData._id && !audio.isDownloading && audio.downloaded)
+        })
+    }
+
     useEffect(() => {
-
-        !downloadedAudios.includes(voiceData._id) && audioRef?.current?.pause()
-
-        if (voiceData._id && voiceData.src) {
+        if (
+            isPlaying
+            &&
+            voiceData?._id
+            &&
+            voiceData?.src
+            &&
+            isVoiceFileReadyToPlay(downloadedAudios)
+        ) {
             setter({ audioElem: audioRef.current, isPlaying: true })
             audioRef.current?.play()
         }
-
-    }, [voiceData._id, voiceData.src, downloadedAudios])
-
-    useEffect(() => {
-        voiceData?.src
-            &&
-            audioRef?.current
-            &&
-            audioRef.current[isPlaying ? 'play' : 'pause']()
-    }, [isPlaying])
+    }, [isPlaying, downloadedAudios?.length])
 
     useEffect(() => {
+
+        let timeout: NodeJS.Timeout;
+
         if (audioRef?.current) {
 
-            audioRef.current.onended = () => setter({ isPlaying: false });
+            const audio = audioRef.current
 
-            audioRef.current.oncanplaythrough = () => {
+            audio.onended = () => {
+                setter({ isPlaying: false })
+                clearTimeout(timeout)
+            }
+
+            audio.onerror = () => {
+
+                showToast(false, 'Failed to download, check your shitty internet!', 2500)
+
                 setter({
-                    isVoiceDownloaded: true,
-                    downloadedAudios: downloadedAudios.includes(voiceData._id) ? downloadedAudios : [...downloadedAudios, voiceData._id]
+                    downloadedAudios: downloadedAudios.filter(audio => audio._id !== voiceData?._id),
+                    isPlaying: false,
+                    voiceData: null
                 })
+
+            }
+
+            audio.oncanplaythrough = () => {
+
+                const addNewVoiceToDownloadedList = () => {
+
+                    audio.pause()
+
+                    setter({
+                        downloadedAudios: downloadedAudios.map(audio => {
+                            if (audio._id === voiceData._id) {
+                                audio.downloaded = true
+                                audio.isDownloading = false
+                            }
+                            return audio;
+                        }),
+                        isPlaying: false
+                    })
+                }
+
+                timeout = setTimeout(addNewVoiceToDownloadedList, 300);
             }
 
         }
+
+        return () => clearTimeout(timeout)
+
     }, [voiceData?._id])
 
     return (
