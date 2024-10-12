@@ -252,8 +252,8 @@ const Message = (msgData: MessageModel & Props) => {
                                                 (
                                                     downloadedAudios?.some(audio => audio._id === _id && audio.isDownloading)
                                                         ?
-                                                        <span className='absolute inset-0 flex-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] bg-inherit border-2 border-darkBlue rounded-full h-[90%]'>
-                                                            <span className='origin-left size-4 loader mb-2 bg-white absolute left-0 top-0 block rounded-full z-20'></span>
+                                                        <span className={`absolute inset-0 flex-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] bg-inherit border-2 rounded-full ${isFromMe ? 'border-darkBlue' : 'border-none'} h-[90%]`}>
+                                                            <span className={`${isFromMe ? 'origin-left bg-white' : 'bg-darkBlue'} size-4 loader mb-2 absolute left-0 top-0 block rounded-full z-20`}></span>
                                                             <IoClose className='size-6 z-30' />
                                                         </span>
                                                         :

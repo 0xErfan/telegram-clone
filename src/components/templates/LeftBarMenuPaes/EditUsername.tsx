@@ -16,6 +16,7 @@ const EditUsername = ({ getBack }: { getBack: () => void }) => {
     const [isLoading, setIsLoading] = useState(false)
     const [isUsernameValid, setIsUsernameValid] = useState(true)
     const [isValidationLoading, setIsValidationLoading] = useState(false)
+    const [errorMsg, setErrorMsg] = useState(null)
 
     const updateUsername = () => {
 
@@ -50,7 +51,9 @@ const EditUsername = ({ getBack }: { getBack: () => void }) => {
             try {
                 const { data } = await axios.post('/api/users/updateUsername', { query: updatedUsername })
                 setIsUsernameValid(data?.isValid)
-            } catch (error) { setIsUsernameValid(false) }
+                setErrorMsg(data?.message)
+                //@ts-expect-error
+            } catch (error) { setIsUsernameValid(false), setErrorMsg(error?.response?.data?.message) }
             finally { setIsValidationLoading(false) }
 
         }
@@ -134,7 +137,7 @@ const EditUsername = ({ getBack }: { getBack: () => void }) => {
                                 ?
                                 `${username} is available`
                                 :
-                                'Usernames must be between 3 & 20 Characters length b.'
+                                errorMsg ?? 'Usernames must be between 3 & 20 Characters length b.'
                         }
 
                     </p>

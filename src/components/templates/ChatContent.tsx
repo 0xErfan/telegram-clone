@@ -255,7 +255,7 @@ const ChatContent = () => {
     return (
         <section data-aos="fade-right" className="relative">
 
-            <div className="flex items-center justify-between sticky top-0 border-b border-white/5 bg-chatBg z-50 py-3 xl:py-0 xl:h-[97px]">
+            <div className="flex items-center justify-between sticky top-0 border-b border-white/5 bg-chatBg z-50 py-2 md:py-3 xl:py-0 xl:h-[97px]">
 
                 <div className='flex items-center gap-5'>
 
@@ -275,7 +275,7 @@ const ChatContent = () => {
                                     src={avatar}
                                     width={55}
                                     height={55}
-                                    className="size-[55px] object-center object-cover rounded-full"
+                                    className="size-[45px] mt-auto md:size-[55px] object-center object-cover rounded-full"
                                     alt="avatar"
                                 />
                                 :
@@ -313,7 +313,7 @@ const ChatContent = () => {
 
                 </div>
 
-                <div className="flex items-center gap-2 *:cursor-pointer ch:bg-white/[7%] ch:p-[10px] justify-end">
+                <div className="flex items-center gap-2 *:cursor-pointer ch:p-[10px] justify-end">
                     <div className="size-[44px] ch:size-full rounded-full flex-center">
                         <PiDotsThreeVerticalBold onClick={deleteRoom} />
                     </div>

@@ -38,7 +38,7 @@ const AudioManager = () => {
             const audio = audioRef.current
 
             audio.onended = () => {
-                setter({ isPlaying: false })
+                setter({ isPlaying: false, voiceData: null })
                 clearTimeout(timeout)
             }
 

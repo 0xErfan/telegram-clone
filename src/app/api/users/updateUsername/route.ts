@@ -17,7 +17,7 @@ export const POST = async (req: Request) => {
 
         const isUsernameExist = await UserModel.findOne({ username: query })
 
-        return Response.json({ isValid: !isUsernameExist }, { status: isUsernameExist ? 403 : 200 })
+        return Response.json({ isValid: !isUsernameExist, message: isUsernameExist ? 'This username already taken btw.' : null }, { status: isUsernameExist ? 403 : 200 })
 
     } catch (err) {
         console.log(err)
