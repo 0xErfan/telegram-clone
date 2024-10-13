@@ -52,6 +52,9 @@ const RoomDetails = () => {
     useEffect(() => {
         (
             async () => {
+
+                if (!isRoomDetailsShown) return
+
                 if (type?.length && type !== 'private' && roomID) {
 
                     setIsLoading(true)
@@ -67,7 +70,7 @@ const RoomDetails = () => {
                 }
             }
         )()
-    }, [roomID])
+    }, [roomID, isRoomDetailsShown])
 
     useEffect(() => {
         setter({ mockSelectedRoomData: null })
