@@ -1,5 +1,5 @@
 'use client'
-import { IoMdArrowRoundBack } from "react-icons/io";
+import { IoMdArrowRoundBack, IoIosArrowDown } from "react-icons/io";
 import Message from "../modules/Message"
 import Image from "next/image";
 import { PiDotsThreeVerticalBold } from "react-icons/pi";
@@ -11,10 +11,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import ScrollToBottom from "./ScrollToBottom";
 import JoinToRoom from "./JoinToRoom";
 import { MessageModel } from "@/@types/data.t";
+import useScrollChange from "@/hook/useScrollChange";
 
 const ChatContent = () => {
 
     let lastMsgRef = useRef<HTMLDivElement>(null)
+    let messageContainerRef = useRef<HTMLDivElement>(null)
+
     const { _id: myID, name: myName, setter: userDataUpdater, rooms: userRooms } = useUserStore(state => state)
     const { setter } = useGlobalVariablesStore(state => state)
     const { rooms } = useSockets(state => state)
@@ -25,6 +28,7 @@ const ChatContent = () => {
     const [forceRender, setForceRender] = useState(false)
     const [replayData, setReplayData] = useState<string | null>(null)
     const [editData, setEditData] = useState<MessageModel | null>(null)
+    const { canShow } = useScrollChange(messageContainerRef?.current!)
 
     const {
         _id: roomID,
@@ -73,6 +77,15 @@ const ChatContent = () => {
             const isFromMe = messages?.length && messages[messages.length - 1]?.sender?._id === myID;
             if (isFromMe || isLastMsgInView) lastMsgRef.current?.scrollIntoView({ behavior: 'smooth' })
         }
+    }
+
+    const deleteRoom = () => {
+        rooms?.emit('deleteRoom', roomID)
+    }
+
+    const checkIsLastMsgInView = (e: any) => {
+        const isInView = e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight <= 0
+        setIsLastMsgInView(isInView)
     }
 
     useEffect(() => {
@@ -243,15 +256,6 @@ const ChatContent = () => {
         }
     }, [roomID])
 
-    const deleteRoom = () => {
-        rooms?.emit('deleteRoom', roomID)
-    }
-
-    const checkIsLastMsgInView = (e: any) => {
-        const isInView = e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight <= 0
-        setIsLastMsgInView(isInView)
-    }
-
     return (
         <section data-aos="fade-right" className="relative">
 
@@ -323,6 +327,7 @@ const ChatContent = () => {
 
             <div
                 onScroll={checkIsLastMsgInView}
+                ref={messageContainerRef}
                 className="flex flex-col gap-2 relative fillScreen mb-1 md:pb-2 overflow-x-hidden overflow-y-auto noScrollWidth"
             >
 
@@ -356,6 +361,13 @@ const ChatContent = () => {
                     count={notSeenMessages}
                     scrollToBottom={() => lastMsgRef.current?.scrollIntoView()}
                 />
+
+                <div
+                    onClick={() => messageContainerRef?.current?.scrollTo({ top: messageContainerRef.current.scrollHeight, behavior: 'smooth' })}
+                    className={`${canShow ? 'right-0' : '-right-32'} transition-all duration-300 size-12 fixed bottom-16 bg-[#00000094] backdrop-contrast-0 right-0 z-[99999999] cursor-pointer rounded-full flex items-center justify-center`}
+                >
+                    <IoIosArrowDown className="size-6 text-white" />
+                </div>
 
             </div>
 

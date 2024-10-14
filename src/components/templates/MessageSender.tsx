@@ -174,7 +174,7 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
                 onEmojiClick={selectEmoji}
             />
 
-            <div className='flex items-center relative w-full md:px-2 px-6 ch:w-full md:gap-1 gap-3 bg-white/[5.12%] h-[53px] rounded'>
+            <div className='flex items-center relative w-full md:px-2 px-6 ch:w-full md:gap-1 gap-3 bg-white/[5.12%] h-[53px] rounded mt-2'>
 
                 {
                     (selectedRoom?.type == 'chanel' && selectedRoom.admins.includes(myData._id)) || selectedRoom?.type !== 'chanel'
