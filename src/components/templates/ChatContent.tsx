@@ -364,7 +364,7 @@ const ChatContent = () => {
 
                 <div
                     onClick={() => messageContainerRef?.current?.scrollTo({ top: messageContainerRef.current.scrollHeight, behavior: 'smooth' })}
-                    className={`${canShow ? 'right-0' : '-right-32'} transition-all duration-300 size-12 fixed bottom-16 bg-[#00000094] backdrop-contrast-0 right-0 z-[99999999] cursor-pointer rounded-full flex items-center justify-center`}
+                    className={`${(canShow && !isLastMsgInView) ? 'right-0' : '-right-32'} transition-all duration-300 size-12 fixed bottom-16 md:bottom-20 bg-[#00000094] backdrop-contrast-0 z-[99999999] cursor-pointer rounded-full flex items-center justify-center`}
                 >
                     <IoIosArrowDown className="size-6 text-white" />
                 </div>

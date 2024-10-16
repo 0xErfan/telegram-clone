@@ -63,7 +63,7 @@ const Main = ({ closeMenu, updateRoute, isOpen }: Props) => {
     }
 
     return (
-        <nav className={`fixed ${isOpen ? 'left-0' : '-left-[400px]'} max-h-screen h-full overflow-auto duration-200 transition-all inset-y-0 z-[999999999999] bg-chatBg text-white w-[80%] max-w-[350px]`}>
+        <nav className={`fixed ${isOpen ? 'left-0' : '-left-[400px]'} max-h-screen h-full overflow-auto duration-200 transition-all inset-y-0 z-[999999999999] bg-chatBg text-white w-[80%] max-w-[300px] md:max-w-[230px] lg:max-w-[300px]`}>
 
             <div className="flex flex-col pt-4 px-4 gap-3">
                 {

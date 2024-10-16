@@ -104,7 +104,9 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
         const msgText = e.target.value
         draftMsg = msgText
         setText(msgText)
-
+        if (inputRef.current) {
+            inputRef.current.height = inputRef.current?.scrollHeight
+        }
         handleIsTyping()
     }
 
@@ -137,9 +139,9 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
                     {
                         editData
                             ?
-                            <MdModeEditOutline className="size-6 text-lightBlue" />
+                            <MdModeEditOutline className="size-6 shrink-0 text-lightBlue" />
                             :
-                            <BsFillReplyFill className="size-6 text-lightBlue" />
+                            <BsFillReplyFill className="size-6 shrink-0 text-lightBlue" />
 
                     }
 
@@ -196,22 +198,23 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
                                 placeholder="Message"
                             />
 
-                            {!editData && <MdAttachFile className="shrink-0 basis-[5%] size-6 cursor-pointer" />}
+                            {!editData && !text?.trim().length && <MdAttachFile data-aos='zoom-in' className="shrink-0 basis-[5%] size-6 cursor-pointer" />}
 
                             {
                                 editData?._id ?
                                     <div
+                                        data-aos='zoom-in'
                                         className="basis-[10%] xl:basis-[3%] md:basis-[5%] size-8 ch:size-full p-1 cursor-pointer text-white bg-lightBlue rounded-full flex-center"
                                         onClick={editMessage}
                                     >
-                                        <MdOutlineDone className="shrink-0" />
+                                        <MdOutlineDone data-aos='zoom-in' className="shrink-0" />
                                     </div>
                                     :
                                     <>
                                         {
                                             text.trim().length
                                                 ?
-                                                <IoIosSend onClick={sendMessage} className="shrink-0 basis-[7%] size-6 cursor-pointer text-lightBlue rotate-45" />
+                                                <IoIosSend data-aos='zoom-in' onClick={sendMessage} className="shrink-0 basis-[7%] size-6 cursor-pointer text-lightBlue ml-10 mb-3 *:rotate-45" />
                                                 :
                                                 <VoiceMessageRecorder
                                                     replayData={replayData as any}
@@ -225,7 +228,7 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
                         :
                         <div
                             onClick={() => setIsMuted(prev => !prev)}
-                            className="absolute size-full cursor-pointer pt-3 text-center">{isMuted ? 'Unmute' : 'Mute'}
+                            className="absolute size-full cursor-pointer pt-3 mb-[14px] text-center">{isMuted ? 'Unmute' : 'Mute'}
                         </div>
                 }
 

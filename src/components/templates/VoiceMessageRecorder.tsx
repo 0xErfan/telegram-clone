@@ -164,6 +164,7 @@ const VoiceMessageRecorder = ({ replayData, closeEdit, closeReplay }: Props) => 
         <div className="shrink-0 basis-[3%] size-6 z-10">
 
             <PiMicrophoneLight
+            data-aos='zoom-in'
                 onClick={startRecording}
                 className="shrink-0 basis-[7%] size-6 cursor-pointer"
             />
