@@ -44,6 +44,7 @@ export const ChatCard = ({
     const notSeenMessages = messages?.length || null
     const latestMessageTime = getTimeFromDate(lastMsgData?.createdAt!)
     const isActive = selectedRoom?._id == _id
+    const cardMessage = lastMsgData?.message ? lastMsgData?.message : lastMsgData.voiceData ? 'Audio' : ''
 
     useEffect(() => { // not useful for now
 
@@ -70,6 +71,7 @@ export const ChatCard = ({
         return () => {
             rooms?.off('updateLastMsgData')
         }
+        
     }, [_id])
 
     useEffect(() => {
@@ -137,7 +139,7 @@ export const ChatCard = ({
                                 ?
                                 <span className="text-red-500">Draft: <span className="text-darkGray">{draftMessage}</span></span>
                                 :
-                                `${(lastMsgData?.sender as any) === myID || lastMsgData?.sender._id == myID ? 'you: ' : ''}${lastMsgData?.message ?? ''}` || ''
+                                `${(lastMsgData?.sender as any) === myID || lastMsgData?.sender._id == myID ? 'you: ' : ''}${cardMessage}` || ''
                         }
                     </div>
 
