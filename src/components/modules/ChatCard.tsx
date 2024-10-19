@@ -44,7 +44,7 @@ export const ChatCard = ({
     const notSeenMessages = messages?.length || null
     const latestMessageTime = getTimeFromDate(lastMsgData?.createdAt!)
     const isActive = selectedRoom?._id == _id
-    const cardMessage = lastMsgData?.message ? lastMsgData?.message : lastMsgData.voiceData ? 'Audio' : ''
+    const cardMessage = lastMsgData?.message ? lastMsgData?.message : lastMsgData?.voiceData ? 'Audio' : ''
 
     useEffect(() => { // not useful for now
 
@@ -53,7 +53,7 @@ export const ChatCard = ({
 
         if (selectedRoom?.messages?.length) {
             for (let i = -1; i <= selectedRoom.messages.length; i--) {
-                if (!selectedRoom.messages.at(i)?.hideFor?.includes(myID)) {
+                if (!selectedRoom.messages.at(i)?.hideFor?.includes(myID)) { // if we didn't removed the message for ourselves.
                     setLastMsgData(selectedRoom.messages.at(i)!)
                     break;
                 }

@@ -343,8 +343,8 @@ const ChatContent = () => {
                                 ref={index == messages.length - 1 ? lastMsgRef : null}
                             >
                                 <Message
-                                    addReplay={replyData => setReplayData(replyData)}
-                                    edit={() => setEditData(data)}
+                                    addReplay={replyData => { setEditData(null), setReplayData(replyData) }}
+                                    edit={() => { setReplayData(null), setEditData(data) }}
                                     myId={myID}
                                     isPv={type === 'private'}
                                     {...data}

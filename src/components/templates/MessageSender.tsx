@@ -203,7 +203,6 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
                             {
                                 editData?._id ?
                                     <div
-                                        data-aos='zoom-in'
                                         className="basis-[10%] xl:basis-[3%] md:basis-[5%] size-8 ch:size-full p-1 cursor-pointer text-white bg-lightBlue rounded-full flex-center"
                                         onClick={editMessage}
                                     >
