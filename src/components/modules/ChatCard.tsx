@@ -89,7 +89,7 @@ export const ChatCard = ({
                 {
                     avatar ?
                         <Image
-                            className={`size-[50px] bg-center object-cover rounded-full`}
+                            className={`size-[50px] bg-center object-cover rounded-full shrink-0`}
                             width={50}
                             height={50}
                             quality={100}
