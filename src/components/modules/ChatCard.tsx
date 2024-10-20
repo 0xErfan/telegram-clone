@@ -21,6 +21,7 @@ export const ChatCard = ({
 }: RoomModel & { lastMsgData: MessageModel }) => {
 
     const [draftMessage, setDraftMessage] = useState('')
+    const [isActive, setIsActive] = useState(false)
     const [lastMsgData, setLastMsgData] = useState<MessageModel>(lastMsgDataProp)
     const { selectedRoom, onlineUsers } = useGlobalVariablesStore(state => state)
     const { _id: myID } = useUserStore(state => state) || ''
@@ -43,7 +44,6 @@ export const ChatCard = ({
     const isOnline = onlineUsers.some(data => { if (data.userID === roomID) return true })
     const notSeenMessages = messages?.length || null
     const latestMessageTime = getTimeFromDate(lastMsgData?.createdAt!)
-    const isActive = selectedRoom?._id == _id
     const cardMessage = lastMsgData?.message ? lastMsgData?.message : lastMsgData?.voiceData ? 'Audio' : ''
 
     useEffect(() => { // not useful for now
@@ -64,6 +64,8 @@ export const ChatCard = ({
 
     useEffect(() => {
 
+        setIsActive(selectedRoom?._id == _id)
+
         rooms?.on('updateLastMsgData', ({ msgData, roomID }) => {
             _id === roomID && msgData && setLastMsgData(msgData)
         })
@@ -72,13 +74,16 @@ export const ChatCard = ({
             rooms?.off('updateLastMsgData')
         }
         
-    }, [_id])
+    }, [_id, selectedRoom?._id])
 
     useEffect(() => {
         setDraftMessage(localStorage.getItem(_id) || '')
     }, [localStorage.getItem(_id), _id])
 
-    const joinToRoom = () => { rooms?.emit('joining', _id) }
+    const joinToRoom = () => {
+        setIsActive(true)
+        rooms?.emit('joining', _id)
+    }
 
     return (
         <div
