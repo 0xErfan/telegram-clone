@@ -65,7 +65,7 @@ export const ChatCard = ({
     useEffect(() => {
 
         rooms?.on('updateLastMsgData', ({ msgData, roomID }) => {
-            _id === roomID && setLastMsgData(msgData)
+            _id === roomID && msgData && setLastMsgData(msgData)
         })
 
         return () => {

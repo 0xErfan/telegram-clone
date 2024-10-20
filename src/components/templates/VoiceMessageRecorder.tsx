@@ -181,7 +181,7 @@ const VoiceMessageRecorder = ({ replayData, closeEdit, closeReplay }: Props) => 
 
                     <button onClick={cancelRecording} className='text-lightBlue absolute mr-9 inset-x-0 font-bold font-segoeBold'>CANCEL</button>
 
-                    <button onClick={() => mediaRecorderRef.current.stop()} className='w-[100px] h-3/4 rounded-sm animate-pulse flex-center z-[2000] bg-lightBlue'>
+                    <div onClick={() => mediaRecorderRef.current.stop()} className='w-[100px] h-3/4 rounded-sm animate-pulse flex-center z-[2000] bg-lightBlue'>
                         {
                             isLoading
                                 ?
@@ -192,7 +192,7 @@ const VoiceMessageRecorder = ({ replayData, closeEdit, closeReplay }: Props) => 
                                 :
                                 'SEND'
                         }
-                    </button>
+                    </div>
 
                 </div>
             }

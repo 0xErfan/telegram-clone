@@ -229,7 +229,7 @@ const Message = (msgData: MessageModel & Props) => {
                             className='flex items-center gap-3 bg-inherit w-full mt-2'
                         >
 
-                            <button
+                            <div
                                 onClick={togglePlayVoice}
                                 className={`rounded-full size-10 relative flex-center overflow-hidden ${isFromMe ? 'bg-white text-darkBlue' : 'bg-darkBlue text-white'}`}
                             >
@@ -267,7 +267,7 @@ const Message = (msgData: MessageModel & Props) => {
                                         }
                                     </>
                                 }
-                            </button>
+                            </div>
 
                             <div className='flex flex-col gap-1 justify-center'>
 
