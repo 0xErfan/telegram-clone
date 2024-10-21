@@ -11,18 +11,19 @@ import { useEffect, useMemo, useState } from "react"
 
 
 export const ChatCard = ({
-    messages,
     _id,
     name: roomName,
     type,
     avatar: roomAvatar,
     lastMsgData: lastMsgDataProp,
+    notSeenCount: currentNotSeenCount,
     participants
-}: RoomModel & { lastMsgData: MessageModel }) => {
+}: RoomModel & { lastMsgData: MessageModel, notSeenCount: number }) => {
 
     const [draftMessage, setDraftMessage] = useState('')
     const [isActive, setIsActive] = useState(false)
     const [lastMsgData, setLastMsgData] = useState<MessageModel>(lastMsgDataProp)
+    const [notSeenCount, setNotSeenCount] = useState(currentNotSeenCount)
     const { selectedRoom, onlineUsers } = useGlobalVariablesStore(state => state)
     const { _id: myID } = useUserStore(state => state) || ''
     const { rooms } = useSockets(state => state)
@@ -42,9 +43,13 @@ export const ChatCard = ({
     }, [])
 
     const isOnline = onlineUsers.some(data => { if (data.userID === roomID) return true })
-    const notSeenMessages = messages?.length || null
     const latestMessageTime = getTimeFromDate(lastMsgData?.createdAt!)
     const cardMessage = lastMsgData?.message ? lastMsgData?.message : lastMsgData?.voiceData ? 'Audio' : ''
+
+    const joinToRoom = () => {
+        setIsActive(true)
+        rooms?.emit('joining', _id)
+    }
 
     useEffect(() => { // not useful for now
 
@@ -70,20 +75,31 @@ export const ChatCard = ({
             _id === roomID && msgData && setLastMsgData(msgData)
         })
 
+        rooms?.on('seenMsg', ({ roomID }) => {
+            if (roomID === _id) setNotSeenCount(prev => prev - 1)
+        })
+
+        rooms?.on('newMessage', ({ roomID, sender }) => {
+            if (roomID == _id) {
+                // just checking if the message is not from us
+                if ((typeof sender == 'string' && sender !== myID) || sender?._id !== myID) {
+                    setNotSeenCount(prev => prev + 1)
+                }
+            }
+        })
+
         return () => {
             rooms?.off('updateLastMsgData')
+            rooms?.off('seenMsg')
         }
-        
+
     }, [_id, selectedRoom?._id])
 
     useEffect(() => {
         setDraftMessage(localStorage.getItem(_id) || '')
     }, [localStorage.getItem(_id), _id])
 
-    const joinToRoom = () => {
-        setIsActive(true)
-        rooms?.emit('joining', _id)
-    }
+    useEffect(() => setNotSeenCount(currentNotSeenCount), [currentNotSeenCount])
 
     return (
         <div
@@ -149,7 +165,12 @@ export const ChatCard = ({
                     </div>
 
                     <div className="flex items-center justify-between gap-2">
-                        <div className="flex-center text-center w-min px-2 bg-darkBlue text-white rounded-full">{notSeenMessages}</div>
+                        {
+                            notSeenCount > 0
+                                ?
+                                <div data-aos='zoom-in' className="flex-center text-center w-min px-2 bg-darkBlue text-white rounded-full">{notSeenCount}</div>
+                                : null
+                        }
                         {/* pin */}
                         {/* <Image
                             priority

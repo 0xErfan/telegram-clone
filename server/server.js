@@ -214,18 +214,33 @@ io.on('connection', socket => {
         onlineUsers.push({ socketID: socket.id, userID })
         io.to([...socket.rooms]).emit('updateOnlineUsers', onlineUsers)
 
-        const getRoomsLastMsgData = async () => {
+        const getRoomsData = async () => {
             const promises = userRooms.map(async (room) => {
-                if (room?.messages?.length) {
-                    const lastMsgID = room.messages[room.messages.length - 1]?._id || null;
-                    const lastMsgData = await MessageModel.findOne({ _id: lastMsgID });
-                    return { ...room, lastMsgData };
-                } else return room
+                const lastMsgData = room?.messages?.length
+                    ?
+                    await MessageModel.findOne({ _id: room.messages[room.messages.length - 1]?._id })
+                    :
+                    null;
+
+                const notSeenCount = await MessageModel.find({
+                    $and: [
+                        { roomID: room?._id },
+                        { sender: { $ne: userID } },
+                        { seen: { $nin: [userID] } }
+                    ]
+                });
+
+                return {
+                    ...room,
+                    lastMsgData,
+                    notSeenCount: notSeenCount?.length
+                };
             });
+
             return Promise.all(promises);
         };
 
-        const rooms = await getRoomsLastMsgData()
+        const rooms = await getRoomsData()
 
         socket.emit('getRooms', rooms)
     })
