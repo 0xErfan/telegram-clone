@@ -5,7 +5,7 @@ import { FaPause, FaArrowDown } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
 import useSockets from '@/zustand/useSockets'
 import Image from 'next/image'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import type { MessageModel, VoiceModel } from '@/@types/data.t';
 import useGlobalVariablesStore from '@/zustand/globalVariablesStore';
 import type { Props as globalVariablesStoreType } from '@/zustand/globalVariablesStore';
@@ -231,7 +231,7 @@ const Message = (msgData: MessageModel & Props) => {
 
                             <div
                                 onClick={togglePlayVoice}
-                                className={`rounded-full size-10 relative flex-center overflow-hidden ${isFromMe ? 'bg-white text-darkBlue' : 'bg-darkBlue text-white'}`}
+                                className={`rounded-full size-10 cursor-pointer relative flex-center overflow-hidden ${isFromMe ? 'bg-white text-darkBlue' : 'bg-darkBlue text-white'}`}
                             >
                                 {
                                     downloadedAudios &&
