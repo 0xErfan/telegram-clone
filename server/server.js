@@ -11,7 +11,7 @@ const io = new Server(3001, {
         origin: '*',
         methods: ['PUT', 'POST']
     },
-    pingTimeout: 60000
+    pingTimeout: 30000
 })
 
 let typings = []
@@ -189,7 +189,8 @@ io.on('connection', socket => {
         const voiceMessagePlayedByList = targetMessage?.voiceData?.playedBy
 
         if (!voiceMessagePlayedByList?.includes(userID)) {
-            targetMessage.voiceData.playedBy = [...voiceMessagePlayedByList, userID]
+            const userIdWithSeenTime = `${userID}_${new Date.now()}`
+            targetMessage.voiceData.playedBy = [...voiceMessagePlayedByList, userIdWithSeenTime]
             targetMessage.save()
         }
 
@@ -207,7 +208,7 @@ io.on('connection', socket => {
         }).lean().populate('participants')
 
         for (const room of userRooms) {
-            room.participants = userPvs.find(data => data._id.toString() == room._id.toString())?.participants || room.participants
+            room.participants = userPvs.find(data => data._id.toString() === room._id.toString())?.participants || room.participants
             socket.join(room._id.toString())
         }
 
@@ -266,7 +267,7 @@ io.on('connection', socket => {
                 },
             });
 
-        roomData && roomData?.type == 'private' && await roomData.populate('participants')
+        roomData && roomData?.type === 'private' && await roomData.populate('participants')
 
         if (!roomData?._id) {
             roomData = defaultRoomData
@@ -292,6 +293,8 @@ io.on('connection', socket => {
         await UserModel.findOneAndUpdate({ _id: updatedFields.userID }, updatedFields)
         socket.emit('updateUserData')
     })
+
+    socket.on('ping', () => socket.emit('pong'))
 
     socket.on('disconnect', () => {
         onlineUsers = onlineUsers.filter(data => data.socketID !== socket.id)

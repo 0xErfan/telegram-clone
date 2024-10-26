@@ -117,7 +117,7 @@ const MessageActions = () => {
                                 {
                                     !isCollapsed
                                     &&
-                                    <p className="pr-2">
+                                    <div className="pr-2">
                                         {
                                             loading
                                                 ?
@@ -127,7 +127,7 @@ const MessageActions = () => {
                                                 :
                                                 playedByUsersData?.length
                                         }
-                                    </p>
+                                    </div>
                                 }
 
                             </div>
@@ -145,11 +145,19 @@ const MessageActions = () => {
                                 {
                                     playedByUsersData?.map((userData: UserModel) =>
                                         <div
-                                            className="w-full flex gap-2"
+                                            className="w-full flex items-center gap-2"
                                             key={userData._id}
                                             onClick={() => openProfile(userData)}
                                         >
-                                            <div className="size-8 rounded-full bg-gray-300"></div>
+                                            <div className="size-8 flex items-center justify-center rounded-full bg-gray-300">
+                                                {
+                                                    userData?.avatar
+                                                    ?
+                                                    <img src={userData?.avatar} alt="user avatar"/>
+                                                    :
+                                                    <p className='font-segoeBold font-bold text-lg'>{userData.name[0]}</p>
+                                                }
+                                            </div>
                                             <div className="flex flex-col">
                                                 <p className="line-clam-1 font-bold font-segoeBold">{userData?.name}</p>
                                                 <p className="line-clamp-1 text-[12px] text-darkGray">today at 12:30 PM</p>

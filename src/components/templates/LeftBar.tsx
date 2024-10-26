@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { BiSearch } from "react-icons/bi"
 import { ChatCard } from "../modules/ChatCard"
-import { lazy, useEffect, useMemo, useState } from "react"
+import {lazy, useEffect, useMemo, useRef, useState} from "react"
 import { RoomModel } from "@/@types/data.t"
 import { io } from 'socket.io-client'
 import useUserStore from "@/zustand/userStore"
@@ -11,6 +11,7 @@ import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import useSockets from "@/zustand/useSockets"
 import RoomFolders from "./RoomFolders"
 import RoomSkeleton from "../modules/RoomSkeleton"
+import {clearInterval} from "node:timers";
 
 const CreateRoomBtn = lazy(() => import('@/components/templates/CreateRoomBtn'))
 const LeftBarMenu = lazy(() => import('@/components/templates/LeftBarMenu'))
@@ -18,15 +19,19 @@ const SearchPage = lazy(() => import('@/components/templates/SearchPage'))
 const Modal = lazy(() => import('../modules/Modal'))
 
 const roomSocket = io('http://localhost:3001/', {
-    autoConnect: true,
+    autoConnect: false,
+    reconnection: true,
     reconnectionAttempts: Infinity,
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
-})
+    timeout: 20000,
+    transports: ['websocket']
+});
 
 const LeftBar = () => {
 
     const [rooms, setRooms] = useState<RoomModel[]>([])
+    const interval = useRef<NodeJS.Timeout | null>(null)
     const [filterBy, setFilterBy] = useState('all')
     const [isPageLoaded, setIsPageLoaded] = useState(false)
     const [forceRender, setForceRender] = useState(false)
@@ -51,6 +56,40 @@ const LeftBar = () => {
 
         return sortAndFilteredRooms;
     }, [rooms?.length, forceRender, userRooms?.length, filterBy])
+
+    // heartbeat effect to keep connection alive even with no activity
+    useEffect(() => {
+
+        const intervalId = setInterval(() => {
+            if (roomSocket.connected) {
+                roomSocket.emit('ping');
+                console.log('Ping sent');
+            }
+        }, 20000);
+
+        roomSocket?.on('pong', () => console.log('pong received from server'))
+
+        return () => {
+            clearInterval(intervalId);
+            roomSocket.off('pong')
+        };
+    }, []);
+
+    // socket re-connect effect
+    useEffect(() => {
+
+        roomSocket.connect();
+
+        return () => {
+            clearInterval(interval.current!);
+            roomSocket.off('connect');
+            roomSocket.off('disconnect');
+            roomSocket.off('reconnect_attempt');
+            roomSocket.off('reconnect');
+            roomSocket.disconnect();
+        };
+
+    }, []);
 
     useEffect(() => {
 

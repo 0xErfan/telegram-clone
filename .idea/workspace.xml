@@ -6,6 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="feb97921-83dc-4b8f-9720-f472f4c4fd74" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/server.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/playedByData/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/playedByData/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/modules/Message.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/modules/Message.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/modules/MessageActions.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/modules/MessageActions.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/templates/LeftBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/templates/LeftBar.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,23 +46,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/RCC/OneDrive/Desktop/telegram-clone",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "Errors",
-    "ts.external.directory.path": "C:\\Users\\RCC\\OneDrive\\Desktop\\telegram-clone\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/RCC/OneDrive/Desktop/telegram-clone&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;Errors&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\RCC\\OneDrive\\Desktop\\telegram-clone\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\RCC\OneDrive\Desktop\telegram-clone\src\app\api\getName" />
@@ -83,6 +88,8 @@
       <workItem from="1727082616562" duration="4532000" />
       <workItem from="1727434723543" duration="78000" />
       <workItem from="1728583943003" duration="1039000" />
+      <workItem from="1729962156730" duration="501000" />
+      <workItem from="1729962665148" duration="5637000" />
     </task>
     <servers />
   </component>
@@ -91,6 +98,17 @@
   </component>
   <component name="UnknownFeatures">
     <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
