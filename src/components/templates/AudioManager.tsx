@@ -14,6 +14,11 @@ const AudioManager = () => {
         })
     }
 
+    // effect to listening for audio pause
+    useEffect(() => {
+        if (audioRef?.current && voiceData?._id && voiceData?.src && !isPlaying) audioRef.current.pause()
+    }, [isPlaying, voiceData?._id, voiceData?.src])
+
     useEffect(() => {
         if (
             isPlaying
