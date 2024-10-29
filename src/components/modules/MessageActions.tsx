@@ -1,4 +1,4 @@
-import { copyText, showToast } from "@/utils";
+import { copyText, getTimeReportFromDate, showToast } from "@/utils";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/dropdown";
 import { GoReply } from "react-icons/go";
 import { MdContentCopy, MdOutlineModeEdit, MdOutlinePlayCircle } from "react-icons/md";
@@ -75,7 +75,6 @@ const MessageActions = () => {
                 try {
                     setLoading(true)
                     const { data, statusText } = await axios.post('/api/playedByData', { playedByIds })
-                    console.log(statusText)
                     if (statusText === 'OK') setPlayedByUsersData(data)
                 } catch (error) { showToast(false, 'Failed to fetch data, try again i think') }
                 finally { setLoading(false) }
@@ -159,8 +158,8 @@ const MessageActions = () => {
                                                 }
                                             </div>
                                             <div className="flex flex-col">
-                                                <p className="line-clam-1 font-bold font-segoeBold">{userData?.name}</p>
-                                                <p className="line-clamp-1 text-[12px] text-darkGray">today at 12:30 PM</p>
+                                                <p className="line-clam-1 font-bold font-segoeBold">{userData?._id == myID ? 'You' : userData?.name}</p>
+                                                <p className="line-clamp-1 text-[12px] overflow-hidden text-darkGray">{'seenTime' in userData ? getTimeReportFromDate(userData.seenTime as string) : '' }</p>
                                             </div>
                                         </div>)
                                 }

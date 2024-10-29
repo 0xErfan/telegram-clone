@@ -63,11 +63,11 @@ const LeftBar = () => {
         const intervalId = setInterval(() => {
             if (roomSocket.connected) {
                 roomSocket.emit('ping');
-                console.log('Ping sent');
+                // console.log('Ping sent');
             }
         }, 20000);
 
-        roomSocket?.on('pong', () => console.log('pong received from server'))
+        // roomSocket?.on('pong', () => console.log('pong received from server'))
 
         return () => {
             clearInterval(intervalId);

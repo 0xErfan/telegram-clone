@@ -13,7 +13,7 @@ export const schema = new Schema({
         type: {
             src: { type: String, required: true },
             duration: { type: Number, required: true },
-            playedBy: [{ type: Schema.ObjectId, ref: 'User' }]
+            playedBy: [{ type: String }]
         },
         default: null
     }

@@ -189,7 +189,7 @@ io.on('connection', socket => {
         const voiceMessagePlayedByList = targetMessage?.voiceData?.playedBy
 
         if (!voiceMessagePlayedByList?.includes(userID)) {
-            const userIdWithSeenTime = `${userID}_${new Date.now()}`
+            const userIdWithSeenTime = `${userID}_${new Date}`
             targetMessage.voiceData.playedBy = [...voiceMessagePlayedByList, userIdWithSeenTime]
             targetMessage.save()
         }

@@ -70,6 +70,31 @@ const Message = (msgData: MessageModel & Props) => {
 
     }, [])
 
+    useEffect(() => {
+
+        // @ts-expect-error
+        let socket: null | typeof socket = null;
+
+        (() => {
+
+            socket = useSockets.getState().rooms;
+
+            // socket?.on('listenToVoice', ({voiceID}) => {    
+            //     audioUpdater(prev => ({voiceData: {...prev.voiceData, playedBy: prev.voiceData?.playedBy?.map(id => {
+            //         if (id === voiceID) {
+            //             id = voiceID + Date.now
+            //         };
+            //         return id;
+            //     })}}))
+            // })
+            
+        })()
+
+        return () => socket?.off('listenToVoice')
+    }, [])
+
+    console.log(voiceData?.playedBy)
+
     const togglePlayVoice = () => {
 
         const savedVoiceData = downloadedAudios.find(voice => voice._id === _id)
@@ -219,7 +244,8 @@ const Message = (msgData: MessageModel & Props) => {
                         >
                             <span className={`absolute ${isFromMe ? 'bg-white' : 'bg-green-500'} left-0  inset-y-0 w-[3px] h-full `}></span>
                             <p className='font-extrabold font-segoeBold break-words text-start line-clamp-1 overflow-ellipsis'>{replayedTo.username}</p>
-                            <p className='font-thin break-words line-clamp-1 overflow-ellipsis'>{replayedTo.message}</p>
+                            {/* here should be checked for different message types like file or locations */}
+                            <p className='font-thin break-words line-clamp-1 overflow-ellipsis text-left'>{replayedTo.message || 'Voice Message'}</p>
                         </div>
                     }
                     {
