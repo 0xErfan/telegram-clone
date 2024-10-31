@@ -28,6 +28,8 @@ const ChatContent = () => {
     const [isLoaded, setIsLoaded] = useState(false)
     const [isLastMsgInView, setIsLastMsgInView] = useState(false);
     const [showRoomOptions, setShowRoomOptions] = useState(false);
+    const [messageDates, setMessageDates] = useState<{ date: string, usedBy: string }[]>([])
+    const [activeDateIndex, setActiveDateIndex] = useState(messageDates?.length ?? 0)
     const [forceRender, setForceRender] = useState(false)
     const [replayData, setReplayData] = useState<string | null>(null)
     const [editData, setEditData] = useState<MessageModel | null>(null)
@@ -93,6 +95,7 @@ const ChatContent = () => {
 
                 if (!isDateUsed) {
                     dates = [...dates, { date: formattedDateString(data.createdAt), usedBy: data._id }]
+                    setMessageDates(dates)
                 }
 
                 return <div
@@ -135,6 +138,10 @@ const ChatContent = () => {
     const openChatSetting = () => {
         setShowRoomOptions(true)
     }
+
+    useEffect(() => {
+
+    }, [messageDates?.length])
 
     useEffect(() => {
         manageScroll()
@@ -378,6 +385,8 @@ const ChatContent = () => {
                         }
                     </div>
                 </div>
+
+                {/* <div className='absolute -bottom-8 inset-x-0 text-[12px] z-50 bg-white/10 w-fit m-auto text-center rounded-2xl py-1 px-3 cursor-pointer'>{messageDates[activeDateIndex]}</div> */}
 
             </div>
 

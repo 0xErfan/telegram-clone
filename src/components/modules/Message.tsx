@@ -196,8 +196,8 @@ const Message = (msgData: MessageModel & Props) => {
                 stickyDate
                     ?
                     <div
-                        onClick={() => messageRef?.current?.scrollIntoView({ behavior: 'smooth' })}
-                        className='sticky top-3 inset-x-0 text-[12px] z-50 bg-white/10 w-fit m-auto text-center rounded-2xl py-1 px-3 cursor-pointer'>{formattedDateString(stickyDate)}
+                        onClick={() => (messageRef?.current as unknown as HTMLElement)?.scrollIntoView({ behavior: 'smooth' })}
+                        className='sticky top-3 inset-x-0 text-[12px] z-50 bg-white/10 w-fit m-auto text-center rounded-2xl py-1 px-3 cursor-pointer'>{stickyDate}
                     </div>
                     : null
             }
