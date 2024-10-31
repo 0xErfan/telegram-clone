@@ -219,7 +219,7 @@ io.on('connection', socket => {
             const promises = userRooms.map(async (room) => {
                 const lastMsgData = room?.messages?.length
                     ?
-                    await MessageModel.findOne({ _id: room.messages[room.messages.length - 1]?._id })
+                    await MessageModel.findOne({ _id: room.messages.at(-1)?._id })
                     :
                     null;
 

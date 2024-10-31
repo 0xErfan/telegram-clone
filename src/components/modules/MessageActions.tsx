@@ -74,7 +74,7 @@ const MessageActions = () => {
 
                 try {
                     setLoading(true)
-                    const { data, statusText } = await axios.post('/api/playedByData', { playedByIds })
+                    const { data, statusText } = await axios.post('/api/playedByData', { msgID: msgData?._id })
                     if (statusText === 'OK') setPlayedByUsersData(data)
                 } catch (error) { showToast(false, 'Failed to fetch data, try again i think') }
                 finally { setLoading(false) }
@@ -151,15 +151,15 @@ const MessageActions = () => {
                                             <div className="size-8 flex items-center justify-center rounded-full bg-gray-300">
                                                 {
                                                     userData?.avatar
-                                                    ?
-                                                    <img src={userData?.avatar} alt="user avatar"/>
-                                                    :
-                                                    <p className='font-segoeBold font-bold text-lg'>{userData.name[0]}</p>
+                                                        ?
+                                                        <img src={userData?.avatar} alt="user avatar" />
+                                                        :
+                                                        <p className='font-segoeBold font-bold text-lg'>{userData.name[0]}</p>
                                                 }
                                             </div>
                                             <div className="flex flex-col">
                                                 <p className="line-clam-1 font-bold font-segoeBold">{userData?._id == myID ? 'You' : userData?.name}</p>
-                                                <p className="line-clamp-1 text-[12px] overflow-hidden text-darkGray">{'seenTime' in userData ? getTimeReportFromDate(userData.seenTime as string) : '' }</p>
+                                                <p className="line-clamp-1 text-[12px] overflow-hidden text-darkGray">{'seenTime' in userData ? getTimeReportFromDate(userData.seenTime as string) : ''}</p>
                                             </div>
                                         </div>)
                                 }

@@ -12,6 +12,7 @@ import ScrollToBottom from "./ScrollToBottom";
 import JoinToRoom from "./JoinToRoom";
 import { MessageModel } from "@/@types/data.t";
 import useScrollChange from "@/hook/useScrollChange";
+import DropDown from "../modules/DropDown";
 
 const ChatContent = () => {
 
@@ -25,6 +26,7 @@ const ChatContent = () => {
     const [typings, setTypings] = useState<string[]>([])
     const [isLoaded, setIsLoaded] = useState(false)
     const [isLastMsgInView, setIsLastMsgInView] = useState(false);
+    const [showRoomOptions, setShowRoomOptions] = useState(false);
     const [forceRender, setForceRender] = useState(false)
     const [replayData, setReplayData] = useState<string | null>(null)
     const [editData, setEditData] = useState<MessageModel | null>(null)
@@ -86,6 +88,10 @@ const ChatContent = () => {
     const checkIsLastMsgInView = (e: any) => {
         const isInView = e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight <= 0
         setIsLastMsgInView(isInView)
+    }
+
+    const openChatSetting = () => {
+        setShowRoomOptions(true)
     }
 
     useEffect(() => {
@@ -209,7 +215,7 @@ const ChatContent = () => {
         })
 
         rooms?.on('listenToVoice', ({ userID, voiceID, roomID }) => {
-
+            console.log('gotta, ', roomID)
             if (selectedRoom?._id !== roomID) return
 
             messages.some(msg => {
@@ -318,8 +324,16 @@ const ChatContent = () => {
                 </div>
 
                 <div className="flex items-center gap-2 *:cursor-pointer ch:p-[10px] justify-end">
-                    <div className="size-[44px] ch:size-full rounded-full flex-center">
-                        <PiDotsThreeVerticalBold onClick={deleteRoom} />
+                    <div className="size-[44px] ch:size-full relative rounded-full flex-center">
+                        <PiDotsThreeVerticalBold onClick={openChatSetting} />
+                        {
+                            showRoomOptions
+                                ?
+                                <div className="absolute top-1/2 w-min inset-x-0">
+                                    <DropDown dropDownItems={[{ title: 'hi', onClick: () => console.log('hi') }]} isOpen={true} onClose={() => setShowRoomOptions(false)} />
+                                </div>
+                                : null
+                        }
                     </div>
                 </div>
 

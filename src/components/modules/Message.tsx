@@ -225,7 +225,7 @@ const Message = (msgData: MessageModel & Props) => {
             <div
                 onClick={updateModalMsgData}
                 onContextMenu={e => { e.preventDefault(), updateModalMsgData() }}
-                className={`${isFromMe ? 'bg-darkBlue rounded-l-md rounded-tr-xl text-right pl-1 pr-3' : `bg-white/10 rounded-r-md rounded-tl-xl text-left pr-1 ${isPv ? 'pl-1' : 'pl-3'}`} relative w-fit max-w-[80%] min-w-24 xl:max-w-[60%]`}
+                className={` tw-min-w-[120px] ${isFromMe ? 'bg-darkBlue rounded-l-md rounded-tr-xl text-right pl-1 pr-3' : `bg-white/10 rounded-r-md rounded-tl-xl text-left pr-1 ${isPv ? 'pl-1' : 'pl-3'}`} relative w-fit max-w-[80%] min-w-24 xl:max-w-[60%]`}
             >
 
                 {

@@ -19,7 +19,7 @@ const SearchPage = lazy(() => import('@/components/templates/SearchPage'))
 const Modal = lazy(() => import('../modules/Modal'))
 
 const roomSocket = io('http://localhost:3001/', {
-    autoConnect: false,
+    autoConnect: true,
     reconnection: true,
     reconnectionAttempts: Infinity,
     reconnectionDelay: 1000,
@@ -73,22 +73,6 @@ const LeftBar = () => {
             clearInterval(intervalId);
             roomSocket.off('pong')
         };
-    }, []);
-
-    // socket re-connect effect
-    useEffect(() => {
-
-        roomSocket.connect();
-
-        return () => {
-            clearInterval(interval.current!);
-            roomSocket.off('connect');
-            roomSocket.off('disconnect');
-            roomSocket.off('reconnect_attempt');
-            roomSocket.off('reconnect');
-            roomSocket.disconnect();
-        };
-
     }, []);
 
     useEffect(() => {

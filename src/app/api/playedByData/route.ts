@@ -1,11 +1,15 @@
 import connectToDB from "@/db/db";
+import MessageModel from "@/models/Message";
 import UserModel from "@/models/User";
 
 export const POST = async (req: Request) => {
+
     try {
+        
         await connectToDB();
 
-        const { playedByIds } = await req.json();
+        const { msgID } = await req.json()
+        const { voiceData: { playedBy: playedByIds } } = await MessageModel.findOne({ _id: msgID })
 
         // the second part of the string after the "_" is seen time btw.
         const playedByIdsWithoutSeenTime = playedByIds.map((id: string) => id?.includes('_') ? id.split('_')[0] : id)
