@@ -13,12 +13,15 @@ import JoinToRoom from "./JoinToRoom";
 import { MessageModel } from "@/@types/data.t";
 import useScrollChange from "@/hook/useScrollChange";
 import DropDown from "../modules/DropDown";
-import { formattedDateString } from "@/utils";
+import {formattedDateString, scrollToMessage} from "@/utils";
+
+export interface msgDate { date: string, usedBy: string }
 
 const ChatContent = () => {
 
-    let lastMsgRef = useRef<HTMLDivElement>(null)
-    let messageContainerRef = useRef<HTMLDivElement>(null)
+    let lastMsgRef = useRef<HTMLDivElement | null>(null)
+    let messageContainerRef = useRef<HTMLDivElement | null>(null)
+    const stickyDateTimer = useRef<NodeJS.Timeout | null>(null)
 
     const { _id: myID, name: myName, setter: userDataUpdater, rooms: userRooms } = useUserStore(state => state)
     const { setter } = useGlobalVariablesStore(state => state)
@@ -28,12 +31,13 @@ const ChatContent = () => {
     const [isLoaded, setIsLoaded] = useState(false)
     const [isLastMsgInView, setIsLastMsgInView] = useState(false);
     const [showRoomOptions, setShowRoomOptions] = useState(false);
-    const [messageDates, setMessageDates] = useState<{ date: string, usedBy: string }[]>([])
-    const [activeDateIndex, setActiveDateIndex] = useState(messageDates?.length ?? 0)
+    const [messageDates, setMessageDates] = useState<msgDate[]>([])
+    const [activeFixedDate, setActiveFixedDate] = useState<msgDate | null>(null)
+    const [isFixedDateShow, setIsFixedDateShow] = useState(true)
     const [forceRender, setForceRender] = useState(false)
     const [replayData, setReplayData] = useState<string | null>(null)
     const [editData, setEditData] = useState<MessageModel | null>(null)
-    const { canShow } = useScrollChange(messageContainerRef?.current!)
+    const { lastScrollPosition, canShow } = useScrollChange(messageContainerRef?.current!)
 
     const {
         _id: roomID,
@@ -109,6 +113,11 @@ const ChatContent = () => {
                         myId={myID}
                         isPv={type === 'private'}
                         stickyDate={dates.find(dateString => dateString.usedBy === data._id)?.date ?? null}
+                        datesStore={{
+                            dates: messageDates,
+                            activeDateUpdater: date => setActiveFixedDate(date),
+                            hideFixedDate: bool => setIsFixedDateShow(bool)
+                        }}
                         {...data}
                     />
                 </div>
@@ -138,10 +147,6 @@ const ChatContent = () => {
     const openChatSetting = () => {
         setShowRoomOptions(true)
     }
-
-    useEffect(() => {
-
-    }, [messageDates?.length])
 
     useEffect(() => {
         manageScroll()
@@ -311,10 +316,22 @@ const ChatContent = () => {
         }
     }, [roomID])
 
+    // close fixed message date 1.5 seconds after every scroll
+    useEffect(() => {
+        stickyDateTimer.current = setTimeout(() => setIsFixedDateShow(false), 1500)
+        return () => clearTimeout(stickyDateTimer.current)
+    }, [lastScrollPosition])
+
+    console.log(messageDates)
+
+    useEffect(() => {
+        if (messageDates?.length) setActiveFixedDate(messageDates.at(-1))
+    }, [messageDates?.length, selectedRoom?._id])
+
     return (
         <section data-aos="fade-right" className="relative">
 
-            <div className="flex items-center justify-between sticky top-0 border-b border-white/5 bg-chatBg z-50 py-2 md:py-3 xl:py-0 xl:h-[97px]">
+            <div className="flex items-center justify-between sticky top-0 border-b border-white/5 bg-chatBg z-50 py-2 md:py-3 xl:py-0 xl:h-[97px] z-[100]">
 
                 <div className='flex items-center gap-5'>
 
@@ -386,7 +403,17 @@ const ChatContent = () => {
                     </div>
                 </div>
 
-                {/* <div className='absolute -bottom-8 inset-x-0 text-[12px] z-50 bg-white/10 w-fit m-auto text-center rounded-2xl py-1 px-3 cursor-pointer'>{messageDates[activeDateIndex]}</div> */}
+                {
+                    (activeFixedDate && isFixedDateShow)
+                    ?
+                    <div
+                        onClick={() => scrollToMessage(activeFixedDate?.usedBy, 'smooth')}
+                        className='absolute -bottom-8 inset-x-0 text-[12px] z-50 bg-white/10 w-fit m-auto text-center rounded-2xl py-1 px-3 cursor-pointer'
+                    >
+                        {activeFixedDate.date}
+                    </div>
+                    : null
+                }
 
             </div>
 

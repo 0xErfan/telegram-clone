@@ -11,14 +11,20 @@ import useGlobalVariablesStore from '@/zustand/globalVariablesStore';
 import type { Props as globalVariablesStoreType } from '@/zustand/globalVariablesStore';
 import MessageActions from './MessageActions';
 import useAudio from '@/zustand/audioStore';
+import type { msgDate } from "@/components/templates/ChatContent";
 
 interface Props {
     myId: string,
     addReplay: (_id: string) => void
     edit: (data: MessageModel) => void
     isPv?: boolean
-    voiceData?: VoiceModel | null,
+    voiceData?: VoiceModel | null
     stickyDate: string | null
+    datesStore: {
+        dates: msgDate[],
+        activeDateUpdater: (msgDate: msgDate | null) => void,
+        hideFixedDate: (val: boolean) => void
+    }
 }
 
 const Message = (msgData: MessageModel & Props) => {
@@ -38,6 +44,7 @@ const Message = (msgData: MessageModel & Props) => {
         isPv = false,
         voiceData: voiceDataProp,
         stickyDate,
+        datesStore: { dates, activeDateUpdater, hideFixedDate }
     } = msgData
 
     const messageRef = useRef(null)
@@ -187,6 +194,16 @@ const Message = (msgData: MessageModel & Props) => {
 
     }, [isInViewport, isFromMe]);
 
+    useEffect(() => {
+
+        if (!dates?.length) return
+        if (isInViewport) hideFixedDate(true)
+
+        const currentMsgDateIndex = dates.findIndex(data => data.date == stickyDate)
+        typeof dates[currentMsgDateIndex] == 'object' && activeDateUpdater(dates[currentMsgDateIndex]) && hideFixedDate(false)
+
+    }, [isInViewport, dates, stickyDate])
+
     useEffect(() => { setIsMounted(true) }, [])
 
     return (
@@ -197,7 +214,7 @@ const Message = (msgData: MessageModel & Props) => {
                     ?
                     <div
                         onClick={() => (messageRef?.current as unknown as HTMLElement)?.scrollIntoView({ behavior: 'smooth' })}
-                        className='sticky top-3 inset-x-0 text-[12px] z-50 bg-white/10 w-fit m-auto text-center rounded-2xl py-1 px-3 cursor-pointer'>{stickyDate}
+                        className='sticky top-[13px] inset-x-0 text-[12px] z-50 bg-white/10 w-fit m-auto text-center rounded-2xl py-1 px-3 cursor-pointer'>{stickyDate}
                     </div>
                     : null
             }
@@ -364,7 +381,6 @@ const Message = (msgData: MessageModel & Props) => {
 
             </div>
         </>
-
     )
 }
 

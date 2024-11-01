@@ -28,7 +28,7 @@ const useScrollChange = (elem: HTMLElement | null) => {
 
     }, [elem]);
 
-    return { lastScrollPosition, canShow, setCanShow };
+    return { lastScrollPosition: lastScrollPosition?.current, canShow, setCanShow };
 }
 
 export default useScrollChange;

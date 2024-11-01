@@ -6,11 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="feb97921-83dc-4b8f-9720-f472f4c4fd74" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/server.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/api/playedByData/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/playedByData/route.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/modules/Message.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/modules/Message.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/modules/MessageActions.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/modules/MessageActions.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/templates/LeftBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/templates/LeftBar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/templates/ChatContent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/templates/ChatContent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hook/useScrollChange.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/hook/useScrollChange.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +32,9 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/components/templates/ChatContent.tsx" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="ProjectErrors" />
