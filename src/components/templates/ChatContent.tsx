@@ -13,6 +13,7 @@ import JoinToRoom from "./JoinToRoom";
 import { MessageModel } from "@/@types/data.t";
 import useScrollChange from "@/hook/useScrollChange";
 import DropDown from "../modules/DropDown";
+import { formattedDateString } from "@/utils";
 
 const ChatContent = () => {
 
@@ -27,6 +28,8 @@ const ChatContent = () => {
     const [isLoaded, setIsLoaded] = useState(false)
     const [isLastMsgInView, setIsLastMsgInView] = useState(false);
     const [showRoomOptions, setShowRoomOptions] = useState(false);
+    const [messageDates, setMessageDates] = useState<{ date: string, usedBy: string }[]>([])
+    const [activeDateIndex, setActiveDateIndex] = useState(messageDates?.length ?? 0)
     const [forceRender, setForceRender] = useState(false)
     const [replayData, setReplayData] = useState<string | null>(null)
     const [editData, setEditData] = useState<MessageModel | null>(null)
@@ -74,6 +77,48 @@ const ChatContent = () => {
         return count;
     }, [messages?.length, myID, forceRender])
 
+    const messageContent = useMemo(() => {
+
+        let dates: { date: string, usedBy: string }[] = []
+
+        return messages?.length
+            ?
+            messages.map((data, index) => {
+
+                if (data?.hideFor?.includes(myID)) return;
+
+                const isDateUsed = dates.some(date => {
+                    if (date.date === formattedDateString(data.createdAt) || date.usedBy === data._id) {
+                        return true;
+                    }
+                })
+
+                if (!isDateUsed) {
+                    dates = [...dates, { date: formattedDateString(data.createdAt), usedBy: data._id }]
+                    setMessageDates(dates)
+                }
+
+                return <div
+                    className={data._id}
+                    key={data._id}
+                    ref={index == messages.length - 1 ? lastMsgRef : null}
+                >
+                    <Message
+                        addReplay={replyData => { setEditData(null), setReplayData(replyData) }}
+                        edit={() => { setReplayData(null), setEditData(data) }}
+                        myId={myID}
+                        isPv={type === 'private'}
+                        stickyDate={dates.find(dateString => dateString.usedBy === data._id)?.date ?? null}
+                        {...data}
+                    />
+                </div>
+            })
+            :
+            <div data-aos="fade-left" className="flex-center size-full">
+                <p className="rounded-full w-fit text-[14px] py-1 px-3 text-center bg-white/[18%]">Send a message to start the chat bud</p>
+            </div>
+    }, [myID, messages, type])
+
     const manageScroll = () => {
         if (isLoaded) {
             const isFromMe = messages?.length && messages[messages.length - 1]?.sender?._id === myID;
@@ -93,6 +138,10 @@ const ChatContent = () => {
     const openChatSetting = () => {
         setShowRoomOptions(true)
     }
+
+    useEffect(() => {
+
+    }, [messageDates?.length])
 
     useEffect(() => {
         manageScroll()
@@ -337,6 +386,8 @@ const ChatContent = () => {
                     </div>
                 </div>
 
+                {/* <div className='absolute -bottom-8 inset-x-0 text-[12px] z-50 bg-white/10 w-fit m-auto text-center rounded-2xl py-1 px-3 cursor-pointer'>{messageDates[activeDateIndex]}</div> */}
+
             </div>
 
             <div
@@ -345,31 +396,8 @@ const ChatContent = () => {
                 className="flex flex-col gap-2 relative fillScreen mb-1 md:pb-2 overflow-x-hidden overflow-y-auto noScrollWidth"
             >
 
-                {
-                    messages?.length
-                        ?
-                        messages.map((data, index) =>
-                            !data?.hideFor?.includes(myID)
-                            &&
-                            <div
-                                className={data._id}
-                                key={data._id}
-                                ref={index == messages.length - 1 ? lastMsgRef : null}
-                            >
-                                <Message
-                                    addReplay={replyData => { setEditData(null), setReplayData(replyData) }}
-                                    edit={() => { setReplayData(null), setEditData(data) }}
-                                    myId={myID}
-                                    isPv={type === 'private'}
-                                    {...data}
-                                />
-                            </div>
-                        )
-                        :
-                        <div data-aos="fade-left" className="flex-center size-full">
-                            <p className="rounded-full w-fit text-[14px] py-1 px-3 text-center bg-white/[18%]">Send a message to start the chat bud</p>
-                        </div>
-                }
+                {/* rendering all the messages */}
+                {messageContent}
 
                 <ScrollToBottom
                     count={notSeenMessages}

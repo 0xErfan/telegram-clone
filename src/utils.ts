@@ -327,6 +327,8 @@ const secondsToFormattedTimeString = (seconds: number): string => {
     return paddedHours + paddedMinutes + paddedSeconds;
 };
 
+const formattedDateString = (date: string) => new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+
 export {
     getTimer,
     showToast,
@@ -350,5 +352,6 @@ export {
     openModal,
     logout,
     secondsToFormattedTimeString,
-    getTimeReportFromDate
+    getTimeReportFromDate,
+    formattedDateString
 }
