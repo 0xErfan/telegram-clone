@@ -319,13 +319,11 @@ const ChatContent = () => {
     // close fixed message date 1.5 seconds after every scroll
     useEffect(() => {
         stickyDateTimer.current = setTimeout(() => setIsFixedDateShow(false), 1500)
-        return () => clearTimeout(stickyDateTimer.current)
+            return () => clearTimeout(stickyDateTimer.current!)
     }, [lastScrollPosition])
 
-    console.log(messageDates)
-
     useEffect(() => {
-        if (messageDates?.length) setActiveFixedDate(messageDates.at(-1))
+        if (messageDates?.length) setActiveFixedDate(messageDates.at(-1)!)
     }, [messageDates?.length, selectedRoom?._id])
 
     return (

@@ -69,7 +69,7 @@ const SearchResultCard = (roomData: Partial<RoomModel & { findBy?: keyof RoomMod
 
         setTimeout(() => {
             roomData.messages?.length && scrollToMessage(roomData.messages[0]._id)
-        }, isChatPageLoaded ? 800 : 1400);
+        }, isChatPageLoaded ? 800 : 2000);
     }
 
     return (

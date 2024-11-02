@@ -1,5 +1,5 @@
 import { useOnScreen } from '@/hook/useOnScreen'
-import { formattedDateString, getTimeFromDate, scrollToMessage, secondsToFormattedTimeString } from '@/utils'
+import { getTimeFromDate, scrollToMessage, secondsToFormattedTimeString } from '@/utils'
 import { FaPlay } from "react-icons/fa";
 import { FaPause, FaArrowDown } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
@@ -60,7 +60,30 @@ const Message = (msgData: MessageModel & Props) => {
     const { isPlaying, voiceData, setter: audioUpdater, downloadedAudios, audioElem } = useAudio(state => state)
     const [voiceCurrentTime, setVoiceCurrentTime] = useState(0)
 
-    const songWaves = useMemo(() => {
+    const { songWaves, waveUpdater } = useMemo(() => {
+
+        const waveUpdater = (percentage: number) => {
+
+            const activeWavesCount = Math.trunc((percentage * 20) / 100)
+
+            // every of these two shitty loops gets run thousand and more, fix it later please.
+
+            if (activeWavesCount + 1 == 20) {
+                console.log('voice ended')
+                Array(20).fill(0).forEach((_, index) => {
+                    const elem = document.getElementById(`${_id + '' + index}`)
+                    if (elem) elem.style.backgroundColor = '#888888'
+                })
+            }
+
+            Array(activeWavesCount + 1).fill(0).forEach((_, index) => {
+                console.log('foreach run here...')
+                const elem = document.getElementById(`${_id + '' + index}`)
+                if (elem) elem.style.backgroundColor = 'white'
+
+            })
+
+        }
 
         const waves = Array(20).fill(0).map((_, index) => {
 
@@ -68,6 +91,7 @@ const Message = (msgData: MessageModel & Props) => {
 
             return (
                 <div
+                    id={_id + '' + index}
                     key={index}
                     className={`w-[3px] rounded-full bg-darkGray z-40`}
                     style={{ height: `${randomHeight}px` }}
@@ -75,7 +99,7 @@ const Message = (msgData: MessageModel & Props) => {
             );
         })
 
-        return waves;
+        return { songWaves: waves, waveUpdater };
 
     }, [])
 
@@ -162,8 +186,11 @@ const Message = (msgData: MessageModel & Props) => {
 
             const totalTime = audioElem?.duration
             const currentTime = audioElem?.currentTime
+            if (currentTime == totalTime) return clearInterval(interval)
+
             const currentTimeInPercentage = Math.trunc((currentTime! * 100) / totalTime!)
 
+            waveUpdater(currentTimeInPercentage)
             setVoiceCurrentTime(Math.trunc(currentTime!))
         }
 
@@ -197,10 +224,11 @@ const Message = (msgData: MessageModel & Props) => {
     useEffect(() => {
 
         if (!dates?.length) return
-        if (isInViewport) hideFixedDate(true)
 
         const currentMsgDateIndex = dates.findIndex(data => data.date == stickyDate)
-        typeof dates[currentMsgDateIndex] == 'object' && activeDateUpdater(dates[currentMsgDateIndex]) && hideFixedDate(false)
+        typeof dates[currentMsgDateIndex] == 'object' && activeDateUpdater(dates[currentMsgDateIndex])
+
+        hideFixedDate(!false)
 
     }, [isInViewport, dates, stickyDate])
 
