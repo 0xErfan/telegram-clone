@@ -179,6 +179,7 @@ const LeftBar = () => {
             <div
                 data-aos-duration="400"
                 data-aos='fade-right'
+                id="leftbar-container"
                 className={`flex-1 ${selectedRoom && 'hidden'} md:block bg-leftBarBg relative noScrollWidth px-4 overflow-y-auto`}
             >
 

@@ -23,8 +23,8 @@ const MessageActions = () => {
     const myID = useUserStore(state => state._id)
 
     const { msgData } = modalData
-
     const copy = () => { copyText(msgData!.message); onClose() }
+    const pin = () => { msgData?.pin(msgData?._id); onClose() }
     const reply = () => msgData?.addReplay(msgData._id)
     const edit = () => msgData?.edit(msgData._id)
 
@@ -84,7 +84,6 @@ const MessageActions = () => {
 
     return (
         <>
-
             <Dropdown
                 isOpen={Boolean(msgData)}
                 size="lg"
@@ -115,18 +114,19 @@ const MessageActions = () => {
 
                                 {
                                     !isCollapsed
-                                    &&
-                                    <div className="pr-2">
-                                        {
-                                            loading
-                                                ?
-                                                <div className="size-10 flex-center m-auto rounded-full overflow-hidden">
-                                                    <Button isLoading size="sm" style={{ borderRadius: '100%', backgroundColor: 'transparent' }} />
-                                                </div>
-                                                :
-                                                playedByUsersData?.length
-                                        }
-                                    </div>
+                                        ?
+                                        <div className="pr-2">
+                                            {
+                                                loading
+                                                    ?
+                                                    <div className="size-10 flex-center m-auto rounded-full overflow-hidden">
+                                                        <Button isLoading size="sm" style={{ borderRadius: '100%', backgroundColor: 'transparent' }} />
+                                                    </div>
+                                                    :
+                                                    playedByUsersData?.length
+                                            }
+                                        </div>
+                                        : null
                                 }
 
                             </div>
@@ -135,51 +135,64 @@ const MessageActions = () => {
 
                     {
                         isCollapsed
-                        &&
-                        <DropdownItem
-                            className="absolute h-60 z-30 overflow-auto inset-0" style={{ backgroundColor: '#2E323F', border: 'none', color: 'inherit' }}
-                            data-aos='fade-left'
-                        >
-                            <div className="absolute top-3 flex flex-col gap-2">
-                                {
-                                    playedByUsersData?.map((userData: UserModel) =>
-                                        <div
-                                            className="w-full flex items-center gap-2"
-                                            key={userData._id}
-                                            onClick={() => openProfile(userData)}
-                                        >
-                                            <div className="size-8 flex items-center justify-center rounded-full bg-gray-300">
-                                                {
-                                                    userData?.avatar
-                                                        ?
-                                                        <img src={userData?.avatar} alt="user avatar" />
-                                                        :
-                                                        <p className='font-segoeBold font-bold text-lg'>{userData.name[0]}</p>
-                                                }
-                                            </div>
-                                            <div className="flex flex-col">
-                                                <p className="line-clam-1 font-bold font-segoeBold">{userData?._id == myID ? 'You' : userData?.name}</p>
-                                                <p className="line-clamp-1 text-[12px] overflow-hidden text-darkGray">{'seenTime' in userData ? getTimeReportFromDate(userData.seenTime as string) : ''}</p>
-                                            </div>
-                                        </div>)
-                                }
-                            </div>
-                        </DropdownItem>
+                            ?
+                            <DropdownItem
+                                className="absolute h-60 z-30 overflow-auto inset-0" style={{ backgroundColor: '#2E323F', border: 'none', color: 'inherit' }}
+                                data-aos='fade-left'
+                            >
+                                <div className="absolute top-3 flex flex-col gap-2">
+                                    {
+                                        playedByUsersData?.map((userData: UserModel) =>
+                                            <div
+                                                className="w-full flex items-center gap-2"
+                                                key={userData._id}
+                                                onClick={() => openProfile(userData)}
+                                            >
+                                                <div className="size-8 flex items-center justify-center rounded-full bg-gray-300">
+                                                    {
+                                                        userData?.avatar
+                                                            ?
+                                                            <img src={userData?.avatar} alt="user avatar" />
+                                                            :
+                                                            <p className='font-segoeBold font-bold text-lg'>{userData.name[0]}</p>
+                                                    }
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <p className="line-clam-1 font-bold font-segoeBold">{userData?._id == myID ? 'You' : userData?.name}</p>
+                                                    <p className="line-clamp-1 text-[12px] overflow-hidden text-darkGray">{'seenTime' in userData ? getTimeReportFromDate(userData.seenTime as string) : ''}</p>
+                                                </div>
+                                            </div>)
+                                    }
+                                </div>
+                            </DropdownItem>
+                            : null
                     }
 
                     {
                         // if the room is not chanel or if it is, user should be admin
                         ((roomData?.type && roomData?.type !== 'chanel') || roomData?.admins?.includes(myID))
-                        &&
-                        <DropdownItem
-                            className="p-3"
-                            onClick={reply}
-                            style={{ backgroundColor: 'transparent', border: 'none', color: 'inherit' }}
-                            startContent={<GoReply className="size-5" />}
-                            key="reply"
-                        >
-                            Reply
-                        </DropdownItem> as any
+                            ?
+                            <>
+                                <DropdownItem
+                                    className="p-3"
+                                    onClick={reply}
+                                    style={{ backgroundColor: 'transparent', border: 'none', color: 'inherit' }}
+                                    startContent={<GoReply className="size-5" />}
+                                    key="reply"
+                                >
+                                    Reply
+                                </DropdownItem>
+                                <DropdownItem
+                                    className="p-3"
+                                    onClick={pin}
+                                    style={{ backgroundColor: 'transparent', border: 'none', color: 'inherit' }}
+                                    startContent={<GoReply className="size-5" />}
+                                    key="pin"
+                                >
+                                    Pin
+                                </DropdownItem>
+                            </> as any
+                            : null
                     }
 
                     <DropdownItem

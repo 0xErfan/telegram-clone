@@ -17,6 +17,7 @@ interface Props {
     myId: string,
     addReplay: (_id: string) => void
     edit: (data: MessageModel) => void
+    pin: (_id: string) => void
     isPv?: boolean
     voiceData?: VoiceModel | null
     stickyDate: string | null
@@ -41,6 +42,7 @@ const Message = (msgData: MessageModel & Props) => {
         isEdited,
         addReplay,
         edit,
+        pin,
         isPv = false,
         voiceData: voiceDataProp,
         stickyDate,
@@ -174,7 +176,8 @@ const Message = (msgData: MessageModel & Props) => {
                 ...prev.modalData,
                 msgData,
                 edit,
-                reply: () => addReplay(_id)
+                reply: () => addReplay(_id),
+                pin
             }
         }))
     }

@@ -9,6 +9,7 @@ export const schema = new Schema({
     replayedTo: { type: { message: String, msgID: String, username: String } || null, default: null },
     isEdited: { type: Boolean, default: false },
     hideFor: [{ type: Schema.ObjectId, ref: 'User', default: [] }],
+    pinnedAt: { type: String || null, default: null },
     voiceData: {
         type: {
             src: { type: String, required: true },

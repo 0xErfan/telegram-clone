@@ -18,7 +18,7 @@ export interface Props {
         bodyText?: string
         isChecked?: boolean
         isCheckedText?: string
-        msgData: (MessageModel & { myId: string, addReplay: (_id: string) => void, edit: (_id: string) => void, isPv?: boolean } | null)
+        msgData: (MessageModel & { myId: string, addReplay: (_id: string) => void, edit: (_id: string) => void, pin: (_id: string) => void, isPv?: boolean } | null)
         okText?: string
         cancelText?: string
         onSubmit: () => void

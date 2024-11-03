@@ -13,7 +13,8 @@ import JoinToRoom from "./JoinToRoom";
 import { MessageModel } from "@/@types/data.t";
 import useScrollChange from "@/hook/useScrollChange";
 import DropDown from "../modules/DropDown";
-import {formattedDateString, scrollToMessage} from "@/utils";
+import { formattedDateString } from "@/utils";
+import PinnedMessages from "./PinnedMessages";
 
 export interface msgDate { date: string, usedBy: string }
 
@@ -64,6 +65,8 @@ const ChatContent = () => {
         return messages?.find(msg => msg._id == replayData)
     }, [replayData, roomID])
 
+    const pinMessage = () => alert('pinned successfully')
+
     const onlineMembersCount = useMemo(() => {
         if (!onlineUsers?.length || !participants?.length) return 0
         return participants?.filter(pId => onlineUsers.some(data => { if (data.userID === pId) return true })).length
@@ -81,15 +84,17 @@ const ChatContent = () => {
         return count;
     }, [messages?.length, myID, forceRender])
 
-    const messageContent = useMemo(() => {
+    const { messageContent, pinnedMessages } = useMemo(() => {
 
         let dates: { date: string, usedBy: string }[] = []
+        const pinnedMessages: MessageModel[] = []
 
-        return messages?.length
+        const messageContent = messages?.length
             ?
             messages.map((data, index) => {
 
                 if (data?.hideFor?.includes(myID)) return;
+                if (data?.pinnedAt) pinnedMessages.push(data)
 
                 const isDateUsed = dates.some(date => {
                     if (date.date === formattedDateString(data.createdAt) || date.usedBy === data._id) {
@@ -110,6 +115,7 @@ const ChatContent = () => {
                     <Message
                         addReplay={replyData => { setEditData(null), setReplayData(replyData) }}
                         edit={() => { setReplayData(null), setEditData(data) }}
+                        pin={pinMessage}
                         myId={myID}
                         isPv={type === 'private'}
                         stickyDate={dates.find(dateString => dateString.usedBy === data._id)?.date ?? null}
@@ -126,6 +132,10 @@ const ChatContent = () => {
             <div data-aos="fade-left" className="flex-center size-full">
                 <p className="rounded-full w-fit text-[14px] py-1 px-3 text-center bg-white/[18%]">Send a message to start the chat bud</p>
             </div>
+
+
+        return { messageContent, pinnedMessages }
+
     }, [myID, messages, type])
 
     const manageScroll = () => {
@@ -317,10 +327,10 @@ const ChatContent = () => {
     }, [roomID])
 
     // close fixed message date 1.5 seconds after every scroll
-    useEffect(() => {
-        stickyDateTimer.current = setTimeout(() => setIsFixedDateShow(true), 1500)
-            return () => clearTimeout(stickyDateTimer.current!)
-    }, [lastScrollPosition])
+    // useEffect(() => {
+    //     stickyDateTimer.current = setTimeout(() => setIsFixedDateShow(true), 1500)
+    //     return () => clearTimeout(stickyDateTimer.current!)
+    // }, [lastScrollPosition])
 
     useEffect(() => {
         if (messageDates?.length) setActiveFixedDate(messageDates.at(-1)!)
@@ -329,7 +339,12 @@ const ChatContent = () => {
     return (
         <section data-aos="fade-right" className="relative">
 
-            <div className="flex items-center justify-between sticky top-0 border-b border-white/5 bg-chatBg z-50 py-2 md:py-3 xl:py-0 xl:h-[97px] z-[100]">
+            <PinnedMessages pinnedMessages={pinnedMessages} />
+
+            <div
+                id="chatContentHeader"
+                className="flex items-center justify-between sticky top-0 border-b border-white/5 bg-chatBg py-2 md:py-3 xl:py-0 xl:h-[97px] z-[100]"
+            >
 
                 <div className='flex items-center gap-5'>
 
@@ -418,7 +433,7 @@ const ChatContent = () => {
             <div
                 onScroll={checkIsLastMsgInView}
                 ref={messageContainerRef}
-                className="flex flex-col gap-2 relative fillScreen mb-1 md:pb-2 overflow-x-hidden overflow-y-auto noScrollWidth"
+                className={`flex flex-col gap-2 relative fillScreen mb-1 md:pb-2 overflow-x-hidden ${pinnedMessages?.length && 'mt-[50px]'} overflow-y-auto noScrollWidth`}
             >
 
                 {/* rendering all the messages */}
