@@ -277,6 +277,16 @@ io.on('connection', socket => {
 
     })
 
+    socket.on('pinMessage', async (id, roomID) => {
+
+        io.to(roomID).emit('pinMessage', id)
+        const messageToPin = await MessageModel.findOne({_id: id})
+        
+        messageToPin.pinnedAt = messageToPin?.pinnedAt ? null : Date.now() // toggle between pin & unpin
+        messageToPin.save()
+        
+    })
+
     socket.on('typing', data => {
         if (!typings.includes(data.sender.name)) {
             io.to(data.roomID).emit('typing', data)

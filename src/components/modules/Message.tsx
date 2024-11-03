@@ -46,7 +46,7 @@ const Message = (msgData: MessageModel & Props) => {
         isPv = false,
         voiceData: voiceDataProp,
         stickyDate,
-        datesStore: { dates, activeDateUpdater, hideFixedDate }
+        // datesStore: { dates, activeDateUpdater, hideFixedDate }
     } = msgData
 
     const messageRef = useRef(null)

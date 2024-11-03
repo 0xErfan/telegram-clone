@@ -7,14 +7,15 @@ import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import useUserStore from "@/zustand/userStore";
 import MessageSender from "./MessageSender";
 import useSockets from "@/zustand/useSockets";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import ScrollToBottom from "./ScrollToBottom";
 import JoinToRoom from "./JoinToRoom";
 import { MessageModel } from "@/@types/data.t";
 import useScrollChange from "@/hook/useScrollChange";
 import DropDown from "../modules/DropDown";
 import { formattedDateString } from "@/utils";
-import PinnedMessages from "./PinnedMessages";
+
+const PinnedMessages = lazy(() => import('./PinnedMessages'))
 
 export interface msgDate { date: string, usedBy: string }
 
@@ -30,6 +31,7 @@ const ChatContent = () => {
     const { selectedRoom, onlineUsers, isRoomDetailsShown } = useGlobalVariablesStore(state => state) || {}
     const [typings, setTypings] = useState<string[]>([])
     const [isLoaded, setIsLoaded] = useState(false)
+    const [pinnedMessages, setPinnedMessages] = useState<MessageModel[]>([])
     const [isLastMsgInView, setIsLastMsgInView] = useState(false);
     const [showRoomOptions, setShowRoomOptions] = useState(false);
     const [messageDates, setMessageDates] = useState<msgDate[]>([])
@@ -61,11 +63,13 @@ const ChatContent = () => {
             (selectedRoom || '') as any
     }, [selectedRoom?._id, type])
 
+    const pinMessage = (id: string) => {
+        rooms?.emit('pinMessage', id, selectedRoom?._id)
+    }
+
     const replayDataMsg = useMemo(() => {
         return messages?.find(msg => msg._id == replayData)
     }, [replayData, roomID])
-
-    const pinMessage = () => alert('pinned successfully')
 
     const onlineMembersCount = useMemo(() => {
         if (!onlineUsers?.length || !participants?.length) return 0
@@ -84,17 +88,16 @@ const ChatContent = () => {
         return count;
     }, [messages?.length, myID, forceRender])
 
-    const { messageContent, pinnedMessages } = useMemo(() => {
+    const messageContent = useMemo(() => {
 
         let dates: { date: string, usedBy: string }[] = []
-        const pinnedMessages: MessageModel[] = []
 
         const messageContent = messages?.length
             ?
             messages.map((data, index) => {
 
                 if (data?.hideFor?.includes(myID)) return;
-                if (data?.pinnedAt) pinnedMessages.push(data)
+                if (data?.pinnedAt) setPinnedMessages(prev => [...prev, data])
 
                 const isDateUsed = dates.some(date => {
                     if (date.date === formattedDateString(data.createdAt) || date.usedBy === data._id) {
@@ -133,10 +136,9 @@ const ChatContent = () => {
                 <p className="rounded-full w-fit text-[14px] py-1 px-3 text-center bg-white/[18%]">Send a message to start the chat bud</p>
             </div>
 
+        return messageContent;
 
-        return { messageContent, pinnedMessages }
-
-    }, [myID, messages, type])
+    }, [myID, messages, type, roomID])
 
     const manageScroll = () => {
         if (isLoaded) {
@@ -153,7 +155,7 @@ const ChatContent = () => {
         const isInView = e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight <= 0
         setIsLastMsgInView(isInView)
     }
-
+    console.log(pinnedMessages)
     const openChatSetting = () => {
         setShowRoomOptions(true)
     }
@@ -310,6 +312,24 @@ const ChatContent = () => {
     }, [messages?.length, participants?.length])
 
     useEffect(() => {
+        rooms?.on('pinMessage', (msgId) => {
+
+            let updatedPinList;
+
+            const pinMessageIndex = pinnedMessages?.findIndex(msg => msg._id == msgId)
+
+            if (pinMessageIndex !== -1) {
+                updatedPinList = [...pinnedMessages].splice(pinMessageIndex, 1)
+            } else {
+                const newPinMessage = messages.find(msg => msg._id == msgId)
+                updatedPinList = [...pinnedMessages, newPinMessage]
+            }
+
+            setPinnedMessages(updatedPinList as MessageModel[])
+        })
+    }, [pinnedMessages, messages])
+
+    useEffect(() => {
         if (!isLoaded && _id && messages?.length) {
             const lastSeenMsg = [...messages].reverse().find(msg => msg.sender._id === myID || msg.seen.includes(myID))
             const lastSeenMsgElem = document.getElementsByClassName(lastSeenMsg?._id!)[0]
@@ -339,7 +359,12 @@ const ChatContent = () => {
     return (
         <section data-aos="fade-right" className="relative">
 
-            <PinnedMessages pinnedMessages={pinnedMessages} />
+            {
+                pinnedMessages?.length
+                    ?
+                    <Suspense><PinnedMessages pinnedMessages={pinnedMessages} /></Suspense>
+                    : null
+            }
 
             <div
                 id="chatContentHeader"

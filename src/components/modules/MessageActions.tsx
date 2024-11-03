@@ -6,6 +6,7 @@ import { IoArrowBackOutline } from "react-icons/io5";
 import { AiOutlineDelete } from "react-icons/ai";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import useSockets from "@/zustand/useSockets";
+import { LuPin } from "react-icons/lu";
 import { Key, useEffect, useMemo, useState } from "react";
 import useUserStore from "@/zustand/userStore";
 import { UserModel } from "@/@types/data.t";
@@ -171,28 +172,30 @@ const MessageActions = () => {
                     {
                         // if the room is not chanel or if it is, user should be admin
                         ((roomData?.type && roomData?.type !== 'chanel') || roomData?.admins?.includes(myID))
-                            ?
-                            <>
-                                <DropdownItem
-                                    className="p-3"
-                                    onClick={reply}
-                                    style={{ backgroundColor: 'transparent', border: 'none', color: 'inherit' }}
-                                    startContent={<GoReply className="size-5" />}
-                                    key="reply"
-                                >
-                                    Reply
-                                </DropdownItem>
-                                <DropdownItem
-                                    className="p-3"
-                                    onClick={pin}
-                                    style={{ backgroundColor: 'transparent', border: 'none', color: 'inherit' }}
-                                    startContent={<GoReply className="size-5" />}
-                                    key="pin"
-                                >
-                                    Pin
-                                </DropdownItem>
-                            </> as any
-                            : null
+                        &&
+                        <DropdownItem
+                            className="p-3"
+                            onClick={reply}
+                            style={{ backgroundColor: 'transparent', border: 'none', color: 'inherit' }}
+                            startContent={<GoReply className="size-5" />}
+                            key="reply"
+                        >
+                            Reply
+                        </DropdownItem> as any
+                    }
+
+                    {
+                        ((roomData?.type && roomData?.type !== 'chanel') || roomData?.admins?.includes(myID))
+                        &&
+                        <DropdownItem
+                            className="p-3"
+                            onClick={pin}
+                            style={{ backgroundColor: 'transparent', border: 'none', color: 'inherit' }}
+                            startContent={<LuPin className="size-5" />}
+                            key="pin"
+                        >
+                            Pin
+                        </DropdownItem> as any
                     }
 
                     <DropdownItem
@@ -229,7 +232,7 @@ const MessageActions = () => {
 
                 </DropdownMenu>
 
-            </Dropdown>
+            </Dropdown >
         </>
     )
 }

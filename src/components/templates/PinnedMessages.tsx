@@ -1,14 +1,17 @@
 import { MessageModel } from "@/@types/data.t";
+import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import { ElementRef, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { TiPinOutline } from "react-icons/ti";
 
 
 const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageModel[] }) => {
 
+    const roomId = useGlobalVariablesStore(state => state.selectedRoom?._id)
+
     const pinnedMessageRef = useRef<ElementRef<'section'> | null>(null)
     const [isLoaded, setIsLoaded] = useState(false)
     const [pinMessages, setPinMessages] = useState(messages ?? [])
-    console.log(pinMessages)
+    
     // dynamically update the pin container before the page paint. 
     useLayoutEffect(() => {
 
@@ -22,11 +25,11 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
 
         setIsLoaded(true)
 
-    }, [pinnedMessageRef?.current])
+    }, [pinnedMessageRef?.current, ])
 
     useEffect(() => {
         if (messages?.length) setPinMessages(messages)
-    }, [messages?.length])
+    }, [messages?.length, roomId])
 
     return (
         <section
