@@ -318,7 +318,7 @@ const ChatContent = () => {
 
     // close fixed message date 1.5 seconds after every scroll
     useEffect(() => {
-        stickyDateTimer.current = setTimeout(() => setIsFixedDateShow(false), 1500)
+        stickyDateTimer.current = setTimeout(() => setIsFixedDateShow(true), 1500)
             return () => clearTimeout(stickyDateTimer.current!)
     }, [lastScrollPosition])
 
@@ -401,17 +401,17 @@ const ChatContent = () => {
                     </div>
                 </div>
 
-                {
+                {/* {
                     (activeFixedDate && isFixedDateShow)
                     ?
                     <div
                         onClick={() => scrollToMessage(activeFixedDate?.usedBy, 'smooth')}
-                        className='absolute -bottom-8 inset-x-0 text-[12px] z-50 bg-white/10 w-fit m-auto text-center rounded-2xl py-1 px-3 cursor-pointer'
+                        className='absolute -bottom-10 inset-x-0 text-[12px] z-50 bg-white/10 w-fit m-auto text-center rounded-2xl py-1 px-3 cursor-pointer'
                     >
                         {activeFixedDate.date}
                     </div>
                     : null
-                }
+                } */}
 
             </div>
 

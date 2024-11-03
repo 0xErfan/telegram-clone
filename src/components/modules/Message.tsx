@@ -80,7 +80,6 @@ const Message = (msgData: MessageModel & Props) => {
                 console.log('foreach run here...')
                 const elem = document.getElementById(`${_id + '' + index}`)
                 if (elem) elem.style.backgroundColor = 'white'
-
             })
 
         }
@@ -101,7 +100,7 @@ const Message = (msgData: MessageModel & Props) => {
 
         return { songWaves: waves, waveUpdater };
 
-    }, [])
+    }, [_id])
 
     useEffect(() => {
 
@@ -221,16 +220,16 @@ const Message = (msgData: MessageModel & Props) => {
 
     }, [isInViewport, isFromMe]);
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        if (!dates?.length) return
+    //     if (!dates?.length) return
 
-        const currentMsgDateIndex = dates.findIndex(data => data.date == stickyDate)
-        typeof dates[currentMsgDateIndex] == 'object' && activeDateUpdater(dates[currentMsgDateIndex])
+    //     const currentMsgDateIndex = dates.findIndex(data => data.date == stickyDate)
+    //     typeof dates[currentMsgDateIndex] == 'object' && activeDateUpdater(dates[currentMsgDateIndex])
 
-        hideFixedDate(!false)
+    //     hideFixedDate(true)
 
-    }, [isInViewport, dates, stickyDate])
+    // }, [isInViewport, dates, stickyDate])
 
     useEffect(() => { setIsMounted(true) }, [])
 
