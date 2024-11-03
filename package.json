@@ -32,7 +32,7 @@
     "framer-motion": "^11.3.28",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.2",
-    "next": "^15.0.2",
+    "next": "^14.2.16",
     "next-connect": "^1.0.0",
     "nodemon": "^3.1.4",
     "peerjs": "^1.5.4",
