@@ -1,4 +1,5 @@
 import { MessageModel } from "@/@types/data.t";
+import { scrollToMessage } from "@/utils";
 import { ElementRef, memo, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { TiPinOutline } from "react-icons/ti";
 
@@ -7,6 +8,10 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
     const pinnedMessageRef = useRef<ElementRef<'section'> | null>(null)
     const [isLoaded, setIsLoaded] = useState(false)
     const [pinMessages, setPinMessages] = useState<MessageModel[]>([])
+
+    const scrollToPinMessage = () => {
+        scrollToMessage(pinMessages[0]._id, 'smooth')
+    }
 
     // dynamically update the pin container before the page paint. 
     useLayoutEffect(() => {
@@ -45,7 +50,7 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
         >
             <div className="flex items-center justify-between *:cursor-pointer gap-2">
 
-                <div className="basis-[94%] w-full pl-2 m-auto flex items-start justify-start flex-col">
+                <div onClick={scrollToPinMessage} className="basis-[94%] w-full pl-2 m-auto flex items-start justify-start flex-col">
                     <h5 className="font-bold font-segoeBold text-sm text-lightBlue text-left">Pin messages</h5>
                     <p className="line-clamp-1 w-full overflow-hidden text-darkGray text-sm">{`${pinMessages?.[0]?.sender.name}: ${pinMessages?.[0]?.message}`}</p>
                 </div>
