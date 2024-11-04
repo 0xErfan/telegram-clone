@@ -14,14 +14,14 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
     }
 
     // dynamically update the pin container before the page paint. 
-    useLayoutEffect(() => {
+    useEffect(() => {
 
         const leftBarWidth = document.querySelector('#leftbar-container')?.clientWidth as number
         const chatContentHeaderHeight = document.querySelector('#chatContentHeader')?.clientHeight as number
 
         if (pinnedMessageRef?.current) {
             pinnedMessageRef.current.style.width = `${window.innerWidth - leftBarWidth}px`
-            pinnedMessageRef.current.style.top = `${chatContentHeaderHeight + 57}px`
+            pinnedMessageRef.current.style.top = `${chatContentHeaderHeight}px`
         }
 
         setIsLoaded(true)
@@ -46,7 +46,7 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
         <section
             key={String(isLoaded)}
             ref={pinnedMessageRef}
-            className={`absolute inset-x-0 p-1 left-1/2 h-[50px] -translate-x-1/2 z-[999999999] overflow-hidden bg-leftBarBg`}
+            className={`absolute ${isLoaded ? 'opacity-100' : 'opacity-0'} transition-all duration-200 inset-x-0 p-1 left-1/2 h-[50px] -translate-x-1/2 z-[999999999] overflow-hidden bg-leftBarBg`}
         >
             <div className="flex items-center justify-between *:cursor-pointer gap-2">
 

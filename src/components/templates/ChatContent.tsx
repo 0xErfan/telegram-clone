@@ -367,8 +367,6 @@ const ChatContent = () => {
     return (
         <section data-aos="fade-right" className="relative">
 
-            <PinnedMessages pinnedMessages={pinnedMessages} />
-
             <div
                 id="chatContentHeader"
                 className="flex items-center justify-between sticky top-0 border-b border-white/5 bg-chatBg py-2 md:py-3 xl:py-0 xl:h-[97px] z-[100]"
@@ -455,6 +453,8 @@ const ChatContent = () => {
                     </div>
                     : null
                 } */}
+
+                <PinnedMessages pinnedMessages={pinnedMessages} />
 
             </div>
 

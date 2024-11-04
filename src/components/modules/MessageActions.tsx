@@ -194,7 +194,7 @@ const MessageActions = () => {
                             startContent={<LuPin className="size-5" />}
                             key="pin"
                         >
-                            Pin
+                            {msgData?.pinnedAt ? 'Unpin' : 'Pin'}
                         </DropdownItem> as any
                     }
 
