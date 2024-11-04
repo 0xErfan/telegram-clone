@@ -283,7 +283,7 @@ io.on('connection', socket => {
         const messageToPin = await MessageModel.findOne({_id: id})
         
         messageToPin.pinnedAt = messageToPin?.pinnedAt ? null : Date.now() // toggle between pin & unpin
-        messageToPin.save()
+        await messageToPin.save()
         
     })
 

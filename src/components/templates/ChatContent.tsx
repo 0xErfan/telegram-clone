@@ -7,15 +7,14 @@ import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import useUserStore from "@/zustand/userStore";
 import MessageSender from "./MessageSender";
 import useSockets from "@/zustand/useSockets";
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ScrollToBottom from "./ScrollToBottom";
 import JoinToRoom from "./JoinToRoom";
 import { MessageModel } from "@/@types/data.t";
 import useScrollChange from "@/hook/useScrollChange";
 import DropDown from "../modules/DropDown";
 import { formattedDateString } from "@/utils";
-
-const PinnedMessages = lazy(() => import('./PinnedMessages'))
+import PinnedMessages from "./PinnedMessages";
 
 export interface msgDate { date: string, usedBy: string }
 
@@ -40,7 +39,7 @@ const ChatContent = () => {
     const [forceRender, setForceRender] = useState(false)
     const [replayData, setReplayData] = useState<string | null>(null)
     const [editData, setEditData] = useState<MessageModel | null>(null)
-    const { lastScrollPosition, canShow } = useScrollChange(messageContainerRef?.current!)
+    const { canShow } = useScrollChange(messageContainerRef?.current!)
 
     const {
         _id: roomID,
@@ -97,7 +96,6 @@ const ChatContent = () => {
             messages.map((data, index) => {
 
                 if (data?.hideFor?.includes(myID)) return;
-                if (data?.pinnedAt) setPinnedMessages(prev => [...prev, data])
 
                 const isDateUsed = dates.some(date => {
                     if (date.date === formattedDateString(data.createdAt) || date.usedBy === data._id) {
@@ -155,7 +153,7 @@ const ChatContent = () => {
         const isInView = e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight <= 0
         setIsLastMsgInView(isInView)
     }
-    console.log(pinnedMessages)
+
     const openChatSetting = () => {
         setShowRoomOptions(true)
     }
@@ -309,24 +307,27 @@ const ChatContent = () => {
             rooms?.off('listenToVoice')
             rooms?.off('newMessageIdUpdate')
         }
-    }, [messages?.length, participants?.length])
+    }, [messages, participants])
 
     useEffect(() => {
         rooms?.on('pinMessage', (msgId) => {
 
             let updatedPinList;
 
-            const pinMessageIndex = pinnedMessages?.findIndex(msg => msg._id == msgId)
+            const pinMessageData = pinnedMessages?.find(msg => msg._id == msgId)
 
-            if (pinMessageIndex !== -1) {
-                updatedPinList = [...pinnedMessages].splice(pinMessageIndex, 1)
+            if (pinMessageData) {
+                updatedPinList = [...pinnedMessages].filter(msg => msg._id != pinMessageData?._id)
             } else {
                 const newPinMessage = messages.find(msg => msg._id == msgId)
-                updatedPinList = [...pinnedMessages, newPinMessage]
+                updatedPinList = [...pinnedMessages, { ...newPinMessage, pinnedAt: Date.now() }]
             }
 
             setPinnedMessages(updatedPinList as MessageModel[])
         })
+        return () => {
+            rooms?.off('pinMessage')
+        }
     }, [pinnedMessages, messages])
 
     useEffect(() => {
@@ -336,7 +337,14 @@ const ChatContent = () => {
             lastSeenMsgElem?.scrollIntoView()
             setIsLoaded(true)
         } // not working properly, the element get selected correctly but the scroll is not
-    }, [messages?.length, isLoaded, myID])
+    }, [messages, isLoaded, myID])
+
+    useEffect(() => {
+        if (messages?.length) {
+            const pinnedMsgs = [...messages].filter(msg => msg.pinnedAt)
+            setPinnedMessages(pinnedMsgs)
+        }
+    }, [messages])
 
     useEffect(() => {
         setter({ isChatPageLoaded: true })
@@ -352,19 +360,14 @@ const ChatContent = () => {
     //     return () => clearTimeout(stickyDateTimer.current!)
     // }, [lastScrollPosition])
 
-    useEffect(() => {
-        if (messageDates?.length) setActiveFixedDate(messageDates.at(-1)!)
-    }, [messageDates?.length, selectedRoom?._id])
+    // useEffect(() => {
+    //     if (messageDates?.length) setActiveFixedDate(messageDates.at(-1)!)
+    // }, [messageDates?.length, selectedRoom?._id])
 
     return (
         <section data-aos="fade-right" className="relative">
 
-            {
-                pinnedMessages?.length
-                    ?
-                    <Suspense><PinnedMessages pinnedMessages={pinnedMessages} /></Suspense>
-                    : null
-            }
+            <PinnedMessages pinnedMessages={pinnedMessages} />
 
             <div
                 id="chatContentHeader"

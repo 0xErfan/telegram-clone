@@ -1,17 +1,13 @@
 import { MessageModel } from "@/@types/data.t";
-import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
-import { ElementRef, useEffect, useLayoutEffect, useRef, useState } from "react"
+import { ElementRef, memo, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { TiPinOutline } from "react-icons/ti";
-
 
 const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageModel[] }) => {
 
-    const roomId = useGlobalVariablesStore(state => state.selectedRoom?._id)
-
     const pinnedMessageRef = useRef<ElementRef<'section'> | null>(null)
     const [isLoaded, setIsLoaded] = useState(false)
-    const [pinMessages, setPinMessages] = useState(messages ?? [])
-    
+    const [pinMessages, setPinMessages] = useState<MessageModel[]>([])
+
     // dynamically update the pin container before the page paint. 
     useLayoutEffect(() => {
 
@@ -20,16 +16,26 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
 
         if (pinnedMessageRef?.current) {
             pinnedMessageRef.current.style.width = `${window.innerWidth - leftBarWidth}px`
-            pinnedMessageRef.current.style.top = `${chatContentHeaderHeight}px`
+            pinnedMessageRef.current.style.top = `${chatContentHeaderHeight + 57}px`
         }
 
         setIsLoaded(true)
 
-    }, [pinnedMessageRef?.current, ])
+    }, [pinnedMessageRef?.current, messages])
 
     useEffect(() => {
-        if (messages?.length) setPinMessages(messages)
-    }, [messages?.length, roomId])
+
+        if (!messages?.length) return
+
+        const sortedPinMessages = [...messages].filter(msg => msg.pinnedAt).sort((a, b) => {
+            return (new Date(Number(b.pinnedAt)).getTime()) - (new Date(Number(a.pinnedAt)).getTime())
+        })
+
+        setPinMessages(sortedPinMessages)
+
+    }, [messages])
+
+    if (!messages?.length) return;
 
     return (
         <section
@@ -41,7 +47,7 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
 
                 <div className="basis-[94%] w-full pl-2 m-auto flex items-start justify-start flex-col">
                     <h5 className="font-bold font-segoeBold text-sm text-lightBlue text-left">Pin messages</h5>
-                    <p className="line-clamp-1 w-full overflow-hidden text-darkGray text-sm">Erfan: hi guys, how you doing btw?</p>
+                    <p className="line-clamp-1 w-full overflow-hidden text-darkGray text-sm">{`${pinMessages?.[0]?.sender.name}: ${pinMessages?.[0]?.message}`}</p>
                 </div>
 
                 <div className="basis-[6%]">
@@ -53,4 +59,4 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
     )
 }
 
-export default PinnedMessages
+export default memo(PinnedMessages)

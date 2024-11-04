@@ -6,9 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="feb97921-83dc-4b8f-9720-f472f4c4fd74" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/modules/Message.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/modules/Message.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/templates/ChatContent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/templates/ChatContent.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hook/useScrollChange.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/hook/useScrollChange.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,7 +56,7 @@
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;Errors&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\RCC\\OneDrive\\Desktop\\telegram-clone\\node_modules\\typescript\\lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -91,6 +88,7 @@
       <workItem from="1728583943003" duration="1039000" />
       <workItem from="1729962156730" duration="501000" />
       <workItem from="1729962665148" duration="5637000" />
+      <workItem from="1730478387010" duration="117000" />
     </task>
     <servers />
   </component>
