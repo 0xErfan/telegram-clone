@@ -11,7 +11,7 @@ import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import useSockets from "@/zustand/useSockets"
 import RoomFolders from "./RoomFolders"
 import RoomSkeleton from "../modules/RoomSkeleton"
-import {clearInterval} from "node:timers";
+import { clearInterval } from "timers"
 
 const CreateRoomBtn = lazy(() => import('@/components/templates/CreateRoomBtn'))
 const LeftBarMenu = lazy(() => import('@/components/templates/LeftBarMenu'))

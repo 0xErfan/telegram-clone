@@ -20,8 +20,6 @@ type Props = {
 
 const CreateRoom = ({ roomType, close }: Props) => {
 
-    if (!roomType) return
-
     const { _id: myID, rooms } = useUserStore(state => state)
     const userContacts = rooms.filter(room => room.type === 'private' && room.participants.length > 1)
     const onlineUsers = useGlobalVariablesStore(state => state.onlineUsers)
@@ -41,6 +39,8 @@ const CreateRoom = ({ roomType, close }: Props) => {
             [...userContacts].filter(data => (data.participants as UserModel[]).find(pd => pd._id !== myID)?.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
             : []
     }, [search, userContacts?.length])
+
+    if (!roomType) return
 
     const isUserOnline = (id: string) => {
         return onlineUsers.some(data => {

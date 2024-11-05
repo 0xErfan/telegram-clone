@@ -12,11 +12,12 @@ const useUserStore = create<UserModel & Updater>(set => ({
     lastName: '',
     username: '',
     password: '',
-    phone: 0,
+    phone: '0',
     rooms: [],
     avatar: '',
     createdAt: '',
     isLogin: false,
+    biography: '',
     status: 'offline',
     updatedAt: '',
 
