@@ -52,7 +52,7 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
 
                 <div onClick={scrollToPinMessage} className="basis-[94%] w-full pl-2 m-auto flex items-start justify-start flex-col">
                     <h5 className="font-bold font-segoeBold text-sm text-lightBlue text-left">Pin messages</h5>
-                    <p className="line-clamp-1 w-full overflow-hidden text-darkGray text-sm">{`${pinMessages?.[0]?.sender.name}: ${pinMessages?.[0]?.message}`}</p>
+                    <p className="line-clamp-1 w-full overflow-hidden text-darkGray text-sm">{`${pinMessages?.[0]?.sender.name}: ${pinMessages?.[0]?.message ? pinMessages?.[0]?.message : pinMessages?.[0]?.voiceData && 'Voice Message'}`}</p>
                 </div>
 
                 <div className="basis-[6%]">
