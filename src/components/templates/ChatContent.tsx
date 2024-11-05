@@ -312,22 +312,29 @@ const ChatContent = () => {
     useEffect(() => {
         rooms?.on('pinMessage', (msgId) => {
 
-            let updatedPinList;
+            let msgData = messages.find(msg => msg._id == msgId)
+            msgData = { ...msgData, pinnedAt: msgData?.pinnedAt ? null : String(Date.now()) } as MessageModel
 
-            const pinMessageData = pinnedMessages?.find(msg => msg._id == msgId)
 
-            if (pinMessageData) {
-                updatedPinList = [...pinnedMessages].filter(msg => msg._id != pinMessageData?._id)
-            } else {
-                const newPinMessage = messages.find(msg => msg._id == msgId)
-                updatedPinList = [...pinnedMessages, { ...newPinMessage, pinnedAt: Date.now() }]
-            }
+            const updatedMessages = messages.map(msg => {
 
-            setPinnedMessages(updatedPinList as MessageModel[])
+                if (msg?._id == msgData?._id) {
+                    msg = msgData
+                }
+                return msg;
+
+            })
+
+            setter({
+                selectedRoom: {
+                    ...selectedRoom,
+                    messages: updatedMessages
+                }
+            })
+
         })
-        return () => {
-            rooms?.off('pinMessage')
-        }
+        return () => { rooms?.off('pinMessage') }
+
     }, [pinnedMessages, messages])
 
     useEffect(() => {

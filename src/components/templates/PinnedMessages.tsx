@@ -14,7 +14,7 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
     }
 
     // dynamically update the pin container before the page paint. 
-    useEffect(() => {
+    useLayoutEffect(() => {
 
         const leftBarWidth = document.querySelector('#leftbar-container')?.clientWidth as number
         const chatContentHeaderHeight = document.querySelector('#chatContentHeader')?.clientHeight as number

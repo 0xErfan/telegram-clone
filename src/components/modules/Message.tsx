@@ -4,6 +4,7 @@ import { FaPlay } from "react-icons/fa";
 import { FaPause, FaArrowDown } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
 import useSockets from '@/zustand/useSockets'
+import { TiPin } from "react-icons/ti";
 import Image from 'next/image'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { MessageModel, VoiceModel } from '@/@types/data.t';
@@ -244,7 +245,7 @@ const Message = (msgData: MessageModel & Props) => {
                     ?
                     <div
                         onClick={() => (messageRef?.current as unknown as HTMLElement)?.scrollIntoView({ behavior: 'smooth' })}
-                        className='sticky top-[13px] inset-x-0 text-[12px] z-50 bg-white/10 w-fit m-auto text-center rounded-2xl py-1 px-3 cursor-pointer'>{stickyDate}
+                        className='sticky top-[13px] inset-x-0 text-[12px] z-50 bg-white/10 w-fit m-auto text-center rounded-2xl py-1 px-3 mb-2 cursor-pointer'>{stickyDate}
                     </div>
                     : null
             }
@@ -285,7 +286,7 @@ const Message = (msgData: MessageModel & Props) => {
                 <div
                     onClick={updateModalMsgData}
                     onContextMenu={e => { e.preventDefault(), updateModalMsgData() }}
-                    className={` tw-min-w-[120px] ${isFromMe ? 'bg-darkBlue rounded-l-md rounded-tr-xl text-right pl-1 pr-3' : `bg-white/10 rounded-r-md rounded-tl-xl text-left pr-1 ${isPv ? 'pl-1' : 'pl-3'}`} relative w-fit max-w-[80%] min-w-24 xl:max-w-[60%]`}
+                    className={`${isFromMe ? 'bg-darkBlue rounded-l-md rounded-tr-xl text-right pl-1 pr-3' : `bg-white/10 rounded-r-md rounded-tl-xl text-left pr-1 ${isPv ? 'pl-1' : 'pl-3'}`} relative w-fit max-w-[80%] min-w-[140px] xl:max-w-[60%]`}
                 >
 
                     {
@@ -389,7 +390,16 @@ const Message = (msgData: MessageModel & Props) => {
                     </div>
 
                     <span className={`flex items-center justify-end gap-1 absolute bottom-px right-3 w-full text-[12px]  ${isFromMe ? 'text-[#B7D9F3]' : 'text-darkGray'} text-right`}>
+
+                        {
+                            msgData?.pinnedAt
+                                ?
+                                <TiPin />
+                                : null
+                        }
+
                         <p className='whitespace-nowrap'>{isEdited && 'edited '} {messageTime}</p>
+
                         {
                             (isFromMe && seen?.length) ?
                                 <Image
@@ -401,6 +411,7 @@ const Message = (msgData: MessageModel & Props) => {
                                 />
                                 : null
                         }
+
                     </span>
 
                 </div>
