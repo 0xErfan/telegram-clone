@@ -462,7 +462,7 @@ const ChatContent = () => {
                     : null
                 } */}
 
-                <PinnedMessages pinnedMessages={pinnedMessages} />
+                <PinnedMessages key={roomID} pinnedMessages={pinnedMessages} />
 
             </div>
 

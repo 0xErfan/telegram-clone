@@ -1,8 +1,9 @@
 import { MessageModel } from "@/@types/data.t";
 import { scrollToMessage } from "@/utils";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
-import { ElementRef, memo, useEffect, useLayoutEffect, useRef, useState } from "react"
+import { ElementRef, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { TiPinOutline } from "react-icons/ti";
+alert('pin message not resting when going to a pv that do not have a pin message i think, bye for now.')
 
 const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageModel[] }) => {
 
@@ -54,13 +55,13 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
 
                 <div
                     onClick={scrollToPinMessage}
-                    className={`${!isRoomDetailsShown && 'basis-[94%]'} w-full pl-2 m-auto flex items-start justify-start flex-col`}
+                    className={`${!isRoomDetailsShown && 'basis-[96%]'} w-full pl-2 m-auto flex items-start justify-start flex-col`}
                 >
                     <h5 className="font-bold font-segoeBold text-sm text-lightBlue text-left">Pin messages</h5>
                     <p className="line-clamp-1 w-full overflow-hidden text-darkGray text-sm">{`${pinMessages?.[0]?.sender.name}: ${pinMessages?.[0]?.message ? pinMessages?.[0]?.message : pinMessages?.[0]?.voiceData && 'Voice Message'}`}</p>
                 </div>
 
-                <div className="basis-[6%]">
+                <div className="basis-[4%] flex justify-center items-center">
                     <TiPinOutline className="size-5 text-darkGray" />
                 </div>
 
@@ -69,4 +70,4 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
     )
 }
 
-export default memo(PinnedMessages)
+export default PinnedMessages

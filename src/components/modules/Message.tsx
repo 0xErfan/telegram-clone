@@ -394,7 +394,7 @@ const Message = (msgData: MessageModel & Props) => {
                         {
                             msgData?.pinnedAt
                                 ?
-                                <TiPin />
+                                <TiPin className='size-4' />
                                 : null
                         }
 
