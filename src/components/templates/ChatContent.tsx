@@ -63,7 +63,8 @@ const ChatContent = () => {
     }, [selectedRoom?._id, type])
 
     const pinMessage = (id: string) => {
-        rooms?.emit('pinMessage', id, selectedRoom?._id)
+        const isLastMessage = messages?.at(-1)?._id == id
+        rooms?.emit('pinMessage', id, selectedRoom?._id, isLastMessage)
     }
 
     const replayDataMsg = useMemo(() => {

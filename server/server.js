@@ -277,14 +277,19 @@ io.on('connection', socket => {
 
     })
 
-    socket.on('pinMessage', async (id, roomID) => {
+    socket.on('pinMessage', async (id, roomID, isLastMessage) => {
 
         io.to(roomID).emit('pinMessage', id)
-        const messageToPin = await MessageModel.findOne({_id: id})
-        
+
+        const messageToPin = await MessageModel.findOne({ _id: id })
+
         messageToPin.pinnedAt = messageToPin?.pinnedAt ? null : Date.now() // toggle between pin & unpin
         await messageToPin.save()
-        
+
+        if (isLastMessage) {
+            io.to(roomID).emit('updateLastMsgData', { msgData: messageToPin, roomID })
+        }
+
     })
 
     socket.on('typing', data => {

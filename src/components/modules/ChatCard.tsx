@@ -165,21 +165,30 @@ export const ChatCard = ({
                     </div>
 
                     <div className="flex items-center justify-between gap-2">
+
                         {
                             notSeenCount > 0
                                 ?
                                 <div data-aos='zoom-in' className="flex-center text-center w-min px-2 bg-darkBlue text-white rounded-full">{notSeenCount}</div>
                                 : null
                         }
-                        {/* pin */}
-                        {/* <Image
-                            priority
-                            src='/shapes/pin.svg'
-                            width={17}
-                            height={17}
-                            className="size-4 bg-center"
-                            alt="pin shape"
-                        /> */}
+
+                        {
+                            lastMsgData?.pinnedAt
+                                ?
+                                <div key={lastMsgData?.pinnedAt} data-aos='zoom-in'>
+                                    <Image
+                                        priority
+                                        src='/shapes/pin.svg'
+                                        width={17}
+                                        height={17}
+                                        className="size-4 bg-center"
+                                        alt="pin shape"
+                                    />
+                                </div>
+                                : null
+                        }
+
                     </div>
 
                 </div>
