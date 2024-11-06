@@ -1,10 +1,12 @@
 import { MessageModel } from "@/@types/data.t";
 import { scrollToMessage } from "@/utils";
+import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import { ElementRef, memo, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { TiPinOutline } from "react-icons/ti";
 
 const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageModel[] }) => {
 
+    const isRoomDetailsShown = useGlobalVariablesStore(state => state.isRoomDetailsShown)
     const pinnedMessageRef = useRef<ElementRef<'section'> | null>(null)
     const [isLoaded, setIsLoaded] = useState(false)
     const [pinMessages, setPinMessages] = useState<MessageModel[]>([])
@@ -20,13 +22,13 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
         const chatContentHeaderHeight = document.querySelector('#chatContentHeader')?.clientHeight as number
 
         if (pinnedMessageRef?.current) {
-            pinnedMessageRef.current.style.width = `${window.innerWidth - leftBarWidth}px`
+            pinnedMessageRef.current.style.width = `${window.innerWidth - leftBarWidth - (isRoomDetailsShown ? 400 : 0)}px`
             pinnedMessageRef.current.style.top = `${chatContentHeaderHeight}px`
         }
 
         setIsLoaded(true)
 
-    }, [pinnedMessageRef?.current, messages])
+    }, [pinnedMessageRef?.current, messages, isRoomDetailsShown])
 
     useEffect(() => {
 
@@ -50,7 +52,10 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
         >
             <div className="flex items-center justify-between *:cursor-pointer gap-2">
 
-                <div onClick={scrollToPinMessage} className="basis-[94%] w-full pl-2 m-auto flex items-start justify-start flex-col">
+                <div
+                    onClick={scrollToPinMessage}
+                    className={`${!isRoomDetailsShown && 'basis-[94%]'} w-full pl-2 m-auto flex items-start justify-start flex-col`}
+                >
                     <h5 className="font-bold font-segoeBold text-sm text-lightBlue text-left">Pin messages</h5>
                     <p className="line-clamp-1 w-full overflow-hidden text-darkGray text-sm">{`${pinMessages?.[0]?.sender.name}: ${pinMessages?.[0]?.message ? pinMessages?.[0]?.message : pinMessages?.[0]?.voiceData && 'Voice Message'}`}</p>
                 </div>
