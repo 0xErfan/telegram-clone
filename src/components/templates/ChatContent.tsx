@@ -7,14 +7,15 @@ import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import useUserStore from "@/zustand/userStore";
 import MessageSender from "./MessageSender";
 import useSockets from "@/zustand/useSockets";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { lazy, useEffect, useMemo, useRef, useState } from "react";
 import ScrollToBottom from "./ScrollToBottom";
 import JoinToRoom from "./JoinToRoom";
 import { MessageModel } from "@/@types/data.t";
 import useScrollChange from "@/hook/useScrollChange";
 import DropDown from "../modules/DropDown";
 import { formattedDateString } from "@/utils";
-import PinnedMessages from "./PinnedMessages";
+
+const PinnedMessages = lazy(() => import('@/components/templates/PinnedMessages'))
 
 export interface msgDate { date: string, usedBy: string }
 
@@ -351,7 +352,7 @@ const ChatContent = () => {
         if (messages?.length) {
             const pinnedMsgs = [...messages].filter(msg => msg.pinnedAt)
             setPinnedMessages(pinnedMsgs)
-        }
+        } else setPinnedMessages([])
     }, [messages])
 
     useEffect(() => {
@@ -462,7 +463,12 @@ const ChatContent = () => {
                     : null
                 } */}
 
-                <PinnedMessages key={roomID} pinnedMessages={pinnedMessages} />
+                {
+                    pinnedMessages?.length
+                        ?
+                        <PinnedMessages key={roomID} pinnedMessages={pinnedMessages} />
+                        : null
+                }
 
             </div>
 

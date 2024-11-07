@@ -3,7 +3,7 @@ import { scrollToMessage } from "@/utils";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import { ElementRef, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { TiPinOutline } from "react-icons/ti";
-alert('pin message not resting when going to a pv that do not have a pin message i think, bye for now.')
+
 
 const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageModel[] }) => {
 
@@ -23,7 +23,8 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
         const chatContentHeaderHeight = document.querySelector('#chatContentHeader')?.clientHeight as number
 
         if (pinnedMessageRef?.current) {
-            pinnedMessageRef.current.style.width = `${window.innerWidth - leftBarWidth - (isRoomDetailsShown ? 400 : 0)}px`
+            const roomDetailsContainerHeight = isRoomDetailsShown ? (window.innerWidth >= 1280 ? 400 : 0) : 0
+            pinnedMessageRef.current.style.width = `${window.innerWidth - leftBarWidth - roomDetailsContainerHeight}px`
             pinnedMessageRef.current.style.top = `${chatContentHeaderHeight}px`
         }
 
