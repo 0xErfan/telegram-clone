@@ -224,14 +224,19 @@ const scrollIntoElem = (elem: Element) => {
     elem?.scrollIntoView({ behavior: 'smooth' })
 }
 
-const scrollToMessage = (id: string, behavior: 'smooth' | 'auto' = 'smooth') => {
+const scrollToMessage = (id: string, behavior: 'smooth' | 'auto' = 'smooth', block = 'center' as ScrollLogicalPosition) => {
 
     const replayTargetElem = document.getElementsByClassName(id!)[0]
-
+    const pinMessageContainer = document.querySelector('#pinMessagesContainer')
+    alert('wait for message to get to the view and then add the active blue background by the way haha.')
     if (replayTargetElem) {
 
-        replayTargetElem.scrollIntoView({ block: 'center', behavior })
+        replayTargetElem.scrollIntoView({ block, behavior })
         replayTargetElem.classList.add('highLightedMessage')
+
+        // if (pinMessageContainer) {
+        //     window.scrollBy(0, -pinMessageContainer.clientHeight)
+        // }
 
         setTimeout(() => replayTargetElem.classList.remove('highLightedMessage'), 1000);
     }

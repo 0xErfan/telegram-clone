@@ -11,9 +11,16 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
     const pinnedMessageRef = useRef<ElementRef<'section'> | null>(null)
     const [isLoaded, setIsLoaded] = useState(false)
     const [pinMessages, setPinMessages] = useState<MessageModel[]>([])
+    const [activePinMsg, setActivePinMsg] = useState(0)
 
     const scrollToPinMessage = () => {
-        scrollToMessage(pinMessages[0]._id, 'smooth')
+
+        scrollToMessage(pinMessages[activePinMsg]?._id, 'smooth', 'nearest')
+        console.log(`active pin msg: ${activePinMsg}, message length: ${pinMessages?.length}`)
+
+        const nextActiveMsg = (activePinMsg + 1) >= pinMessages?.length ? 0 : (activePinMsg + 1)
+        setActivePinMsg(nextActiveMsg)
+
     }
 
     // dynamically update the pin container before the page paint. 
@@ -48,6 +55,7 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
 
     return (
         <section
+            id="pinMessagesContainer"
             key={String(isLoaded)}
             ref={pinnedMessageRef}
             className={`absolute ${isLoaded ? 'opacity-100' : 'opacity-0'} transition-all duration-200 inset-x-0 p-1 left-1/2 h-[50px] -translate-x-1/2 z-[999999999] overflow-hidden bg-leftBarBg`}
@@ -59,7 +67,7 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
                     className={`${!isRoomDetailsShown && 'basis-[96%]'} w-full pl-2 m-auto flex items-start justify-start flex-col`}
                 >
                     <h5 className="font-bold font-segoeBold text-sm text-lightBlue text-left">Pin messages</h5>
-                    <p className="line-clamp-1 w-full overflow-hidden text-darkGray text-sm">{`${pinMessages?.[0]?.sender.name}: ${pinMessages?.[0]?.message ? pinMessages?.[0]?.message : pinMessages?.[0]?.voiceData && 'Voice Message'}`}</p>
+                    <p className="line-clamp-1 w-full overflow-hidden text-darkGray text-sm">{`${pinMessages?.[activePinMsg]?.sender.name}: ${pinMessages?.[activePinMsg]?.message ? pinMessages?.[activePinMsg]?.message : pinMessages?.[activePinMsg]?.voiceData && 'Voice Message'}`}</p>
                 </div>
 
                 <div className="basis-[4%] flex justify-center items-center">
