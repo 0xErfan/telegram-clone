@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaAngleDown } from "react-icons/fa6";
 
 interface Props {
@@ -9,8 +9,17 @@ interface Props {
 const ScrollToBottom = ({ scrollToBottom, count }: Props) => {
 
     const [notSeenCount, setNotSeenCount] = useState(count)
+    const timer = useRef<NodeJS.Timeout | null>(null)
 
-    useEffect(() => { setNotSeenCount(count) }, [count])
+    useEffect(() => {
+
+        timer.current = null
+
+        timer.current = setTimeout(() => setNotSeenCount(count), 200);
+
+        return () => { clearTimeout(timer?.current!) }
+
+    }, [count])
 
     return (
         <section

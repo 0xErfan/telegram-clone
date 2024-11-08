@@ -228,7 +228,9 @@ const scrollToMessage = (id: string, behavior: 'smooth' | 'auto' = 'smooth', blo
 
     const replayTargetElem = document.getElementsByClassName(id!)[0]
     const pinMessageContainer = document.querySelector('#pinMessagesContainer')
-    alert('wait for message to get to the view and then add the active blue background by the way haha.')
+    
+    // alert('wait for message to get to the view and then add the active blue background by the way haha.')
+
     if (replayTargetElem) {
 
         replayTargetElem.scrollIntoView({ block, behavior })
