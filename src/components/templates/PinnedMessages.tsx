@@ -15,7 +15,7 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
 
     const scrollToPinMessage = () => {
 
-        scrollToMessage(pinMessages[activePinMsg]?._id, 'smooth', 'nearest')
+        scrollToMessage(pinMessages[activePinMsg]?._id, 'smooth', 'center')
 
         const nextActiveMsg = (activePinMsg + 1) >= pinMessages?.length ? 0 : (activePinMsg + 1)
         setActivePinMsg(nextActiveMsg)

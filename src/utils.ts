@@ -6,6 +6,7 @@ import { S3 } from "aws-sdk"
 import { PutObjectRequest } from "aws-sdk/clients/s3";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import useUserStore from "./zustand/userStore";
+import { ReactNode } from "react";
 
 
 const getTimer = (date?: string) => {
@@ -228,27 +229,44 @@ const scrollToMessage = (id: string, behavior: 'smooth' | 'auto' = 'smooth', blo
 
     const replayTargetElem = document.getElementsByClassName(id!)[0]
     const pinMessageContainer = document.querySelector('#pinMessagesContainer')
-    
-    // alert('wait for message to get to the view and then add the active blue background by the way haha.')
 
-    if (replayTargetElem) {
+    replayTargetElem?.scrollIntoView({ block, behavior })
 
-        replayTargetElem.scrollIntoView({ block, behavior })
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                scrollToElem()
+                observer.unobserve(replayTargetElem);
+            }
+        });
+    });
+
+    const scrollToElem = () => {
+
+        if (!replayTargetElem) return
+
         replayTargetElem.classList.add('highLightedMessage')
 
-        // if (pinMessageContainer) {
-        //     window.scrollBy(0, -pinMessageContainer.clientHeight)
-        // }
+        if (pinMessageContainer) {
+            return; // for now
+            // if the pin message container is available, we should scroll the message more to get the move the message from under the container.
+            const msgPosition = checkElementPosition(replayTargetElem)
+            const extraScrollAmount = pinMessageContainer.clientHeight * (msgPosition == 'bottom' ? 1 : -1)
+            window.scrollBy({ top: extraScrollAmount })
+        }
 
         setTimeout(() => replayTargetElem.classList.remove('highLightedMessage'), 1000);
-    }
+    };
+
+    observer.observe(replayTargetElem);
+
 }
 
 const copyText = async (text: string) => {
     if ('clipboard' in navigator) {
         await navigator.clipboard.writeText(text)
     } else {
-        showToast(false, 'Copy not supported bud.')
+        showToast(false, 'Copy not supported in your brows bud.')
     }
 }
 
@@ -333,6 +351,21 @@ const secondsToFormattedTimeString = (seconds: number): string => {
 
     return paddedHours + paddedMinutes + paddedSeconds;
 };
+
+const checkElementPosition = (el: any): ('upper' | 'bottom' | undefined) => {
+
+    const rect = el.getBoundingClientRect();
+    const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+
+    const elementTop = rect.top;
+    const elementBottom = rect.bottom;
+
+    if (elementBottom < 0 || elementTop > windowHeight) return;
+
+    if (elementBottom < windowHeight / 2) return 'upper'
+    if (elementTop >= windowHeight / 2) return 'bottom'
+
+}
 
 const formattedDateString = (date: string) => new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
 
