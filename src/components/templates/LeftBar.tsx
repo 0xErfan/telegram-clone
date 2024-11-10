@@ -18,7 +18,7 @@ const LeftBarMenu = lazy(() => import('@/components/templates/LeftBarMenu'))
 const SearchPage = lazy(() => import('@/components/templates/SearchPage'))
 const Modal = lazy(() => import('../modules/Modal'))
 
-const roomSocket = io('http://192.168.99.40:3001/', {
+const roomSocket = io('http://localhost:3001/', {
     autoConnect: true,
     reconnection: true,
     reconnectionAttempts: Infinity,
