@@ -247,7 +247,7 @@ const scrollToMessage = (id: string, behavior: 'smooth' | 'auto' = 'smooth', blo
 
         replayTargetElem.classList.add('highLightedMessage')
 
-        if (pinMessageContainer) {
+        if (0) {
             return; // for now
             // if the pin message container is available, we should scroll the message more to get the move the message from under the container.
             const msgPosition = checkElementPosition(replayTargetElem)

@@ -7,7 +7,7 @@ import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import useUserStore from "@/zustand/userStore";
 import MessageSender from "./MessageSender";
 import useSockets from "@/zustand/useSockets";
-import { lazy, useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import ScrollToBottom from "./ScrollToBottom";
 import JoinToRoom from "./JoinToRoom";
 import { MessageModel } from "@/@types/data.t";
@@ -466,7 +466,7 @@ const ChatContent = () => {
                 {
                     pinnedMessages?.length
                         ?
-                        <PinnedMessages key={roomID} pinnedMessages={pinnedMessages} />
+                        <Suspense><PinnedMessages key={roomID} pinnedMessages={pinnedMessages} /></Suspense>
                         : null
                 }
 
