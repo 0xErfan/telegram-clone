@@ -7,7 +7,7 @@ import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import useUserStore from "@/zustand/userStore";
 import MessageSender from "./MessageSender";
 import useSockets from "@/zustand/useSockets";
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { ElementRef, lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import ScrollToBottom from "./ScrollToBottom";
 import JoinToRoom from "./JoinToRoom";
 import { MessageModel } from "@/@types/data.t";
@@ -24,6 +24,7 @@ const ChatContent = () => {
     let lastMsgRef = useRef<HTMLDivElement | null>(null)
     let messageContainerRef = useRef<HTMLDivElement | null>(null)
     const stickyDateTimer = useRef<NodeJS.Timeout | null>(null)
+    const ringAudioRef = useRef<ElementRef<'audio'>>(null)
 
     const { _id: myID, name: myName, setter: userDataUpdater, rooms: userRooms } = useUserStore(state => state)
     const { setter } = useGlobalVariablesStore(state => state)
@@ -62,6 +63,13 @@ const ChatContent = () => {
             :
             (selectedRoom || '') as any
     }, [selectedRoom?._id, type])
+
+    const playRingSound = () => {
+        if (ringAudioRef?.current) {
+            ringAudioRef.current.currentTime = 0
+            ringAudioRef.current.play()
+        }
+    }
 
     const pinMessage = (id: string) => {
         const isLastMessage = messages?.at(-1)?._id == id
@@ -165,6 +173,9 @@ const ChatContent = () => {
 
         rooms?.on('newMessage', newMsg => {
             if (newMsg.roomID == roomID) {
+
+                if (newMsg?.sender?._id && newMsg.sender._id !== myID) playRingSound()
+
                 setter({
                     selectedRoom: {
                         ...selectedRoom,
@@ -520,6 +531,8 @@ const ChatContent = () => {
                 >
                 </span>
             }
+
+            <audio ref={ringAudioRef} className="hidden invisible opacity-0" src="/files/new-msg-ring.wav"></audio>
 
         </section>
     )
