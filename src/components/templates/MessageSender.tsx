@@ -1,6 +1,6 @@
 import { BsEmojiSmile } from "react-icons/bs";
 import { IoIosSend, IoMdClose } from "react-icons/io";
-import { ChangeEvent, lazy, useEffect, useRef, useState } from "react";
+import { ChangeEvent, ElementRef, lazy, useEffect, useRef, useState } from "react";
 import { MdAttachFile, MdModeEditOutline, MdOutlineDone } from "react-icons/md";
 import { BsFillReplyFill } from "react-icons/bs";
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
@@ -23,7 +23,8 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
 
     const [text, setText] = useState('')
     const typingTimer = useRef<NodeJS.Timeout | null>(null)
-    const inputRef = useRef<HTMLInputElement | null>(null)
+    const inputRef = useRef<ElementRef<'textarea'> | null>(null)
+    const msgSenderRef = useRef<ElementRef<'section'>>(null)
     const [isMuted, setIsMuted] = useState(false)
     const [isEmojiOpen, setIsEmojiOpen] = useState(false)
 
@@ -33,6 +34,8 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
     const myData = useUserStore(state => state)
 
     const _id = selectedRoom?._id;
+
+    const msgSenderHeight = `${msgSenderRef?.current?.clientHeight}px`
 
     useEffect(() => {
         setText(editData?.message || '')
@@ -51,6 +54,8 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
         }
 
     }, [_id])
+
+    useEffect(() => resizeTextArea(), [text])
 
     useEffect(() => {
         if (replayData?._id || editData?._id) inputRef.current?.focus()
@@ -102,12 +107,12 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
     const msgTextUpdater = (e: ChangeEvent<HTMLInputElement>) => {
 
         const msgText = e.target.value
+
         draftMsg = msgText
         setText(msgText)
-        if (inputRef.current) {
-            inputRef.current.height = inputRef.current?.scrollHeight
-        }
+
         handleIsTyping()
+
     }
 
     const handleIsTyping = () => {
@@ -126,11 +131,19 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
         setIsEmojiOpen(false)
     }
 
+    const resizeTextArea = () => {
+        const textArea = inputRef.current;
+        if (textArea) {
+            textArea.style.height = '22px';
+            textArea.style.height = `${Math.min(textArea.scrollHeight, 80)}px`;
+        }
+    };
+
     return (
-        <section className='sticky -mx-4 md:mx-0 bg-chatBg z-[999999] bottom-0 md:pb-3 inset-x-0'
+        <section ref={msgSenderRef} className='sticky -mx-4 md:mx-0 bg-chatBg z-[999999] bottom-0 md:pb-3 inset-x-0'
         >
 
-            <div className={`${(replayData?._id || editData?._id) ? 'opacity-100 h-[50px] pb-1' : 'opacity-0 h-0'} flex flex-row-reverse justify-between duration-200 transition-all items-center gap-3 px-4 line-clamp-1 overflow-ellipsis absolute rounded-t-xl bg-white/[5.12%] inset-x-0 z-40 bottom-[53px] md:bottom-16`}>
+            <div style={{ bottom: msgSenderHeight }} className={`${(replayData?._id || editData?._id) ? 'opacity-100 h-[50px] pb-1' : 'opacity-0 h-0'} flex flex-row-reverse justify-between duration-200 transition-all items-center gap-3 px-4 line-clamp-1 overflow-ellipsis absolute rounded-t-xl bg-white/[5.12%] inset-x-0 z-40`}>
 
                 <IoMdClose onClick={() => { closeReplay(), closeEdit() }} className="size-7 shrink-0 transition-all cursor-pointer active:bg-inherit active:rounded-full p-1" />
 
@@ -155,12 +168,13 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
                         <p className="line-clamp-1 text-[13px] text-white/60 break-words overflow-ellipsis">
                             {replayData?.message ?? editData?.message}
                         </p>
+
                     </div>
                 </div>
 
             </div>
 
-            <span className={`${(replayData?._id || editData?._id) ? 'opacity-100 h-[50px] pb-1' : 'opacity-0 h-0'} duration-200 transition-all border-b border-white/5 z-30 absolute inset-x-0 bottom-[53px] md:bottom-16 bg-inherit`}></span>
+            <span style={{ bottom: msgSenderHeight }} className={`${(replayData?._id || editData?._id) ? 'opacity-100 h-[50px] pb-1' : 'opacity-0 h-0'} duration-200 transition-all border-b border-white/5 z-30 absolute inset-x-0 bg-inherit`}></span>
 
             <EmojiPicker
                 open={isEmojiOpen}
@@ -176,7 +190,7 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
                 onEmojiClick={selectEmoji}
             />
 
-            <div className='flex items-center relative w-full md:px-2 px-6 ch:w-full md:gap-1 gap-3 bg-white/[5.12%] h-[53px] rounded mt-2'>
+            <div className='flex items-end relative w-full md:px-2 px-6 ch:w-full md:gap-1 gap-3 bg-white/[5.12%] min-h-[53px] h-auto rounded pb-[15px] mt-2'>
 
                 {
                     (selectedRoom?.type == 'chanel' && selectedRoom.admins.includes(myData._id)) || selectedRoom?.type !== 'chanel'
@@ -187,14 +201,13 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
                                 className="shrink-0 cursor-pointer basis-[5%] size-5"
                             />
 
-                            <input
+                            <textarea
                                 dir="auto"
                                 value={text}
-                                onChange={msgTextUpdater}
-                                onKeyUp={e => (e.key == "Enter" && text.trim().length) && (editData ? editMessage() : sendMessage())}
+                                onChange={msgTextUpdater as any}
+                                onKeyUp={e => (e.key == "Enter" && !e.shiftKey && text.trim().length) && (editData ? editMessage() : sendMessage())}
                                 ref={inputRef}
-                                className="bg-transparent resize-none outline-none h-full flex-center"
-                                type="text"
+                                className="bg-transparent resize-none outline-none flex-center max-h-20 min-h-[22px] h-[22px]"
                                 placeholder="Message"
                             />
 
@@ -213,7 +226,11 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
                                         {
                                             text.trim().length
                                                 ?
-                                                <IoIosSend data-aos='zoom-in' onClick={sendMessage} className="shrink-0 basis-[7%] size-6 cursor-pointer text-lightBlue ml-10 mb-3 *:rotate-45" />
+                                                <IoIosSend
+                                                    data-aos='zoom-in'
+                                                    onClick={sendMessage}
+                                                    className="shrink-0 basis-[7%] size-6 cursor-pointer text-lightBlue ml-10 mb-[5px] *:rotate-45"
+                                                />
                                                 :
                                                 <VoiceMessageRecorder
                                                     replayData={replayData as any}
