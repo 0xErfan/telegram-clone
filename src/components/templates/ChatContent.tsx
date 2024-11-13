@@ -477,7 +477,12 @@ const ChatContent = () => {
                 {
                     pinnedMessages?.length
                         ?
-                        <Suspense><PinnedMessages key={roomID} pinnedMessages={pinnedMessages} /></Suspense>
+                        <Suspense>
+                            <PinnedMessages
+                                key={roomID}
+                                pinnedMessages={pinnedMessages}
+                            />
+                        </Suspense>
                         : null
                 }
 

@@ -39,7 +39,7 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
 
     useEffect(() => {
         setText(editData?.message || '')
-    }, [editData?._id])
+    }, [editData?.message])
 
     useEffect(() => {
 
@@ -55,13 +55,14 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
 
     }, [_id])
 
-    useEffect(() => resizeTextArea(), [text])
+    useEffect(() => resizeTextArea(), [text, editData?._id])
 
     useEffect(() => {
         if (replayData?._id || editData?._id) inputRef.current?.focus()
     }, [replayData?._id, editData?._id])
 
     const cleanUpAfterSendingMsg = () => {
+        if (inputRef?.current) { inputRef.current.style.height = '22px' }
         closeReplay()
         closeEdit()
         setText('')
@@ -134,7 +135,7 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
     const resizeTextArea = () => {
         const textArea = inputRef.current;
         if (textArea) {
-            textArea.style.height = '22px';
+            textArea.style.overflow = textArea.scrollHeight < 30 ? 'hidden' : 'auto'
             textArea.style.height = `${Math.min(textArea.scrollHeight, 80)}px`;
         }
     };
