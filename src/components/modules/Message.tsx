@@ -386,7 +386,7 @@ const Message = (msgData: MessageModel & Props) => {
 
                             </div>
                         }
-                        <p dir='auto'>{message}</p>
+                        <p className='whitespace-pre-wrap' dir='auto'>{message}</p>
                     </div>
 
                     <span className={`flex items-center justify-end gap-1 absolute bottom-px right-3 w-full text-[12px]  ${isFromMe ? 'text-[#B7D9F3]' : 'text-darkGray'} text-right`}>
