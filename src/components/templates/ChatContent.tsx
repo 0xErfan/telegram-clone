@@ -146,7 +146,7 @@ const ChatContent = () => {
 
         return messageContent;
 
-    }, [myID, messages, type, roomID])
+    }, [myID, messages, type, roomID, forceRender])
 
     const manageScroll = () => {
         if (isLoaded) {
@@ -292,7 +292,9 @@ const ChatContent = () => {
         })
 
         rooms?.on('listenToVoice', ({ userID, voiceID, roomID }) => {
-            console.log('gotta, ', roomID)
+
+            console.log('gotta(listen to voice event), ', roomID)
+
             if (selectedRoom?._id !== roomID) return
 
             messages.some(msg => {
@@ -307,6 +309,7 @@ const ChatContent = () => {
                 ) {
                     msg.voiceData.playedBy = [...msg.voiceData.playedBy, userID]
                     setter({ messages: [...messages, msg] })
+                    setForceRender(prev => !prev)
                     return true
                 }
             })

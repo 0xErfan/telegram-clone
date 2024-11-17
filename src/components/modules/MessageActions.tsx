@@ -12,6 +12,7 @@ import useUserStore from "@/zustand/userStore";
 import { UserModel } from "@/@types/data.t";
 import axios from "axios";
 import { Button } from "@nextui-org/button";
+import Image from "next/image";
 
 const MessageActions = () => {
 
@@ -153,7 +154,12 @@ const MessageActions = () => {
                                                     {
                                                         userData?.avatar
                                                             ?
-                                                            <img src={userData?.avatar} alt="user avatar" />
+                                                            <Image
+                                                                width={32}
+                                                                height={32}
+                                                                loading="lazy"
+                                                                className="object-cover size-full rounded-full" src={userData?.avatar} alt="user avatar"
+                                                            />
                                                             :
                                                             <p className='font-segoeBold font-bold text-lg'>{userData.name[0]}</p>
                                                     }
