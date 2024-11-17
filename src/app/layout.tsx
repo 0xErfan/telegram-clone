@@ -18,6 +18,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <html lang="en">
             <head>
                 <link rel="icon" href="./images/telegram.svg" />
+                <link rel="manifest" href="./manifest.json" />
             </head>
             <body className="font-segoeRegular overflow-hidden">
                 <NextUIProvider>
