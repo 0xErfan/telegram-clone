@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { BiSearch } from "react-icons/bi"
 import { ChatCard } from "../modules/ChatCard"
-import {lazy, useEffect, useMemo, useRef, useState} from "react"
+import { lazy, useEffect, useMemo, useRef, useState } from "react"
 import { RoomModel } from "@/@types/data.t"
 import { io } from 'socket.io-client'
 import useUserStore from "@/zustand/userStore"
