@@ -270,6 +270,14 @@ const copyText = async (text: string) => {
     }
 }
 
+const registerServiceWorker = () => {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => console.log(`Service Worker registered successfully in ${registration?.scope} scope.`))
+            .catch(error => console.log(`Service worker registration failed, ${error}`))
+    }
+}
+
 const generateRandomHex = (length: number) => {
     let result = '';
     for (let i = 0; i < length; i++) {
@@ -393,5 +401,6 @@ export {
     logout,
     secondsToFormattedTimeString,
     getTimeReportFromDate,
-    formattedDateString
+    formattedDateString,
+    registerServiceWorker
 }

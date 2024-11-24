@@ -12,6 +12,7 @@ import useSockets from "@/zustand/useSockets"
 import RoomFolders from "./RoomFolders"
 import RoomSkeleton from "../modules/RoomSkeleton"
 import { clearInterval } from "timers"
+import { registerServiceWorker } from "@/utils"
 
 const CreateRoomBtn = lazy(() => import('@/components/templates/CreateRoomBtn'))
 const LeftBarMenu = lazy(() => import('@/components/templates/LeftBarMenu'))
@@ -59,6 +60,8 @@ const LeftBar = () => {
 
     // heartbeat effect to keep connection alive even with no activity
     useEffect(() => {
+
+        registerServiceWorker()
 
         const intervalId = setInterval(() => {
             if (roomSocket.connected) {
