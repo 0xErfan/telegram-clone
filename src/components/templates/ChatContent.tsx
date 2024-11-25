@@ -25,8 +25,9 @@ const ChatContent = () => {
     let messageContainerRef = useRef<HTMLDivElement | null>(null)
     const stickyDateTimer = useRef<NodeJS.Timeout | null>(null)
     const ringAudioRef = useRef<ElementRef<'audio'>>(null)
+    const lastScrollPos = useRef(0)
 
-    const { _id: myID, name: myName, setter: userDataUpdater, rooms: userRooms } = useUserStore(state => state)
+    const { _id: myID, name: myName, setter: userDataUpdater, rooms: userRooms, roomMessageTrack } = useUserStore(state => state)
     const { setter } = useGlobalVariablesStore(state => state)
     const { rooms } = useSockets(state => state)
     const { selectedRoom, onlineUsers, isRoomDetailsShown } = useGlobalVariablesStore(state => state) || {}
@@ -70,6 +71,13 @@ const ChatContent = () => {
             ringAudioRef.current.play()
         }
     }
+
+    const lastMsgSeenTrack = roomMessageTrack?.some(track => {
+        if (track.roomId == _id) {
+            if (messageContainerRef.current) messageContainerRef.current!.scrollTop = track.scrollPos
+            return true
+        }
+    })
 
     const pinMessage = (id: string) => {
         const isLastMessage = messages?.at(-1)?._id == id
@@ -149,6 +157,9 @@ const ChatContent = () => {
     }, [myID, messages, type, roomID, forceRender])
 
     const manageScroll = () => {
+
+        if (lastMsgSeenTrack) return;
+
         if (isLoaded) {
             const isFromMe = messages?.length && messages[messages.length - 1]?.sender?._id === myID;
             if (isFromMe || isLastMsgInView) lastMsgRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -160,6 +171,7 @@ const ChatContent = () => {
     }
 
     const checkIsLastMsgInView = (e: any) => {
+        lastScrollPos.current = e.target.scrollTop
         const isInView = e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight <= 0
         setIsLastMsgInView(isInView)
     }
@@ -168,33 +180,8 @@ const ChatContent = () => {
         setShowRoomOptions(true)
     }
 
-    const findLatestVisibleMessage = useCallback((messageContainer: HTMLElement): MessageModel | null => {
-        return alert('fix the last message finder')
-        if (!messageContainer) return null;
-
-        const { scrollTop, clientHeight } = messageContainer
-
-        // Find the latest visible message  
-        let latestMessage = null;
-
-        for (let i = messages.length - 1; i >= 0; i--) {
-
-            const messageElement = document.getElementsByClassName(messages[i]._id)[0];
-            console.log(messageElement)
-            if (messageElement) {
-                const messageTop = messageElement.offsetTop;
-                if (messageTop + messageElement.offsetHeight <= scrollTop + clientHeight) {
-                    latestMessage = messages[i];
-                    break
-                }
-            }
-        }
-
-        return latestMessage;
-
-    }, [messages])
-
     useEffect(() => {
+
         manageScroll()
 
         rooms?.on('newMessage', newMsg => {
@@ -380,13 +367,13 @@ const ChatContent = () => {
     }, [pinnedMessages, messages])
 
     useEffect(() => {
-        if (!isLoaded && _id && messages?.length) {
+        if (!lastMsgSeenTrack && !isLoaded && _id && messages?.length) {
             const lastSeenMsg = [...messages].reverse().find(msg => msg.sender._id === myID || msg.seen.includes(myID))
             const lastSeenMsgElem = document.getElementsByClassName(lastSeenMsg?._id!)[0]
             lastSeenMsgElem?.scrollIntoView()
             setIsLoaded(true)
         } // not working properly, the element get selected correctly but the scroll is not
-    }, [messages, isLoaded, myID])
+    }, [messages, isLoaded, myID, lastMsgSeenTrack])
 
     useEffect(() => {
         if (messages?.length) {
@@ -401,18 +388,10 @@ const ChatContent = () => {
 
         return () => {
 
-            const messageContainer = document.querySelector('#messageContainer')
-            const lastMessageInView = findLatestVisibleMessage(messageContainer as HTMLElement)
-
             setIsLoaded(false)
             setTypings([])
 
-            // update last seen message position
-            console.log(lastMessageInView)
-
-            if (lastMessageInView) {
-                rooms?.emit('updateLastMsgPos', { roomID: _id, msgID: lastMessageInView._id })
-            }
+            rooms?.emit('updateLastMsgPos', { roomID: _id, scrollPos: lastScrollPos.current, userID: myID })
 
         }
     }, [roomID, _id])

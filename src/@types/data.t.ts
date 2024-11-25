@@ -10,6 +10,7 @@ interface UserModel {
     biography: string
     status: 'online' | 'offline'
     isLogin: boolean
+    roomMessageTrack: { roomId: string, scrollPos: number }[]
     createdAt: string
     updatedAt: string
 }

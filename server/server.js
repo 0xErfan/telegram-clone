@@ -292,25 +292,42 @@ io.on('connection', socket => {
 
     })
 
-    socket.on('updateLastMsgPos', async ({ roomID, msgID, userID }) => {
+    socket.on('updateLastMsgPos', async ({ roomID, scrollPos, userID }) => {
 
-        const userTarget = await UserModel.findOne({ _id: userID })
+        try {
 
-        if (userTarget) {
-            userTarget.roomMessageTrack?.some(room => {
-                if (room.roomId == roomID) {
-                    room.msgId = msgID
-                    userTarget.save()
+            const userTarget = await UserModel.findOne({ _id: userID });
+            
+            if (!userTarget) {
+                console.log(`User not found: ${userID}`);
+                return;
+            }
+
+            if (!userTarget.roomMessageTrack) {
+                userTarget.roomMessageTrack = [];
+            }
+
+            const isRoomExist = userTarget.roomMessageTrack.some(room => {
+                if (room.roomId === roomID) {
+                    room.scrollPos = scrollPos;
                     return true;
                 }
-            })
-        }
-        
-    })
+                return false;
+            });
+
+            if (!isRoomExist) {
+                userTarget.roomMessageTrack.push({ roomId: roomID, scrollPos });
+            }
+
+            await userTarget.save();
+
+        } catch (error) { console.log('Error updating user data:', error) }
+
+    });
 
     socket.on('typing', data => {
         if (!typings.includes(data.sender.name)) {
-            io.to(data.roomID).emit('typing', data)
+            io.to(data.roomID).emit('typin54g', data)
             typings.push(data.sender.name)
         }
     })
