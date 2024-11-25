@@ -7,7 +7,7 @@ import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import useUserStore from "@/zustand/userStore";
 import MessageSender from "./MessageSender";
 import useSockets from "@/zustand/useSockets";
-import { ElementRef, lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { ElementRef, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ScrollToBottom from "./ScrollToBottom";
 import JoinToRoom from "./JoinToRoom";
 import { MessageModel } from "@/@types/data.t";
@@ -167,6 +167,32 @@ const ChatContent = () => {
     const openChatSetting = () => {
         setShowRoomOptions(true)
     }
+
+    const findLatestVisibleMessage = useCallback((messageContainer: HTMLElement): MessageModel | null => {
+        return alert('fix the last message finder')
+        if (!messageContainer) return null;
+
+        const { scrollTop, clientHeight } = messageContainer
+
+        // Find the latest visible message  
+        let latestMessage = null;
+
+        for (let i = messages.length - 1; i >= 0; i--) {
+
+            const messageElement = document.getElementsByClassName(messages[i]._id)[0];
+            console.log(messageElement)
+            if (messageElement) {
+                const messageTop = messageElement.offsetTop;
+                if (messageTop + messageElement.offsetHeight <= scrollTop + clientHeight) {
+                    latestMessage = messages[i];
+                    break
+                }
+            }
+        }
+
+        return latestMessage;
+
+    }, [messages])
 
     useEffect(() => {
         manageScroll()
@@ -370,12 +396,26 @@ const ChatContent = () => {
     }, [messages])
 
     useEffect(() => {
+
         setter({ isChatPageLoaded: true })
+
         return () => {
+
+            const messageContainer = document.querySelector('#messageContainer')
+            const lastMessageInView = findLatestVisibleMessage(messageContainer as HTMLElement)
+
             setIsLoaded(false)
             setTypings([])
+
+            // update last seen message position
+            console.log(lastMessageInView)
+
+            if (lastMessageInView) {
+                rooms?.emit('updateLastMsgPos', { roomID: _id, msgID: lastMessageInView._id })
+            }
+
         }
-    }, [roomID])
+    }, [roomID, _id])
 
     // close fixed message date 1.5 seconds after every scroll
     // useEffect(() => {
@@ -494,6 +534,7 @@ const ChatContent = () => {
             <div
                 onScroll={checkIsLastMsgInView}
                 ref={messageContainerRef}
+                id="messageContainer"
                 className={`flex flex-col gap-2 relative fillScreen mb-1 md:pb-2 overflow-x-hidden ${pinnedMessages?.length && 'mt-[50px]'} overflow-y-auto noScrollWidth`}
             >
 

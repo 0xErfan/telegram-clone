@@ -10,6 +10,7 @@ export const schema = new Schema({
     type: { type: String, enum: ['private'], default: 'private' },
     status: { type: String, enum: ["online", "offline"], default: "offline" },
     password: { type: String, required: true },
+    roomMessageTrack: { type: [{ roomId: String, msgId: String }], default: [] } // track the last seen user message seen before leaving the room
 }, { timestamps: true })
 
 const UserModel = mongoose.models.User || mongoose.model('User', schema);

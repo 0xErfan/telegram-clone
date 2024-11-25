@@ -292,6 +292,22 @@ io.on('connection', socket => {
 
     })
 
+    socket.on('updateLastMsgPos', async ({ roomID, msgID, userID }) => {
+
+        const userTarget = await UserModel.findOne({ _id: userID })
+
+        if (userTarget) {
+            userTarget.roomMessageTrack?.some(room => {
+                if (room.roomId == roomID) {
+                    room.msgId = msgID
+                    userTarget.save()
+                    return true;
+                }
+            })
+        }
+        
+    })
+
     socket.on('typing', data => {
         if (!typings.includes(data.sender.name)) {
             io.to(data.roomID).emit('typing', data)
