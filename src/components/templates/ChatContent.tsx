@@ -10,7 +10,7 @@ import useSockets from "@/zustand/useSockets";
 import { ElementRef, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ScrollToBottom from "./ScrollToBottom";
 import JoinToRoom from "./JoinToRoom";
-import { MessageModel } from "@/@types/data.t";
+import { MessageModel, UserModel } from "@/@types/data.t";
 import useScrollChange from "@/hook/useScrollChange";
 import DropDown from "../modules/DropDown";
 import { formattedDateString } from "@/utils";
@@ -72,12 +72,16 @@ const ChatContent = () => {
         }
     }
 
-    const lastMsgSeenTrack = roomMessageTrack?.some(track => {
-        if (track.roomId == _id) {
-            if (messageContainerRef.current) messageContainerRef.current!.scrollTop = track.scrollPos
-            return true
-        }
-    })
+    const lastMsgSeenTrack = useMemo(() => {
+        return roomMessageTrack?.some(track => {
+            if (track.roomId == _id) {
+                if (messageContainerRef.current) {
+                    messageContainerRef.current!.scrollTop = track.scrollPos
+                }
+                return true
+            }
+        })
+    }, [roomMessageTrack, _id, messageContainerRef?.current])
 
     const pinMessage = (id: string) => {
         const isLastMessage = messages?.at(-1)?._id == id
@@ -305,8 +309,6 @@ const ChatContent = () => {
         })
 
         rooms?.on('listenToVoice', ({ userID, voiceID, roomID }) => {
-
-            console.log('gotta(listen to voice event), ', roomID)
 
             if (selectedRoom?._id !== roomID) return
 

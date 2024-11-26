@@ -4,7 +4,7 @@ import Image from "next/image"
 import { BiSearch } from "react-icons/bi"
 import { ChatCard } from "../modules/ChatCard"
 import { lazy, useEffect, useMemo, useRef, useState } from "react"
-import { RoomModel } from "@/@types/data.t"
+import { RoomModel, UserModel } from "@/@types/data.t"
 import { io } from 'socket.io-client'
 import useUserStore from "@/zustand/userStore"
 import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
@@ -41,7 +41,7 @@ const LeftBar = () => {
 
     const _id = useUserStore(state => state._id)
     const updater = useSockets(state => state.updater)
-    const { setter: userDataUpdater, rooms: userRooms } = useUserStore(state => state)
+    const { setter: userDataUpdater, rooms: userRooms, roomMessageTrack } = useUserStore(state => state)
     const { selectedRoom, setter } = useGlobalVariablesStore(state => state)
 
     const sortedRooms = useMemo(() => {
@@ -57,6 +57,8 @@ const LeftBar = () => {
 
         return sortAndFilteredRooms;
     }, [rooms?.length, forceRender, userRooms?.length, filterBy])
+
+    console.log(roomMessageTrack)
 
     // heartbeat effect to keep connection alive even with no activity
     useEffect(() => {
@@ -112,10 +114,17 @@ const LeftBar = () => {
 
         roomSocket.on('updateOnlineUsers', onlineUsers => setter({ onlineUsers })) // check if its accessible for all(bug) or not
 
+        roomSocket.on('updateLastMsgPos', (updatedData: UserModel['roomMessageTrack']) => {
+            console.log('incomming data', updatedData)
+            userDataUpdater({roomMessageTrack: updatedData})
+        })
+    
         return () => {
+
             roomSocket.off('joining')
             roomSocket.off('getRooms')
             roomSocket.off('createRoom')
+            roomSocket.off('updateLastMsgPos')
             roomSocket.off('lastMsgUpdate')
             roomSocket.off('updateOnlineUsers')
         }

@@ -20,6 +20,7 @@ const useUserStore = create<UserModel & Updater>(set => ({
     biography: '',
     status: 'offline',
     updatedAt: '',
+    roomMessageTrack: [],
 
     updater(key: keyof UserModel, value: UserModel[keyof UserModel]) {
         set({ [key]: value })

@@ -312,14 +312,14 @@ io.on('connection', socket => {
                     room.scrollPos = scrollPos;
                     return true;
                 }
-                return false;
             });
 
             if (!isRoomExist) {
                 userTarget.roomMessageTrack.push({ roomId: roomID, scrollPos });
             }
 
-            await userTarget.save();
+            socket.emit('updateLastMsgPos', userTarget.roomMessageTrack)
+            userTarget.save();
 
         } catch (error) { console.log('Error updating user data:', error) }
 
@@ -327,7 +327,7 @@ io.on('connection', socket => {
 
     socket.on('typing', data => {
         if (!typings.includes(data.sender.name)) {
-            io.to(data.roomID).emit('typin54g', data)
+            io.to(data.roomID).emit('typing', data)
             typings.push(data.sender.name)
         }
     })
