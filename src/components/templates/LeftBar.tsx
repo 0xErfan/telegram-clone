@@ -113,10 +113,9 @@ const LeftBar = () => {
         roomSocket.on('updateOnlineUsers', onlineUsers => setter({ onlineUsers })) // check if its accessible for all(bug) or not
 
         roomSocket.on('updateLastMsgPos', (updatedData: UserModel['roomMessageTrack']) => {
-            console.log('incomming data', updatedData)
-            userDataUpdater({roomMessageTrack: updatedData})
+            userDataUpdater({ roomMessageTrack: updatedData })
         })
-    
+
         return () => {
 
             roomSocket.off('joining')

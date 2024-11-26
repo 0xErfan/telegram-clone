@@ -162,12 +162,12 @@ const ChatContent = () => {
 
     const manageScroll = () => {
 
-        if (lastMsgSeenTrack) return;
+        const isFromMe = messages?.length && messages[messages.length - 1]?.sender?._id === myID;
 
-        if (isLoaded) {
-            const isFromMe = messages?.length && messages[messages.length - 1]?.sender?._id === myID;
-            if (isFromMe || isLastMsgInView) lastMsgRef.current?.scrollIntoView({ behavior: 'smooth' })
+        if (isFromMe || isLastMsgInView) {
+            lastMsgRef.current?.scrollIntoView({ behavior: 'smooth' })
         }
+
     }
 
     const deleteRoom = () => {

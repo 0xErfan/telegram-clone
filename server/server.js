@@ -297,7 +297,7 @@ io.on('connection', socket => {
         try {
 
             const userTarget = await UserModel.findOne({ _id: userID });
-            
+
             if (!userTarget) {
                 console.log(`User not found: ${userID}`);
                 return;
