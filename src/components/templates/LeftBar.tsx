@@ -19,7 +19,7 @@ const LeftBarMenu = lazy(() => import('@/components/templates/LeftBarMenu'))
 const SearchPage = lazy(() => import('@/components/templates/SearchPage'))
 const Modal = lazy(() => import('../modules/Modal'))
 
-const roomSocket = io('http://localhost:3001', {
+const roomSocket = io('http://192.168.94.40:3001', {
     autoConnect: true,
     reconnection: true,
     reconnectionAttempts: Infinity,
@@ -58,8 +58,6 @@ const LeftBar = () => {
         return sortAndFilteredRooms;
     }, [rooms?.length, forceRender, userRooms?.length, filterBy])
 
-    console.log(roomMessageTrack)
-
     // heartbeat effect to keep connection alive even with no activity
     useEffect(() => {
 
@@ -75,8 +73,8 @@ const LeftBar = () => {
         // roomSocket?.on('pong', () => console.log('pong received from server'))
 
         return () => {
-            clearInterval(intervalId);
-            roomSocket.off('pong')
+            clearInterval(intervalId ?? 0);
+            roomSocket?.off('pong')
         };
     }, []);
 

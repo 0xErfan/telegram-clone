@@ -342,6 +342,7 @@ const openModal = (props: { title?: string, bodyText?: string, okText?: string, 
 const logout = async () => {
     try {
         await axios.get('/api/auth/logout')
+        return location.reload() // no time to debug the shitty (e.fun is not a function) error 
         const setter = useUserStore.getState().setter
         setter({ isLogin: false })
     } catch (error) { showToast(false, 'Network issues bud!') }
