@@ -61,6 +61,7 @@ interface RoomModel {
     messages: MessageModel[]
     locations: LocationModel[]
     medias: MediaModel[]
+    notSeenCount?: number
     link: string
     createdAt: string
     updatedAt: string

@@ -24,7 +24,7 @@ export const ChatCard = ({
     const [isActive, setIsActive] = useState(false)
     const [lastMsgData, setLastMsgData] = useState<MessageModel>(lastMsgDataProp)
     const [notSeenCount, setNotSeenCount] = useState(currentNotSeenCount)
-    const { selectedRoom, onlineUsers } = useGlobalVariablesStore(state => state)
+    const { selectedRoom, onlineUsers, forceRender, setter: globalVarSetter } = useGlobalVariablesStore(state => state)
     const { _id: myID } = useUserStore(state => state) || ''
     const { rooms } = useSockets(state => state)
 
@@ -77,6 +77,7 @@ export const ChatCard = ({
 
         rooms?.on('seenMsg', ({ roomID }) => {
             if (roomID === _id) setNotSeenCount(prev => prev - 1)
+            globalVarSetter({ forceRender: !forceRender })
         })
 
         rooms?.on('newMessage', ({ roomID, sender }) => {
@@ -86,6 +87,7 @@ export const ChatCard = ({
                     setNotSeenCount(prev => prev + 1)
                 }
             }
+            globalVarSetter({ forceRender: !forceRender })
         })
 
         return () => {

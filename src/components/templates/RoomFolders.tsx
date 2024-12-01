@@ -1,14 +1,44 @@
 import { useEffect, useRef, useState } from 'react'
 import ChatFolders from '../modules/ChatFolders'
 import useUserStore from '@/zustand/userStore'
+import useGlobalVariablesStore from '@/zustand/globalVariablesStore'
 
 const folders = ['all', 'private', 'group', 'chanel', 'bot']
 
 const RoomFolders = ({ updateFilterBy }: { updateFilterBy: (filterBy: string) => void }) => {
 
+    const [foldersCount, setFolderCount] = useState<Record<typeof folders[number], number>>({})
     const [activeFolder, setActiveFolder] = useState('all')
     const chatFolderRef = useRef<HTMLDivElement>(null)
     const { rooms } = useUserStore(state => state)
+
+    const forceRender = useGlobalVariablesStore(state => state.forceRender)
+
+    useEffect(() => {
+
+        if (!rooms?.length) return;
+
+        setFolderCount({})
+
+        rooms.forEach(room => {
+
+            if (room?.notSeenCount) {
+
+                setFolderCount(prev => {
+                    return {
+                        ...prev,
+                        [room.type]: (prev[room.type] ?? 0) + 1,
+                        all: (prev.all ?? 0) + 1 // no matter what, all should update with other folder updates
+                    }
+                })
+
+            }
+
+            console.log('run again')
+
+        })
+
+    }, [rooms, activeFolder, forceRender])
 
     useEffect(() => { updateFilterBy(activeFolder) }, [activeFolder])
 
@@ -35,7 +65,7 @@ const RoomFolders = ({ updateFilterBy }: { updateFilterBy: (filterBy: string) =>
                 folders.map(data =>
                     <ChatFolders
                         key={data}
-                        count={data == 'all' ? rooms.length : [...rooms].filter((roomData) => roomData.type == data)?.length}
+                        count={foldersCount[data]}
                         name={data}
                         isActive={activeFolder == data}
                         onClick={() => setActiveFolder(data)}

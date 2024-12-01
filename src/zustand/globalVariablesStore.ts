@@ -3,6 +3,7 @@ import { Socket } from "socket.io-client";
 import { create } from "zustand";
 
 export interface Props {
+
     selectedRoom: null | RoomModel
     mockSelectedRoomData: null | RoomModel
     onlineUsers: { socketID: string, userID: string }[]
@@ -10,6 +11,7 @@ export interface Props {
     isRoomDetailsShown: boolean
     shouldCloseAll: boolean
     isChatPageLoaded: boolean
+    forceRender: boolean
     createRoom: (type: 'chanel' | 'group') => void
 
     modalData: {
@@ -46,6 +48,7 @@ const defaultModalData = {
 }
 
 const useGlobalVariablesStore = create<Props & Updater>(set => ({
+
     selectedRoom: null,
     mockSelectedRoomData: null,
     onlineUsers: [],
@@ -53,6 +56,8 @@ const useGlobalVariablesStore = create<Props & Updater>(set => ({
     shouldCloseAll: false,
     isRoomDetailsShown: false,
     isChatPageLoaded: false,
+    forceRender: false,
+
     createRoom: () => { },
 
     modalData: {
