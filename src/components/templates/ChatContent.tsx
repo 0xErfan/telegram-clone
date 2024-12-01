@@ -399,6 +399,7 @@ const ChatContent = () => {
         }
     }, [roomID, _id])
 
+
     // close fixed message date 1.5 seconds after every scroll
     // useEffect(() => {
     //     stickyDateTimer.current = setTimeout(() => setIsFixedDateShow(true), 1500)
