@@ -143,7 +143,7 @@ export const ChatCard = ({
                 {
                     (type === 'private' && isOnline)
                         ?
-                        <span className={`absolute bg-lightBlue transition-all duration-300 ${isActive ? 'left-12' : 'left-9'} size-[10px] bottom-3 rounded-full`}></span>
+                        <span className={`absolute bg-lightBlue transition-all duration-300 ${isActive ? 'left-12' : 'left-9'} size-3 bottom-3 rounded-full border-[2px] border-chatBg`}></span>
                         : null
                 }
             </>
