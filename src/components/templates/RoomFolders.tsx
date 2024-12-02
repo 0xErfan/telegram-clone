@@ -34,13 +34,11 @@ const RoomFolders = ({ updateFilterBy }: { updateFilterBy: (filterBy: string) =>
 
             }
 
-            console.log('run again')
-
         })
 
     }, [rooms, activeFolder, forceRender])
 
-    useEffect(() => { updateFilterBy(activeFolder) }, [activeFolder])
+    useEffect(() => { updateFilterBy(activeFolder) }, [activeFolder, updateFilterBy])
 
     useEffect(() => {
 

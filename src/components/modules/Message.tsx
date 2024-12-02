@@ -219,10 +219,11 @@ const Message = (msgData: MessageModel & Props) => {
                     msgID: _id,
                     roomID
                 });
+                window?.updateCount(roomID)
             }
         }
 
-    }, [isInViewport, isFromMe]);
+    }, [isInViewport, isFromMe, roomID]);
 
     // useEffect(() => {
 

@@ -69,37 +69,54 @@ export const ChatCard = ({
 
     useEffect(() => {
 
-        setIsActive(selectedRoom?._id == _id)
-
-        rooms?.on('updateLastMsgData', ({ msgData, roomID }) => {
-            _id === roomID && msgData && setLastMsgData(msgData)
-        })
-
-        rooms?.on('seenMsg', ({ roomID }) => {
-            if (roomID === _id) setNotSeenCount(prev => prev - 1)
-            globalVarSetter({ forceRender: !forceRender })
-        })
-
-        rooms?.on('newMessage', ({ roomID, sender }) => {
-            if (roomID == _id) {
-                // just checking if the message is not from us
-                if ((typeof sender == 'string' && sender !== myID) || sender?._id !== myID) {
-                    setNotSeenCount(prev => prev + 1)
-                }
+        const handleUpdateLastMsgData = ({ msgData, roomID }: { msgData: MessageModel, roomID: string }) => {
+            if (_id === roomID && msgData) {
+                setLastMsgData(msgData);
             }
-            globalVarSetter({ forceRender: !forceRender })
-        })
+        };
+
+        const handleSeenMsg = ({ roomID }: { roomID: string }) => {
+            if (roomID === _id) {
+                setNotSeenCount(prev => prev - 1);
+                globalVarSetter({ forceRender: !forceRender });
+                console.log('seen message socket event logger');
+            }
+        };
+
+        const handleNewMessage = ({ roomID, sender }: { roomID: string, sender: string | { _id: string } }) => {
+            if (roomID === _id) {
+                if ((typeof sender === 'string' && sender !== myID) || (typeof sender == 'object' && '_id' in sender && sender?._id) !== myID) {
+                    setNotSeenCount(prev => prev + 1);
+                }
+                console.log('new message socket event logger');
+                globalVarSetter({ forceRender: !forceRender });
+            }
+        };
+
+        setIsActive(selectedRoom?._id === _id);
+
+        rooms?.on('updateLastMsgData', handleUpdateLastMsgData);
+        rooms?.on('seenMsg', handleSeenMsg);
+        rooms?.on('newMessage', handleNewMessage);
 
         return () => {
-            rooms?.off('updateLastMsgData')
-            rooms?.off('seenMsg')
-        }
+            rooms?.off('updateLastMsgData', handleUpdateLastMsgData);
+            rooms?.off('seenMsg', handleSeenMsg);
+            rooms?.off('newMessage', handleNewMessage);
+        };
 
-    }, [_id, selectedRoom?._id])
+    }, [_id, selectedRoom?._id, myID, rooms]);
 
     useEffect(() => {
         setDraftMessage(localStorage.getItem(_id) || '')
     }, [localStorage.getItem(_id), _id])
+
+    useEffect(() => {
+        window.updateCount = (roomTargetId: string) => {
+            if (roomID != roomTargetId) return;
+            setNotSeenCount(notSeenCount - 1)
+        }
+    }, [notSeenCount, roomID])
 
     useEffect(() => setNotSeenCount(currentNotSeenCount), [currentNotSeenCount])
 
