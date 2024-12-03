@@ -40,7 +40,7 @@ export const ChatCard = ({
             )
             :
             ({ name: roomName, avatar: roomAvatar } as any)
-    }, [])
+    }, [myID, participants, type])
 
     const isOnline = onlineUsers.some(data => { if (data.userID === roomID) return true })
     const latestMessageTime = getTimeFromDate(lastMsgData?.createdAt!)

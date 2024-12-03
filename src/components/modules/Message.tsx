@@ -105,29 +105,6 @@ const Message = (msgData: MessageModel & Props) => {
 
     }, [_id])
 
-    useEffect(() => {
-
-        // @ts-expect-error
-        let socket: null | typeof socket = null;
-
-        (() => {
-
-            socket = useSockets.getState().rooms;
-
-            // socket?.on('listenToVoice', ({voiceID}) => {    
-            //     audioUpdater(prev => ({voiceData: {...prev.voiceData, playedBy: prev.voiceData?.playedBy?.map(id => {
-            //         if (id === voiceID) {
-            //             id = voiceID + Date.now
-            //         };
-            //         return id;
-            //     })}}))
-            // })
-
-        })()
-
-        return () => socket?.off('listenToVoice')
-    }, [])
-
     const togglePlayVoice = () => {
 
         const savedVoiceData = downloadedAudios.find(voice => voice._id === _id)
@@ -347,7 +324,6 @@ const Message = (msgData: MessageModel & Props) => {
                                                     )
                                                     :
                                                     downloadedAudios?.some(audio => audio._id === _id && audio.downloaded)
-
                                                         ?
                                                         <FaPlay data-aos='zoom-in' className='ml-1' />
                                                         :
