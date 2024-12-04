@@ -79,7 +79,6 @@ export const ChatCard = ({
             if (roomID === _id) {
                 setNotSeenCount(prev => prev - 1);
                 globalVarSetter({ forceRender: !forceRender });
-                console.log('seen message socket event logger');
             }
         };
 
@@ -88,7 +87,6 @@ export const ChatCard = ({
                 if ((typeof sender === 'string' && sender !== myID) || (typeof sender == 'object' && '_id' in sender && sender?._id) !== myID) {
                     setNotSeenCount(prev => prev + 1);
                 }
-                console.log('new message socket event logger');
                 globalVarSetter({ forceRender: !forceRender });
             }
         };
@@ -112,10 +110,8 @@ export const ChatCard = ({
     }, [localStorage.getItem(_id), _id])
 
     useEffect(() => {
-        window.updateCount = (roomTargetId: string) => {
-            if (roomID != roomTargetId) return;
-            setNotSeenCount(notSeenCount - 1)
-        }
+        // this is some nasty code you are viewing in a react codebase, sorry for that
+        window.updateCount = () => setNotSeenCount(prev => prev - 1)
     }, [notSeenCount, roomID])
 
     useEffect(() => setNotSeenCount(currentNotSeenCount), [currentNotSeenCount])
