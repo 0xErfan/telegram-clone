@@ -18,23 +18,21 @@ const RoomFolders = ({ updateFilterBy }: { updateFilterBy: (filterBy: string) =>
 
         if (!rooms?.length) return;
 
-        setFolderCount({})
+        const updateFolders: typeof foldersCount = {}
+        console.log('getting run another time.')
 
         rooms.forEach(room => {
 
-            if (room?.notSeenCount) {
+            if (!!room?.notSeenCount) {
 
-                setFolderCount(prev => {
-                    return {
-                        ...prev,
-                        [room.type]: (prev[room.type] ?? 0) + 1,
-                        all: (prev.all ?? 0) + 1 // no matter what, all should update with other folder updates
-                    }
-                })
+                updateFolders[room.type] = (updateFolders[room.type] ?? 0) + 1
+                updateFolders['all'] = (updateFolders['all'] ?? 0) + 1
 
             }
 
         })
+
+        setFolderCount(updateFolders)
 
     }, [rooms, activeFolder, forceRender])
 

@@ -196,7 +196,7 @@ const Message = (msgData: MessageModel & Props) => {
                     msgID: _id,
                     roomID
                 });
-                window?.updateCount(_id) // zustand honest reaction to this line of code: 😊🎶
+                window?.updateCount('0') // zustand honest reaction to this line of code: 😊🎶
             }
         }
 

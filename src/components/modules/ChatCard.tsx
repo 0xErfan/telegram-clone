@@ -7,7 +7,7 @@ import useGlobalVariablesStore from "@/zustand/globalVariablesStore"
 import useSockets from "@/zustand/useSockets"
 import useUserStore from "@/zustand/userStore"
 import Image from "next/image"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 
 
 export const ChatCard = ({
@@ -27,6 +27,8 @@ export const ChatCard = ({
     const { selectedRoom, onlineUsers, forceRender, setter: globalVarSetter } = useGlobalVariablesStore(state => state)
     const { _id: myID } = useUserStore(state => state) || ''
     const { rooms } = useSockets(state => state)
+
+    const timeout = useRef<NodeJS.Timeout | null>(null)
 
     const { avatar, name, _id: roomID } = useMemo(() => {
         // if type is private, we should view the user infos instead of room infos
@@ -111,8 +113,18 @@ export const ChatCard = ({
 
     useEffect(() => {
         // this is some nasty code you are viewing in a react codebase, sorry for that
-        window.updateCount = () => setNotSeenCount(prev => prev - 1)
-    }, [notSeenCount, roomID])
+        window.updateCount = () => {
+
+            clearTimeout(timeout.current!)
+
+            setNotSeenCount(prev => prev - 1)
+
+            timeout.current = setTimeout(() => {
+                globalVarSetter({ forceRender: !forceRender })
+            }, 200);
+
+        }
+    }, [notSeenCount])
 
     useEffect(() => setNotSeenCount(currentNotSeenCount), [currentNotSeenCount])
 
