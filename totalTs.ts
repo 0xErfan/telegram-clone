@@ -57,23 +57,6 @@ type Result<result> = {
     data: result extends number ? result : never
 }
 
-const createRandomNumber = (): Result<number> => {
-
-    const num = Math.random();
-
-    if (num > 0.5) {
-        return {
-            success: true,
-            data: 123,
-        };
-    }
-
-    return {
-        success: false,
-        error: new Error("Something went wrong"),
-    };
-};
-
 ////////
 
 
@@ -175,10 +158,18 @@ type UnShifted = Unshift<[1, 2], 0> // [0, 1, 2]
 
 
 
+// get return type of fn
+type MyReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
+const myArrReturnFn = (name: string, anotherName: string): { name: 'string', address: { str: string, p: number } }[] | null => null;
+type myArrayReturnType = MyReturnType<typeof myArrReturnFn>
+// get return type of fn
 
 
-
-
+// get property types of fn
+type GetPropType<T> = T extends (...arg: infer R) => any ? (...arg: R) => any : never
+const myTestFn = (name: string, address: { str: string, p: number }) => { }
+type myFnProps = GetPropType<typeof myTestFn>
+// get property types of fn
 
 
 
