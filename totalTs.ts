@@ -173,9 +173,16 @@ type myFnProps = GetPropType<typeof myTestFn>
 
 
 
+// last or first argument of a function, array or similar things
+type LastIndexVal<T> = T extends [...args: infer Rest, last: infer Last] ? Last : never;
+type FirstIndexVal<T> = T extends [first: infer First, reset: infer Rest] ? First : never;
+// last or first argument of a function, array or similar things
+
+// number extract using infer & conditional checking(cool af)
+type ExtractNumber<T> = T extends `${infer U}` ? `${U}` extends number ? U : never : never
 
 
-
-
-
-
+// using recursive call with infer
+type Flatten<T> = T extends Array<infer U> ? Flatten<U> : T;
+type NestedArray = number\[][\][];
+type Flat = Flatten<NestedArray>
