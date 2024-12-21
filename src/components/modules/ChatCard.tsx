@@ -79,7 +79,6 @@ export const ChatCard = ({
             if (roomID === _id) {
                 setNotSeenCount(prev => prev - 1);
                 globalVarSetter({ forceRender: !forceRender });
-                console.log('seen message socket event logger');
             }
         };
 
@@ -88,7 +87,6 @@ export const ChatCard = ({
                 if ((typeof sender === 'string' && sender !== myID) || (typeof sender == 'object' && '_id' in sender && sender?._id) !== myID) {
                     setNotSeenCount(prev => prev + 1);
                 }
-                console.log('new message socket event logger');
                 globalVarSetter({ forceRender: !forceRender });
             }
         };

@@ -137,46 +137,27 @@ const uniqueArray = <A>(arr: A[]): A[] => {
 };
 
 const duplicateValArray = [1, 3, 33, 3, 3, 3, 5, 6]
-
 const removedDuplicatedArray = uniqueArray(duplicateValArray)
 
-/////////
-
-{
-    let want_to_search_later = ['type predicate', 'asserts', 'infer']
-
-}
-
-/////////
 
 type Unshift<T extends any[], K> = [K, ...T]
 type UnShifted = Unshift<[1, 2], 0> // [0, 1, 2]
-
-///////
-
-
-
 
 
 // get return type of fn
 type MyReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
 const myArrReturnFn = (name: string, anotherName: string): { name: 'string', address: { str: string, p: number } }[] | null => null;
 type myArrayReturnType = MyReturnType<typeof myArrReturnFn>
-// get return type of fn
-
 
 // get property types of fn
 type GetPropType<T> = T extends (...arg: infer R) => any ? (...arg: R) => any : never
 const myTestFn = (name: string, address: { str: string, p: number }) => { }
 type myFnProps = GetPropType<typeof myTestFn>
-// get property types of fn
-
 
 
 // last or first argument of a function, array or similar things
 type LastIndexVal<T> = T extends [...args: infer Rest, last: infer Last] ? Last : never;
 type FirstIndexVal<T> = T extends [first: infer First, reset: infer Rest] ? First : never;
-// last or first argument of a function, array or similar things
 
 // number extract using infer & conditional checking(cool af)
 type ExtractNumber<T> = T extends `${infer U}` ? `${U}` extends number ? U : never : never
@@ -184,5 +165,3 @@ type ExtractNumber<T> = T extends `${infer U}` ? `${U}` extends number ? U : nev
 
 // using recursive call with infer
 type Flatten<T> = T extends Array<infer U> ? Flatten<U> : T;
-type NestedArray = number\[][\][];
-type Flat = Flatten<NestedArray>

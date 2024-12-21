@@ -7,10 +7,10 @@ import useGlobalVariablesStore from "@/zustand/globalVariablesStore";
 import useUserStore from "@/zustand/userStore";
 import MessageSender from "./MessageSender";
 import useSockets from "@/zustand/useSockets";
-import { ElementRef, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ElementRef, lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import ScrollToBottom from "./ScrollToBottom";
 import JoinToRoom from "./JoinToRoom";
-import { MessageModel, UserModel } from "@/@types/data.t";
+import { MessageModel } from "@/@types/data.t";
 import useScrollChange from "@/hook/useScrollChange";
 import DropDown from "../modules/DropDown";
 import { formattedDateString } from "@/utils";
@@ -342,40 +342,37 @@ const ChatContent = () => {
     }, [messages, participants])
 
     useEffect(() => {
-        rooms?.on('pinMessage', (msgId) => {
 
-            let msgData = messages.find(msg => msg._id == msgId)
-            msgData = { ...msgData, pinnedAt: msgData?.pinnedAt ? null : String(Date.now()) } as MessageModel
-
-
-            const updatedMessages = messages.map(msg => {
-
-                if (msg?._id == msgData?._id) {
-                    msg = msgData
-                }
-                return msg;
-
-            })
+        const handlePinMessage = (msgId: string) => {
+            const updatedMessages = messages.map((msg) =>
+                msg._id === msgId
+                    ? { ...msg, pinnedAt: msg.pinnedAt ? null : String(Date.now()) }
+                    : msg
+            );
 
             setter({
                 selectedRoom: {
                     ...selectedRoom,
-                    messages: updatedMessages
-                }
-            })
+                    messages: updatedMessages,
+                },
+            });
+        };
 
-        })
-        return () => { rooms?.off('pinMessage') }
+        rooms?.on('pinMessage', handlePinMessage);
+
+        return () => {
+            rooms?.off('pinMessage', handlePinMessage);
+        }
 
     }, [pinnedMessages, messages])
 
     useEffect(() => {
         if (!lastMsgSeenTrack && !isLoaded && _id && messages?.length) {
-            const lastSeenMsg = [...messages].reverse().find(msg => msg.sender._id === myID || msg.seen.includes(myID))
-            const lastSeenMsgElem = document.getElementsByClassName(lastSeenMsg?._id!)[0]
-            lastSeenMsgElem?.scrollIntoView()
+            // const lastSeenMsg = [...messages].reverse().find(msg => msg.sender._id === myID || msg.seen.includes(myID))
+            // const lastSeenMsgElem = document.getElementsByClassName(lastSeenMsg?._id!)[0]
+            // lastSeenMsgElem?.scrollIntoView()
             setIsLoaded(true)
-        } // not working properly, the element get selected correctly but the scroll is not
+        }
     }, [messages, isLoaded, myID, lastMsgSeenTrack])
 
     useEffect(() => {

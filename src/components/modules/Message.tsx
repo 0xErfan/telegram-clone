@@ -66,7 +66,7 @@ const Message = (msgData: MessageModel & Props) => {
     const { songWaves, waveUpdater } = useMemo(() => {
 
         const waveUpdater = (percentage: number) => {
-            return;
+            return; // TODO: fix shitty performance
             const activeWavesCount = Math.trunc((percentage * 20) / 100)
 
             // every of these two shitty loops gets run thousand and more, fix it later please.
