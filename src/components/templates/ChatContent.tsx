@@ -331,6 +331,8 @@ const ChatContent = () => {
 
         })
 
+        console.log(messages.length)
+
         return () => {
             rooms?.off('typing')
             rooms?.off('seenMsg')
@@ -339,7 +341,7 @@ const ChatContent = () => {
             rooms?.off('listenToVoice')
             rooms?.off('newMessageIdUpdate')
         }
-    }, [messages, participants])
+    }, [messages.length, participants])
 
     useEffect(() => {
 
