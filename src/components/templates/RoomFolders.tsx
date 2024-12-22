@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import ChatFolders from '../modules/ChatFolders'
 import useUserStore from '@/zustand/userStore'
-import useGlobalVariablesStore from '@/zustand/globalVariablesStore'
 
 const folders = ['all', 'private', 'group', 'chanel', 'bot']
 
@@ -11,8 +10,6 @@ const RoomFolders = ({ updateFilterBy }: { updateFilterBy: (filterBy: string) =>
     const [activeFolder, setActiveFolder] = useState('all')
     const chatFolderRef = useRef<HTMLDivElement>(null)
     const { rooms } = useUserStore(state => state)
-
-    const forceRender = useGlobalVariablesStore(state => state.forceRender)
 
     useEffect(() => {
 
@@ -36,7 +33,7 @@ const RoomFolders = ({ updateFilterBy }: { updateFilterBy: (filterBy: string) =>
 
         })
 
-    }, [rooms, activeFolder, forceRender])
+    }, [rooms, activeFolder]) //forceRender
 
     useEffect(() => { updateFilterBy(activeFolder) }, [activeFolder, updateFilterBy])
 

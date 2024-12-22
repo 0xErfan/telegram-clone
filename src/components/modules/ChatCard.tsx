@@ -78,7 +78,7 @@ export const ChatCard = ({
         const handleSeenMsg = ({ roomID }: { roomID: string }) => {
             if (roomID === _id) {
                 setNotSeenCount(prev => prev - 1);
-                globalVarSetter({ forceRender: !forceRender });
+                // globalVarSetter({ forceRender: !forceRender });
             }
         };
 
@@ -87,7 +87,7 @@ export const ChatCard = ({
                 if ((typeof sender === 'string' && sender !== myID) || (typeof sender == 'object' && '_id' in sender && sender?._id) !== myID) {
                     setNotSeenCount(prev => prev + 1);
                 }
-                globalVarSetter({ forceRender: !forceRender });
+                // globalVarSetter({ forceRender: !forceRender });
             }
         };
 
