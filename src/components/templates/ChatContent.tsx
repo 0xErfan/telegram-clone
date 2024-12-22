@@ -331,8 +331,6 @@ const ChatContent = () => {
 
         })
 
-        console.log(messages.length)
-
         return () => {
             rooms?.off('typing')
             rooms?.off('seenMsg')
@@ -341,6 +339,7 @@ const ChatContent = () => {
             rooms?.off('listenToVoice')
             rooms?.off('newMessageIdUpdate')
         }
+
     }, [messages.length, participants])
 
     useEffect(() => {
@@ -530,7 +529,7 @@ const ChatContent = () => {
 
                 <div
                     onClick={() => messageContainerRef?.current?.scrollTo({ top: messageContainerRef.current.scrollHeight, behavior: 'smooth' })}
-                    className={`${(!notSeenMessages && canShow && !isLastMsgInView) ? 'right-0' : '-right-32'} transition-all duration-300 size-12 fixed bottom-16 md:bottom-20 bg-[#00000094] backdrop-contrast-0 z-[99999999] cursor-pointer rounded-full flex items-center justify-center`}
+                    className={`${(!notSeenMessages && canShow && !isLastMsgInView) ? 'right-0' : '-right-32'} transition-all duration-300 size-12 fixed bottom-[110px] md:bottom-[140px] xl:bottom-[125px] bg-[#2E323F] backdrop-contrast-0 z-[99999999] cursor-pointer rounded-full flex items-center justify-center`}
                 >
                     <IoIosArrowDown className="size-6 text-white" />
                 </div>
