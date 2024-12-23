@@ -397,6 +397,20 @@ const ChatContent = () => {
         }
     }, [roomID, _id])
 
+    useEffect(() => {
+
+        const handleBeforeUnload = () => {
+            rooms?.emit('updateLastMsgPos', { roomID, scrollPos: lastScrollPos.current, userID: myID, shouldEmitBack: false })
+        };
+
+        window.addEventListener("beforeunload", handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+        };
+
+    }, []); // updating last message position before leaving the page
+
 
     // close fixed message date 1.5 seconds after every scroll
     // useEffect(() => {

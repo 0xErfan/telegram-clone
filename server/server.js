@@ -5,6 +5,7 @@ import MessageModel from "../src/models/Message.js"
 import MediaModel from "../src/models/Media.js"
 import LocationModel from "../src/models/Location.js"
 import UserModel from "../src/models/User.js"
+import { useTransform } from "framer-motion"
 
 const io = new Server(3001, {
     cors: {
@@ -292,7 +293,7 @@ io.on('connection', socket => {
 
     })
 
-    socket.on('updateLastMsgPos', async ({ roomID, scrollPos, userID }) => {
+    socket.on('updateLastMsgPos', async ({ roomID, scrollPos, userID, shouldEmitBack = true }) => {
 
         try {
 
@@ -318,9 +319,13 @@ io.on('connection', socket => {
                 userTarget.roomMessageTrack.push({ roomId: roomID, scrollPos });
             }
 
-            socket.emit('updateLastMsgPos', userTarget.roomMessageTrack)
-            userTarget.save();
+            if (shouldEmitBack) {
+                socket.emit('updateLastMsgPos', userTarget.roomMessageTrack)
+            }
 
+            await userTarget.save();
+            console.log(userTarget)
+            console.log(scrollPos)
         } catch (error) { console.log('Error updating user data:', error) }
 
     });
