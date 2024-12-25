@@ -323,9 +323,8 @@ io.on('connection', socket => {
                 socket.emit('updateLastMsgPos', userTarget.roomMessageTrack)
             }
 
-            await userTarget.save();
-            console.log(userTarget)
-            console.log(scrollPos)
+            userTarget.save();
+
         } catch (error) { console.log('Error updating user data:', error) }
 
     });
