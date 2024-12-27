@@ -427,7 +427,7 @@ const ChatContent = () => {
 
             <div
                 id="chatContentHeader"
-                className="flex items-center justify-between sticky top-0 border-b border-white/5 bg-chatBg py-2 md:py-3 xl:py-0 xl:h-[97px] z-[100]"
+                className="flex items-center justify-between sticky top-0 border-b border-white/5 bg-chatBg py-2 md:py-3 xl:py-0 md:h-[87px] z-[100]"
             >
 
                 <div className='flex items-center gap-5'>
