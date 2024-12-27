@@ -9,7 +9,7 @@ const ChatFolders = ({ name, count, isActive, onClick }: Props) => {
     return (
         <div
             onClick={onClick}
-            className='relative cursor-pointer ch:transition-all ch:duration-300'
+            className='flex items-center justify-center relative cursor-pointer ch:transition-all ch:duration-300'
         >
 
             <div className={`${isActive && 'text-lightBlue'} capitalize inline`}>
@@ -19,7 +19,7 @@ const ChatFolders = ({ name, count, isActive, onClick }: Props) => {
             {
                 count
                     ?
-                    <span className={`px-[5px] text-[13px] ml-1 pb-px ${isActive ? 'bg-lightBlue' : 'bg-darkGray'} text-leftBarBg rounded-full`}>
+                    <span className={`px-[5px] text-[13px] h-[18px] min-w-[18px] w-min flex items-center justify-center text-center ml-1 pb-px ${isActive ? 'bg-lightBlue' : 'bg-darkGray'} text-leftBarBg rounded-full`}>
                         {count}
                     </span>
                     : null

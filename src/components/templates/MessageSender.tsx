@@ -8,6 +8,7 @@ import useUserStore from "@/zustand/userStore";
 import useSockets from "@/zustand/useSockets";
 import { MessageModel } from "@/@types/data.t";
 import VoiceMessageRecorder from "./VoiceMessageRecorder";
+import { debounceFn } from "@/utils";
 
 const EmojiPicker = lazy(() => import('emoji-picker-react'))
 
@@ -19,6 +20,7 @@ interface Props {
 }
 
 let draftMsg: string;
+let debouncedFn = debounceFn(200)
 
 const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) => {
 
@@ -151,7 +153,7 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
 
     }, [_id])
 
-    useEffect(() => resizeTextArea(), [text])
+    useEffect(() => debouncedFn(resizeTextArea), [text])
 
     useEffect(() => {
         if (replayData?._id || editData?._id) inputRef.current?.focus()
@@ -203,7 +205,10 @@ const MessageSender = ({ replayData, editData, closeReplay, closeEdit }: Props) 
 
             </div>
 
-            <span style={{ bottom: msgSenderHeight }} className={`${(replayData?._id || editData?._id) ? 'opacity-100 h-[50px] pb-1' : 'opacity-0 h-0'} duration-200 transition-all border-b border-white/5 z-30 absolute inset-x-0 bg-inherit`}></span>
+            <span
+                style={{ bottom: msgSenderHeight }}
+                className={`${(replayData?._id || editData?._id) ? 'opacity-100 h-[50px] pb-1' : 'opacity-0 h-0'} duration-200 transition-all border-b border-white/5 z-30 absolute inset-x-0 bg-inherit`}
+            ></span>
 
             {
                 isEmojiOpen

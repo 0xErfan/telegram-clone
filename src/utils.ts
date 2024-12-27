@@ -376,6 +376,17 @@ const checkElementPosition = (el: any): ('upper' | 'bottom' | undefined) => {
 
 }
 
+const debounceFn = (delay: number = 1000) => {
+
+    let timer: NodeJS.Timeout;
+
+    return (fn: any) => {
+        clearTimeout(timer)
+        timer = setTimeout(fn, delay);
+    }
+
+}
+
 const formattedDateString = (date: string) => new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
 
 export {
@@ -403,5 +414,6 @@ export {
     secondsToFormattedTimeString,
     getTimeReportFromDate,
     formattedDateString,
-    registerServiceWorker
+    registerServiceWorker,
+    debounceFn,
 }
