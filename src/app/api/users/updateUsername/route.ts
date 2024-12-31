@@ -10,7 +10,7 @@ export const POST = async (req: Request) => {
         await connectToDB()
         const { query } = await req.json()
 
-        const trimmedQuery = query.toLowerCase()
+        const trimmedQuery = query.toLowerCase().trim()
 
         const isQueryValidAndAvailable = trimmedQuery.length > 3 && trimmedQuery.length <= 21
         if (!isQueryValidAndAvailable) return Response.json({ isValid: false }, { status: 403 })

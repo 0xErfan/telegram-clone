@@ -25,7 +25,7 @@ const VoiceMessageRecorder = ({ replayData, closeEdit, closeReplay }: Props) => 
 
     const startRecording = async () => {
 
-        if (!('mediaDevices' in navigator)) return showToast(false, 'your shitty browser is not supporting voice recording!')
+        if (!('mediaDevices' in navigator)) return showToast(false, 'your shitty browser di not support voice recording!')
 
         try {
 
@@ -164,7 +164,7 @@ const VoiceMessageRecorder = ({ replayData, closeEdit, closeReplay }: Props) => 
         <div className="shrink-0 basis-[3%] size-6 z-10">
 
             <PiMicrophoneLight
-            data-aos='zoom-in'
+                data-aos='zoom-in'
                 onClick={startRecording}
                 className="shrink-0 basis-[7%] size-6 cursor-pointer"
             />

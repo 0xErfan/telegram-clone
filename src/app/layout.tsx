@@ -24,7 +24,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 <link rel="apple-touch-icon" sizes="180x180" href="./images/apple-touch-icon.png" />
                 <meta name="apple-mobile-web-app-title" content="Telegram" />
             </head>
-            <body className="font-segoeRegular overflow-hidden">
+            <body className="font-segoeRegular bg-leftBarBg overflow-hidden">
                 <NextUIProvider>
                     <AosAnimation />
                     {children}

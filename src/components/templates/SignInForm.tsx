@@ -49,7 +49,7 @@ const SignInForm = () => {
 
             <Input
                 {...register('payload', {
-                    required: 'This filed is required!',
+                    required: 'This field is required!',
                     minLength: { value: 3, message: 'username or password length are bigger than 3' },
                     maxLength: { value: 20, message: 'username or password length are less than 20' },
                 })}
