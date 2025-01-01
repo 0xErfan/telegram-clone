@@ -13,14 +13,28 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
     const [pinMessages, setPinMessages] = useState<MessageModel[]>([])
     const [activePinMsg, setActivePinMsg] = useState(0)
 
-    const scrollToPinMessage = () => {
+    const updateActivePinMsgIndex = () => {
 
-        scrollToMessage(pinMessages[activePinMsg]?._id, 'smooth', 'center')
+        let nextActiveMsg = (activePinMsg - 1) >= 0 ? activePinMsg - 1 : pinMessages.length - 1
 
-        const nextActiveMsg = (activePinMsg + 1) >= pinMessages?.length ? 0 : (activePinMsg + 1)
+        if (!messages?.[nextActiveMsg]) {
+            nextActiveMsg = 0
+        }
+
         setActivePinMsg(nextActiveMsg)
 
     }
+
+    const scrollToPinMessage = () => {
+        scrollToMessage(pinMessages[activePinMsg]?._id, 'smooth', 'center')
+        updateActivePinMsgIndex()
+    }
+
+    useEffect(() => {
+        if (!messages[activePinMsg]) {
+            updateActivePinMsgIndex()
+        }
+    }, [messages, activePinMsg])
 
     // dynamically update the pin container before the page paint. 
     useLayoutEffect(() => {
@@ -80,4 +94,4 @@ const PinnedMessages = ({ pinnedMessages: messages }: { pinnedMessages: MessageM
     )
 }
 
-export default PinnedMessages
+export default PinnedMessages;
